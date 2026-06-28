@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAY 3 기획서 — ISI & 8장 구조 | AK LABS Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF2F6; --paper:#FFFFFF; --ink:#16243F; --ink-soft:#4A5A78;
+    --line:#CBD5E3; --line-soft:#E2E8F1;
+    --accent:#FF5A1F; --accent-dim:#FFE3D4; --accent-deep:#C8410E;
+    --teal:#0F8B8D; --teal-dim:#DCF1F1;
+    --good:#1C8C5A; --good-dim:#DEF3E8; --bad:#C0392B; --bad-dim:#FBE2DF;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0/100% 28px,
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px) 0 0/28px 100%,
+      var(--bg);
+    color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh; padding:28px 16px 60px;
+  }
+  .app{max-width:920px;margin:0 auto;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{width:34px;height:34px;border-radius:8px;background:var(--ink);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Space Grotesk';font-weight:700;font-size:15px;transform:rotate(-3deg);}
+  .brand-text{font-family:'Space Grotesk';font-weight:700;font-size:15px;letter-spacing:.02em;}
+  .brand-sub{font-size:11px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-top:-2px;}
+  .day-badge{font-family:'JetBrains Mono';font-size:12px;background:var(--ink);color:#fff;padding:6px 12px;border-radius:999px;letter-spacing:.04em;}
+
+  .rail{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px 16px;margin-bottom:20px;box-shadow:0 1px 0 rgba(22,36,63,.03);}
+  .rail-title{font-size:11px;letter-spacing:.1em;color:var(--ink-soft);text-transform:uppercase;margin-bottom:14px;font-family:'JetBrains Mono';}
+  .rail-row{display:flex;align-items:center;}
+  .rail-seg{flex:1;height:3px;background:var(--line-soft);border-radius:2px;}
+  .rail-seg.lit{background:var(--accent);}
+  .rail-node{width:30px;height:30px;border-radius:50%;flex:none;border:2px solid var(--line);background:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--ink-soft);position:relative;z-index:2;transition:all .25s;}
+  .rail-node.done{background:var(--ink);border-color:var(--ink);color:var(--accent);}
+  .rail-node.active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.15);box-shadow:0 0 0 5px var(--accent-dim);}
+  .lblset{display:flex;width:100%;justify-content:space-between;margin-top:8px;}
+  .lblset div{font-size:9.5px;font-family:'JetBrains Mono';color:var(--ink-soft);letter-spacing:.02em;text-align:center;width:60px;}
+  .lblset div.cur{color:var(--accent-deep);font-weight:700;}
+
+  .stage{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px;min-height:380px;}
+  .eyebrow{font-family:'JetBrains Mono';font-size:12px;color:var(--accent-deep);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+  h1.step-title{font-family:'Space Grotesk';font-size:26px;margin:0 0 6px;line-height:1.25;}
+  p.step-desc{color:var(--ink-soft);font-size:14.5px;line-height:1.6;margin:0 0 22px;max-width:660px;}
+
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink);}
+  .field .hint{font-size:12px;color:var(--ink-soft);margin-bottom:6px;line-height:1.5;}
+  textarea, input[type=text]{width:100%;font-family:'Inter';font-size:14px;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;background:#FCFDFE;color:var(--ink);resize:vertical;line-height:1.5;}
+  textarea:focus, input[type=text]:focus{outline:none;border-color:var(--accent);background:#fff;}
+  textarea{min-height:56px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:640px){.row2{grid-template-columns:1fr;}}
+
+  .preview{background:var(--ink);color:#EAF0FF;border-radius:10px;padding:16px;font-family:'JetBrains Mono';font-size:12.5px;line-height:1.7;white-space:pre-wrap;margin-top:6px;min-height:70px;}
+  .preview .ph{color:#6B7C9E;}
+  .preview b{color:var(--accent);}
+
+  .btn{font-family:'Inter';font-weight:600;font-size:13.5px;border:none;cursor:pointer;padding:10px 18px;border-radius:9px;transition:all .15s;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-deep);}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--ink-soft);color:var(--ink);}
+  .btn-sm{padding:6px 12px;font-size:12px;}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+  .copy-row{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap;}
+  .copied-msg{font-size:12px;color:var(--good);font-weight:600;opacity:0;transition:opacity .2s;}
+  .copied-msg.show{opacity:1;}
+
+  .qcard{border:1.5px solid var(--line);border-radius:12px;padding:18px 18px 16px;margin-bottom:16px;background:#FCFDFE;}
+  .qcard .qnum{font-family:'JetBrains Mono';font-size:11px;color:var(--ink-soft);}
+  .qprompt{background:var(--teal-dim);border-left:3px solid var(--teal);padding:10px 12px;border-radius:6px;font-size:13.5px;margin:8px 0 14px;line-height:1.6;font-weight:500;}
+  .qopts{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
+  .qopt{border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13.5px;cursor:pointer;background:#fff;}
+  .qopt:hover{border-color:var(--accent);}
+  .qopt.correct{border-color:var(--good);background:var(--good-dim);font-weight:600;}
+  .qopt.wrong{border-color:var(--bad);background:var(--bad-dim);}
+  .qopt.disabled{cursor:default;}
+  .qfeedback{display:none;margin-top:10px;font-size:13px;line-height:1.6;}
+  .qfeedback.show{display:block;}
+  .qfeedback .label{font-weight:700;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--good);}
+
+  .navbar{display:flex;justify-content:space-between;margin-top:18px;}
+  .progress-note{font-size:12px;color:var(--ink-soft);font-family:'JetBrains Mono';align-self:center;}
+
+  .ticket{background:repeating-linear-gradient(135deg, var(--ink) 0 14px, #1C2E50 14px 28px);color:#fff;border-radius:12px;padding:2px;margin-top:10px;}
+  .ticket-inner{background:var(--ink);border-radius:10px;padding:20px;}
+  .ticket pre{white-space:pre-wrap;font-family:'JetBrains Mono';font-size:11.8px;color:#EAF0FF;line-height:1.6;margin:0;}
+  .ticket-head{font-family:'Space Grotesk';font-size:15px;color:var(--accent);margin-bottom:10px;letter-spacing:.02em;}
+  .launch-banner{text-align:center;padding:10px 0 4px;}
+  .launch-banner .big{font-family:'Space Grotesk';font-size:34px;font-weight:700;color:var(--accent);opacity:0;transform:translateY(10px);animation:rise .6s .15s forwards;}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  .launch-banner .sub{color:var(--ink-soft);font-size:13.5px;margin-top:4px;}
+
+  .pagecard{border:1.5px solid var(--line);border-radius:12px;padding:16px 16px 14px;margin-bottom:14px;background:#FCFDFE;}
+  .pagecard .pnum{display:inline-block;font-family:'JetBrains Mono';font-size:11px;background:var(--ink);color:var(--accent);padding:3px 9px;border-radius:999px;margin-bottom:8px;}
+  .pagecard h3{font-family:'Space Grotesk';font-size:15px;margin:0 0 4px;}
+  .pagecard .guide{font-size:12px;color:var(--ink-soft);margin-bottom:8px;line-height:1.5;}
+
+  .fewshot-row{border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px;background:#FCFDFE;}
+  .fewshot-row .ftitle{font-size:12.5px;font-weight:700;color:var(--accent-deep);margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">AK</div>
+      <div>
+        <div class="brand-text">AK LABS MISSION CONTROL</div>
+        <div class="brand-sub">[ ] 상품을 출시하라</div>
+      </div>
+    </div>
+    <div class="day-badge">DAY 03 / 05</div>
+  </div>
+
+  <div class="rail">
+    <div class="rail-title">MISSION COUNTDOWN</div>
+    <div class="rail-row" id="railTrack"></div>
+    <div class="lblset" id="railLabels"></div>
+  </div>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="navbar">
+    <button class="btn btn-ghost" id="prevBtn">← 이전</button>
+    <div class="progress-note" id="progressNote"></div>
+    <button class="btn btn-primary" id="nextBtn">다음 →</button>
+  </div>
+</div>
+
+<script>
+const STEPS = ['SKELETON','FEWSHOT','P.1-4','P.5-8','LAUNCH'];
+let cur = 0;
+
+const state = {
+  isi: {insight:'', strategy:'', impact:''},
+  fewshot: {
+    p1:{bad:'', good:''},
+    p2:{bad:'', good:''},
+    p3:{bad:'', good:''}
+  },
+  pages: ['','','','','','','','']
+};
+
+const PAGE_DEFS = [
+  {title:'1. 문제 정의', guide:'우리가 풀려는 문제는 무엇인가? 왜 지금 풀어야 하는가?'},
+  {title:'2. 시장 기회', guide:'시장 규모와 성장성은 어느 정도이며, 비어있는 틈새는 어디인가?'},
+  {title:'3. 소비자 인사이트', guide:'타겟이 평소 겪는 불편이나 충족되지 않은 욕구는 무엇인가?'},
+  {title:'4. 제품 컨셉', guide:'무엇을 만들 것인가? 한 문장으로 표현한 컨셉은?'},
+  {title:'5. 마케팅 전략', guide:'이 컨셉을 누구에게, 어떤 채널로, 어떻게 알릴 것인가?'},
+  {title:'6. 실행 일정', guide:'언제, 어떤 순서로 진행할 것인가? (예: 1개월/3개월/6개월 단위)'},
+  {title:'7. 예상 성과', guide:'숫자로 표현하면 어떤 결과를 약속할 수 있는가? (매출/고객수/ROI 등)'},
+  {title:'8. 결론', guide:'한 문장으로, 의사결정자에게 무엇을 요청/제안하는가?'}
+];
+
+function escapeHtml(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function renderRail(){
+  const track = document.getElementById('railTrack');
+  const labels = document.getElementById('railLabels');
+  track.innerHTML='';
+  STEPS.forEach((s,i)=>{
+    const node = document.createElement('div');
+    node.className='rail-node'+(i<cur?' done':'')+(i===cur?' active':'');
+    node.textContent = i<cur ? '✓' : (i+1);
+    track.appendChild(node);
+    if(i<STEPS.length-1){
+      const seg=document.createElement('div');
+      seg.className='rail-seg'+(i<cur?' lit':'');
+      track.appendChild(seg);
+    }
+  });
+  labels.innerHTML = STEPS.map((s,i)=>`<div class="${i===cur?'cur':''}">${s}</div>`).join('');
+}
+
+function renderStage(){
+  renderRail();
+  const stage = document.getElementById('stage');
+  document.getElementById('progressNote').textContent = `STEP ${cur+1} / ${STEPS.length}`;
+  document.getElementById('prevBtn').disabled = (cur===0);
+  document.getElementById('nextBtn').textContent = (cur===STEPS.length-1) ? '기획서 키트 완성 ✓' : '다음 →';
+  if(cur===0) return renderSkeleton(stage);
+  if(cur===1) return renderFewshot(stage);
+  if(cur===2) return renderPages(stage, 0, 4, 'PAGES 1–4');
+  if(cur===3) return renderPages(stage, 4, 8, 'PAGES 5–8');
+  if(cur===4) return renderLaunch(stage);
+}
+
+function renderSkeleton(stage){
+  stage.innerHTML = `
+    <div class="eyebrow">SKELETON</div>
+    <h1 class="step-title">우리 기획서의 ISI 골격</h1>
+    <p class="step-desc"><b>ISI</b> = Insight(통찰, 왜 필요한가) → Strategy(전략, 무엇을 어떻게) → Impact(성과, 숫자/일정). Day 2 보고서의 인사이트를 가져와서, 우리 기획의 뼈대 3줄을 먼저 잡습니다. 이 3줄이 8장 전체를 관통하는 기준이 됩니다.</p>
+
+    <div class="field">
+      <label>Insight — 우리가 발견한 통찰</label>
+      <div class="hint">Day 2 보고서의 "인사이트" 내용을 가져오세요.</div>
+      <textarea id="i_insight" placeholder="타겟이 겪는 문제/관찰한 사실...">${escapeHtml(state.isi.insight)}</textarea>
+    </div>
+    <div class="field">
+      <label>Strategy — 무엇을, 어떻게 할 것인가</label>
+      <textarea id="i_strategy" placeholder="우리 상품/실행 방법...">${escapeHtml(state.isi.strategy)}</textarea>
+    </div>
+    <div class="field">
+      <label>Impact — 일정/예산/KPI</label>
+      <textarea id="i_impact" placeholder="숫자로 표현한 목표...">${escapeHtml(state.isi.impact)}</textarea>
+    </div>
+
+    <div class="field">
+      <label>ISI 한 문단 미리보기</label>
+      <div class="preview" id="isiPreview">${isiPreview()}</div>
+      <div class="copy-row">
+        <button class="btn btn-ghost btn-sm" id="copyIsiBtn">복사하기</button>
+        <span class="copied-msg" id="copyIsiMsg">복사 완료!</span>
+      </div>
+    </div>
+  `;
+  ['insight','strategy','impact'].forEach(k=>{
+    const el = document.getElementById('i_'+k);
+    el.addEventListener('input', ()=>{ state.isi[k]=el.value; document.getElementById('isiPreview').innerHTML = isiPreview(); });
+  });
+  document.getElementById('copyIsiBtn').addEventListener('click', ()=> copyText(isiText(), 'copyIsiMsg'));
+}
+function isiPreview(){
+  const i = state.isi;
+  return `<b>[Insight]</b> ${i.insight? escapeHtml(i.insight) : '<span class="ph">통찰을 입력하세요…</span>'}\n\n<b>[Strategy]</b> ${i.strategy? escapeHtml(i.strategy) : '<span class="ph">전략을 입력하세요…</span>'}\n\n<b>[Impact]</b> ${i.impact? escapeHtml(i.impact) : '<span class="ph">목표 숫자를 입력하세요…</span>'}`;
+}
+function isiText(){ const i=state.isi; return `[Insight] ${i.insight}\n[Strategy] ${i.strategy}\n[Impact] ${i.impact}`; }
+
+const FEWSHOT_DEFS = [
+  {key:'p1', label:'제품/상품 설명 문장', badPh:'예: 우리 제품은 정말 좋고 편리합니다.', goodPh:'예: 1인분 조리 시간 90초, 자판기에서 바로 데워 먹는 야식 키트입니다.'},
+  {key:'p2', label:'타겟 설명 문장', badPh:'예: 젊은 사람들이 좋아할 것입니다.', goodPh:'예: 시험기간 새벽 2시, 편의점 외엔 먹을 곳이 없는 자취 대학생입니다.'},
+  {key:'p3', label:'성과 주장 문장', badPh:'예: 매출이 많이 늘어날 것입니다.', goodPh:'예: 3개월 내 캠퍼스 5곳 입점, 월 매출 500만원을 목표로 합니다.'}
+];
+
+function renderFewshot(stage){
+  stage.innerHTML = `
+    <div class="eyebrow">FEW-SHOT</div>
+    <h1 class="step-title">Few-shot 예시뱅크 만들기</h1>
+    <p class="step-desc">AI에게 "좋은 문장 vs 나쁜 문장" 예시 쌍을 먼저 보여주면, 그 패턴을 따라 80점짜리 초안을 100점으로 끌어올립니다. 우리 상품에 맞는 예시 3쌍을 만들어보세요.</p>
+    <div id="fewshotWrap"></div>
+    <div class="field" style="margin-top:18px;">
+      <label>완성된 Few-shot 프롬프트</label>
+      <div class="preview" id="fsPreview">${fsPreview()}</div>
+      <div class="copy-row">
+        <button class="btn btn-ghost btn-sm" id="copyFsBtn">복사하기</button>
+        <span class="copied-msg" id="copyFsMsg">복사 완료!</span>
+      </div>
+    </div>
+  `;
+  const wrap = document.getElementById('fewshotWrap');
+  FEWSHOT_DEFS.forEach(def=>{
+    const row = document.createElement('div');
+    row.className='fewshot-row';
+    row.innerHTML = `
+      <div class="ftitle">${def.label}</div>
+      <div class="row2">
+        <div class="field" style="margin-bottom:0;">
+          <label style="color:var(--bad);font-size:12px;">나쁜 문장</label>
+          <textarea data-key="${def.key}" data-type="bad" placeholder="${def.badPh}">${escapeHtml(state.fewshot[def.key].bad)}</textarea>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label style="color:var(--good);font-size:12px;">좋은 문장</label>
+          <textarea data-key="${def.key}" data-type="good" placeholder="${def.goodPh}">${escapeHtml(state.fewshot[def.key].good)}</textarea>
+        </div>
+      </div>
+    `;
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('textarea').forEach(el=>{
+    el.addEventListener('input', ()=>{
+      state.fewshot[el.dataset.key][el.dataset.type] = el.value;
+      document.getElementById('fsPreview').innerHTML = fsPreview();
+    });
+  });
+  document.getElementById('copyFsBtn').addEventListener('click', ()=> copyText(fsText(), 'copyFsMsg'));
+}
+function fsPreview(){
+  let lines = ['아래는 우리 기획서에서 쓸 문장 스타일의 좋은 예/나쁜 예야. 이 패턴을 참고해서 8장 기획서 문장을 다듬어줘.\n'];
+  FEWSHOT_DEFS.forEach(def=>{
+    const f = state.fewshot[def.key];
+    lines.push(`<b>[${def.label}]</b>\n나쁜 예: ${f.bad? escapeHtml(f.bad):'<span class="ph">…</span>'}\n좋은 예: ${f.good? escapeHtml(f.good):'<span class="ph">…</span>'}\n`);
+  });
+  return lines.join('\n');
+}
+function fsText(){
+  let lines = ['아래는 우리 기획서에서 쓸 문장 스타일의 좋은 예/나쁜 예야. 이 패턴을 참고해서 8장 기획서 문장을 다듬어줘.\n'];
+  FEWSHOT_DEFS.forEach(def=>{
+    const f = state.fewshot[def.key];
+    lines.push(`[${def.label}]\n나쁜 예: ${f.bad}\n좋은 예: ${f.good}\n`);
+  });
+  return lines.join('\n');
+}
+
+function renderPages(stage, start, end, rangeLabel){
+  stage.innerHTML = `
+    <div class="eyebrow">BUILD — ${rangeLabel}</div>
+    <h1 class="step-title">8장 기획서 채우기 (${rangeLabel})</h1>
+    <p class="step-desc">한 페이지씩, 가이드 질문에 한두 문장으로 답해보세요. 완벽한 문장이 아니어도 됩니다 — 다음 단계에서 AI가 다듬을 초안 재료입니다.</p>
+    <div id="pagesWrap"></div>
+  `;
+  const wrap = document.getElementById('pagesWrap');
+  for(let i=start; i<end; i++){
+    const def = PAGE_DEFS[i];
+    const card = document.createElement('div');
+    card.className='pagecard';
+    card.innerHTML = `
+      <div class="pnum">PAGE ${i+1}</div>
+      <h3>${def.title}</h3>
+      <div class="guide">${def.guide}</div>
+      <textarea data-idx="${i}" placeholder="한두 문장으로 답해보세요...">${escapeHtml(state.pages[i])}</textarea>
+    `;
+    wrap.appendChild(card);
+  }
+  wrap.querySelectorAll('textarea').forEach(el=>{
+    el.addEventListener('input', ()=>{ state.pages[+el.dataset.idx] = el.value; });
+  });
+}
+
+function renderLaunch(stage){
+  const i = state.isi;
+  let pagesText = PAGE_DEFS.map((def,idx)=> `${def.title}: ${state.pages[idx]||'(미입력)'}`).join('\n');
+  const ticketText =
+`■ MISSION KIT — DAY 3 (8장 ISI 기획서 초안)
+
+[ISI 골격]
+Insight: ${i.insight||'(미입력)'}
+Strategy: ${i.strategy||'(미입력)'}
+Impact: ${i.impact||'(미입력)'}
+
+[8장 구조 초안]
+${pagesText}
+
+[Few-shot 문장 가이드]
+${fsText()}
+
+— 위 내용을 Gemini 캔버스 또는 NotebookLM에 붙여넣으면 1차 슬라이드 초안이 나옵니다.
+— Day 4에서는 이 기획서를 PSB 구조 마케팅 제안서로 확장합니다.`;
+
+  const notebookSlidePrompt =
+`아래 조건에 맞는 슬라이드 제작 가이드를 작성해줘.
+
+[슬라이드 주제]
+${i.insight ? i.insight.slice(0,40) : '(우리 상품 기획)'} 기획서
+
+[슬라이드 장수] 8장
+
+[작성 규칙]
+1. 첫 번째 슬라이드는 표지(타이틀), 마지막은 결론/요청사항으로 구성한다.
+2. 나머지 슬라이드는 문제→시장기회→소비자인사이트→제품컨셉→마케팅전략→실행일정→예상성과 순서로 구성한다.
+3. 슬라이드 1장당 항목은 최대 3개를 넘지 않는다.
+4. 항목이 많으면 슬라이드를 분리한다.
+
+[출력 형식 — 반드시 지켜줘]
+[슬라이드 N] 대주제 제목
+* 항목 1
+* 항목 2
+* 항목 3
+
+[참고할 내용]
+${pagesText}`;
+
+  stage.innerHTML = `
+    <div class="eyebrow">LAUNCH</div>
+    <div class="launch-banner">
+      <div class="big">📐 PLAN KIT READY</div>
+      <div class="sub">Gemini 캔버스 또는 NotebookLM에 붙여넣고 슬라이드로 변환해보세요.</div>
+    </div>
+    <div class="ticket"><div class="ticket-inner">
+      <div class="ticket-head">DAY 3 · MISSION KIT</div>
+      <pre id="ticketText"></pre>
+    </div></div>
+    <div class="copy-row" style="margin-top:14px;">
+      <button class="btn btn-primary btn-sm" id="copyAllBtn">전체 복사하기</button>
+      <button class="btn btn-ghost btn-sm" id="downloadBtn">텍스트 파일로 저장</button>
+      <span class="copied-msg" id="copyAllMsg">복사 완료!</span>
+    </div>
+
+    <div class="field" style="margin-top:24px;">
+      <label>대안 — NotebookLM 슬라이드 가이드 프롬프트</label>
+      <div class="hint">우리 팀 자료를 NotebookLM 노트북에 넣고 채팅창에 이 프롬프트를 붙여넣으면, 슬라이드 구조 가이드를 먼저 받아볼 수 있습니다. (가이드를 확인한 뒤 "슬라이드로 만들어줘" 요청)</div>
+      <div class="preview" id="notebookSlidePreview">${notebookSlidePrompt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="copy-row">
+        <button class="btn btn-ghost btn-sm" id="copyNotebookBtn">복사하기</button>
+        <span class="copied-msg" id="copyNotebookMsg">복사 완료!</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('ticketText').textContent = ticketText;
+  document.getElementById('copyAllBtn').addEventListener('click', ()=> copyText(ticketText, 'copyAllMsg'));
+  document.getElementById('copyNotebookBtn').addEventListener('click', ()=> copyText(notebookSlidePrompt, 'copyNotebookMsg'));
+  document.getElementById('downloadBtn').addEventListener('click', ()=>{
+    const blob = new Blob([ticketText], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'day3_plan_kit.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  });
+}
+
+function copyText(text, msgId){
+  navigator.clipboard.writeText(text).then(()=>{
+    const msg = document.getElementById(msgId);
+    if(msg){ msg.classList.add('show'); setTimeout(()=>msg.classList.remove('show'),1500); }
+  });
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{ if(cur>0){cur--; renderStage();} });
+document.getElementById('nextBtn').addEventListener('click', ()=>{ if(cur<STEPS.length-1){cur++; renderStage();} });
+
+renderStage();
+</script>
+</body>
+</html>

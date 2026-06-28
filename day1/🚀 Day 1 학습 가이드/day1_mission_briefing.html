@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAY 1 미션 브리핑 | AK LABS Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF2F6;
+    --paper:#FFFFFF;
+    --ink:#16243F;
+    --ink-soft:#4A5A78;
+    --line:#CBD5E3;
+    --line-soft:#E2E8F1;
+    --accent:#FF5A1F;
+    --accent-dim:#FFE3D4;
+    --accent-deep:#C8410E;
+    --teal:#0F8B8D;
+    --teal-dim:#DCF1F1;
+    --good:#1C8C5A;
+    --good-dim:#DEF3E8;
+    --bad:#C0392B;
+    --bad-dim:#FBE2DF;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0/100% 28px,
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px) 0 0/28px 100%,
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:28px 16px 60px;
+  }
+  .app{max-width:880px;margin:0 auto;}
+
+  /* Topbar */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:22px;flex-wrap:wrap;gap:10px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:34px;height:34px;border-radius:8px;background:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--accent);font-family:'Space Grotesk';font-weight:700;font-size:15px;
+    transform:rotate(-3deg);
+  }
+  .brand-text{font-family:'Space Grotesk';font-weight:700;font-size:15px;letter-spacing:.02em;}
+  .brand-sub{font-size:11px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-top:-2px;}
+  .day-badge{
+    font-family:'JetBrains Mono';font-size:12px;background:var(--ink);color:#fff;
+    padding:6px 12px;border-radius:999px;letter-spacing:.04em;
+  }
+
+  /* Countdown rail */
+  .rail{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 22px 16px;margin-bottom:20px;
+    box-shadow:0 1px 0 rgba(22,36,63,.03);
+  }
+  .rail-title{font-size:11px;letter-spacing:.1em;color:var(--ink-soft);text-transform:uppercase;margin-bottom:14px;font-family:'JetBrains Mono';}
+  .rail-track{display:flex;align-items:center;position:relative;}
+  .rail-seg{flex:1;height:3px;background:var(--line-soft);position:relative;border-radius:2px;}
+  .rail-seg.lit{background:var(--accent);}
+  .rail-node{
+    width:30px;height:30px;border-radius:50%;flex:none;
+    border:2px solid var(--line);background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--ink-soft);
+    position:relative;z-index:2;transition:all .25s;
+  }
+  .rail-node.done{background:var(--ink);border-color:var(--ink);color:var(--accent);}
+  .rail-node.active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.15);box-shadow:0 0 0 5px var(--accent-dim);}
+  .rail-labels{display:flex;margin-top:8px;}
+  .rail-labels span{flex:none;width:30px;text-align:center;font-size:10px;color:var(--ink-soft);font-family:'JetBrains Mono';letter-spacing:.02em;}
+  .rail-labels .lbl-wrap{flex:1;display:flex;justify-content:center;}
+  .rail-row{display:flex;align-items:center;}
+  .lblset{display:flex;width:100%;justify-content:space-between;margin-top:8px;}
+  .lblset div{font-size:10px;font-family:'JetBrains Mono';color:var(--ink-soft);letter-spacing:.03em;text-align:center;width:60px;}
+  .lblset div.cur{color:var(--accent-deep);font-weight:700;}
+
+  /* Stage card */
+  .stage{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 28px;min-height:380px;
+  }
+  .eyebrow{font-family:'JetBrains Mono';font-size:12px;color:var(--accent-deep);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+  h1.step-title{font-family:'Space Grotesk';font-size:26px;margin:0 0 6px;line-height:1.25;}
+  p.step-desc{color:var(--ink-soft);font-size:14.5px;line-height:1.6;margin:0 0 22px;max-width:620px;}
+
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink);}
+  .field .hint{font-size:12px;color:var(--ink-soft);margin-bottom:6px;line-height:1.5;}
+  textarea, input[type=text]{
+    width:100%;font-family:'Inter';font-size:14px;padding:11px 13px;
+    border:1.5px solid var(--line);border-radius:10px;background:#FCFDFE;color:var(--ink);
+    resize:vertical;line-height:1.5;
+  }
+  textarea:focus, input[type=text]:focus{outline:none;border-color:var(--accent);background:#fff;}
+  textarea{min-height:64px;}
+
+  .chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);
+    font-size:13px;cursor:pointer;background:#fff;color:var(--ink-soft);
+    transition:all .15s;font-weight:500;
+  }
+  .chip:hover{border-color:var(--accent);}
+  .chip.sel{background:var(--ink);border-color:var(--ink);color:var(--accent);}
+
+  .preview{
+    background:var(--ink);color:#EAF0FF;border-radius:10px;padding:16px 16px;
+    font-family:'JetBrains Mono';font-size:12.5px;line-height:1.7;white-space:pre-wrap;
+    margin-top:6px;min-height:90px;
+  }
+  .preview .ph{color:#6B7C9E;}
+  .preview b{color:var(--accent);}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:600px){.row2{grid-template-columns:1fr;}}
+
+  .btn{
+    font-family:'Inter';font-weight:600;font-size:13.5px;border:none;cursor:pointer;
+    padding:10px 18px;border-radius:9px;transition:all .15s;
+  }
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-deep);}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--ink-soft);color:var(--ink);}
+  .btn-sm{padding:6px 12px;font-size:12px;}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+
+  .copy-row{display:flex;gap:8px;margin-top:8px;align-items:center;}
+  .copied-msg{font-size:12px;color:var(--good);font-weight:600;opacity:0;transition:opacity .2s;}
+  .copied-msg.show{opacity:1;}
+
+  /* quiz cards */
+  .qcard{border:1.5px solid var(--line);border-radius:12px;padding:18px 18px 16px;margin-bottom:16px;background:#FCFDFE;}
+  .qcard .qnum{font-family:'JetBrains Mono';font-size:11px;color:var(--ink-soft);}
+  .qprompt{
+    background:var(--bad-dim);border-left:3px solid var(--bad);
+    padding:10px 12px;border-radius:6px;font-family:'JetBrains Mono';font-size:13px;
+    margin:8px 0 14px;line-height:1.6;
+  }
+  .qopts{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
+  .qopt{
+    border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13.5px;
+    cursor:pointer;background:#fff;
+  }
+  .qopt:hover{border-color:var(--accent);}
+  .qopt.correct{border-color:var(--good);background:var(--good-dim);font-weight:600;}
+  .qopt.wrong{border-color:var(--bad);background:var(--bad-dim);}
+  .qopt.disabled{cursor:default;}
+  .qfeedback{display:none;margin-top:10px;font-size:13px;line-height:1.6;}
+  .qfeedback.show{display:block;}
+  .qfeedback .label{font-weight:700;font-size:12px;letter-spacing:.03em;text-transform:uppercase;}
+  .qfeedback.ok .label{color:var(--good);}
+  .qimproved{
+    margin-top:8px;background:var(--good-dim);border-left:3px solid var(--good);
+    padding:9px 12px;border-radius:6px;font-family:'JetBrains Mono';font-size:12.5px;line-height:1.6;
+  }
+
+  /* footer nav */
+  .navbar{display:flex;justify-content:space-between;margin-top:18px;}
+  .progress-note{font-size:12px;color:var(--ink-soft);font-family:'JetBrains Mono';align-self:center;}
+
+  /* final summary */
+  .ticket{
+    background:repeating-linear-gradient(135deg, var(--ink) 0 14px, #1C2E50 14px 28px);
+    color:#fff;border-radius:12px;padding:2px;margin-top:10px;
+  }
+  .ticket-inner{
+    background:var(--ink);border-radius:10px;padding:20px 20px;margin:0;
+  }
+  .ticket pre{
+    white-space:pre-wrap;font-family:'JetBrains Mono';font-size:12.5px;color:#EAF0FF;
+    line-height:1.7;margin:0;
+  }
+  .ticket-head{font-family:'Space Grotesk';font-size:15px;color:var(--accent);margin-bottom:10px;letter-spacing:.02em;}
+
+  .launch-banner{
+    text-align:center;padding:10px 0 4px;
+  }
+  .launch-banner .big{font-family:'Space Grotesk';font-size:40px;font-weight:700;color:var(--accent);
+    opacity:0;transform:translateY(10px);animation:rise .6s .15s forwards;}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  .launch-banner .sub{color:var(--ink-soft);font-size:13.5px;margin-top:4px;}
+
+  .scenario-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">AK</div>
+      <div>
+        <div class="brand-text">AK LABS MISSION CONTROL</div>
+        <div class="brand-sub">[ ] 상품을 출시하라</div>
+      </div>
+    </div>
+    <div class="day-badge">DAY 01 / 05</div>
+  </div>
+
+  <div class="rail">
+    <div class="rail-title">MISSION COUNTDOWN</div>
+    <div class="rail-row" id="railTrack"></div>
+    <div class="lblset" id="railLabels"></div>
+  </div>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="navbar">
+    <button class="btn btn-ghost" id="prevBtn">← 이전</button>
+    <div class="progress-note" id="progressNote"></div>
+    <button class="btn btn-primary" id="nextBtn">다음 →</button>
+  </div>
+
+</div>
+
+<script>
+const STEPS = ['BRIEFING','BUILD','DECLARE','LAUNCH'];
+let cur = 0;
+
+const state = {
+  okr: { goal:'', context:'', sample:'', role:'' },
+  team: { name:'', members:'', category:'', target:'', problem:'', seed:'' }
+};
+
+const SCENARIOS = [
+  {
+    label:'무인 자판기 간식',
+    goal:'대학가 무인 간식 자판기 신상품 라인업을 기획하려고 해.',
+    context:'우리는 4인 팀이고, 예산은 0원에 가까운 가상 창업 미션이야. 타겟은 시험기간 야식이 필요한 대학생이야.',
+    sample:'경쟁 제품 3개와 차별점을 표로, 그리고 한 줄 컨셉 문장으로 정리해줘.',
+    role:'지금은 시장 조사만 해줘. 내가 확인하면 그 다음에 같이 컨셉을 다듬자.'
+  },
+  {
+    label:'친환경 텀블러',
+    goal:'캠퍼스에서 잘 팔릴 친환경 텀블러 신상품 컨셉을 잡고 싶어.',
+    context:'타겟은 환경에 관심 있는 20대 초반, 디자인보다 실용성을 중시하는 학생들이야.',
+    sample:'타겟 페르소나 1명을 이름·나이·하루 루틴으로 구체적으로 묘사해줘.',
+    role:'먼저 타겟 페르소나만 잡아줘. 그 다음 단계는 내가 알려줄게.'
+  },
+  {
+    label:'스터디 매칭 앱',
+    goal:'같은 강의를 듣는 학생들을 매칭해주는 스터디 앱 컨셉을 만들고 싶어.',
+    context:'우리 학교 학생들이 스터디 그룹을 못 찾아서 혼자 공부하다 포기하는 문제를 봤어.',
+    sample:'핵심 기능 3개와 그 이유를 불릿으로 정리해줘.',
+    role:'지금은 핵심 기능만 뽑아줘. UI는 다음 단계에서 같이 보자.'
+  }
+];
+
+const CATS = ['음료/푸드','뷰티/생활','디지털 서비스/앱','문구/굿즈','캠퍼스 서비스','기타'];
+
+function escapeHtml(s){
+  return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+}
+
+function renderRail(){
+  const track = document.getElementById('railTrack');
+  const labels = document.getElementById('railLabels');
+  track.innerHTML='';
+  STEPS.forEach((s,i)=>{
+    const node = document.createElement('div');
+    node.className='rail-node'+(i<cur?' done':'')+(i===cur?' active':'');
+    node.textContent = i<cur ? '✓' : (i+1);
+    track.appendChild(node);
+    if(i<STEPS.length-1){
+      const seg=document.createElement('div');
+      seg.className='rail-seg'+(i<cur?' lit':'');
+      track.appendChild(seg);
+    }
+  });
+  labels.innerHTML = STEPS.map((s,i)=>`<div class="${i===cur?'cur':''}">${s}</div>`).join('');
+}
+
+function buildPreview(){
+  const o = state.okr;
+  return `<b>[Goal]</b>\n${o.goal? escapeHtml(o.goal) : '<span class="ph">목표를 입력하면 여기 표시됩니다…</span>'}\n\n<b>[Context]</b>\n${o.context? escapeHtml(o.context) : '<span class="ph">상황·맥락을 입력하세요…</span>'}\n\n<b>[Sample]</b>\n${o.sample? escapeHtml(o.sample) : '<span class="ph">원하는 결과 형태를 입력하세요…</span>'}\n\n<b>[Role]</b>\n${o.role? escapeHtml(o.role) : '<span class="ph">AI에게 맡길 역할 범위를 입력하세요…</span>'}`;
+}
+
+function fullOkrText(){
+  const o = state.okr;
+  return `[Goal] ${o.goal}\n[Context] ${o.context}\n[Sample] ${o.sample}\n[Role] ${o.role}`;
+}
+
+function copyText(text, btnId){
+  navigator.clipboard.writeText(text).then(()=>{
+    const msg = document.getElementById(btnId);
+    if(msg){ msg.classList.add('show'); setTimeout(()=>msg.classList.remove('show'),1500); }
+  });
+}
+
+function renderStage(){
+  renderRail();
+  const stage = document.getElementById('stage');
+  document.getElementById('progressNote').textContent = `STEP ${cur+1} / ${STEPS.length}`;
+  document.getElementById('prevBtn').disabled = (cur===0);
+  document.getElementById('nextBtn').textContent = (cur===STEPS.length-1) ? '미션 키트 완성 ✓' : '다음 →';
+
+  if(cur===0) return renderBriefing(stage);
+  if(cur===1) return renderBuild(stage);
+  if(cur===2) return renderDeclare(stage);
+  if(cur===3) return renderLaunch(stage);
+}
+
+function renderBriefing(stage){
+  stage.innerHTML = `
+    <div class="eyebrow">BRIEFING</div>
+    <h1 class="step-title">오늘의 미션: AI와 작전 짜기</h1>
+    <p class="step-desc">5일 동안 우리 팀은 가상의 상품을 시장조사 → 기획서 → 제안서 → 발표자료까지 만들어 "출시"합니다.
+    Day 1의 목표는 딱 두 가지예요 — ① AI에게 제대로 말 거는 법 익히기, ② 우리 팀의 미션 좌표 정하기.</p>
+    <div class="field">
+      <label>오늘 풀어야 할 질문</label>
+      <div class="hint">아래 두 가지를 머리에 담고 다음 단계로 넘어가세요. 정답을 적는 칸이 아니라, 생각만 해보는 단계입니다.</div>
+      <div class="qcard" style="background:var(--teal-dim);border-color:var(--teal);">
+        <div style="font-size:14px;line-height:1.7;">
+          1. 내가 평소 AI에게 질문할 때, 한 번에 너무 많이 시키지는 않았나?<br>
+          2. 우리 팀이 만들 상품은 어떤 "문제"를 해결하는가?
+        </div>
+      </div>
+    </div>
+    <p class="step-desc" style="margin-top:18px;">준비됐다면 <b>다음 →</b>을 눌러 AI OKR 빌더로 이동하세요.</p>
+  `;
+}
+
+function renderBuild(stage){
+  stage.innerHTML = `
+    <div class="eyebrow">BUILD — T-2</div>
+    <h1 class="step-title">AI OKR 프롬프트 빌더</h1>
+    <p class="step-desc">Goal(목표) · Context(상황) · Sample(원하는 형태) · Role(AI의 역할) 4칸을 채우면, 바로 쓸 수 있는 프롬프트가 완성됩니다.</p>
+
+    <div class="field">
+      <label>막막하면 시나리오로 시작하기</label>
+      <div class="scenario-row" id="scenarioRow"></div>
+    </div>
+
+    <div class="field">
+      <label>[Goal] 지금 AI에게 시킬 일의 목표</label>
+      <div class="hint">예: "OO상품 시장조사를 시작하려고 해."</div>
+      <textarea id="f_goal" placeholder="무엇을 하고 싶은지 한두 문장으로...">${escapeHtml(state.okr.goal)}</textarea>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>[Context] 우리 팀 상황·맥락</label>
+        <textarea id="f_context" placeholder="타겟, 팀 상황, 제약 조건 등...">${escapeHtml(state.okr.context)}</textarea>
+      </div>
+      <div class="field">
+        <label>[Sample] 원하는 결과의 형태</label>
+        <textarea id="f_sample" placeholder="표로, 불릿으로, 한 문장으로 등...">${escapeHtml(state.okr.sample)}</textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label>[Role] AI에게 맡길 역할 범위</label>
+      <div class="hint">한 번에 다 시키지 말고, 지금 단계에서 AI가 할 일만 명확히 잘라주세요.</div>
+      <textarea id="f_role" placeholder="지금은 이 부분만 해줘, 다음은 같이 보자...">${escapeHtml(state.okr.role)}</textarea>
+    </div>
+
+    <div class="field">
+      <label>완성된 프롬프트 미리보기</label>
+      <div class="preview" id="okrPreview">${buildPreview()}</div>
+      <div class="copy-row">
+        <button class="btn btn-ghost btn-sm" id="copyOkrBtn">프롬프트 복사하기</button>
+        <span class="copied-msg" id="copyOkrMsg">복사 완료!</span>
+      </div>
+    </div>
+  `;
+
+  const scRow = document.getElementById('scenarioRow');
+  SCENARIOS.forEach((s,i)=>{
+    const chip = document.createElement('div');
+    chip.className='chip';
+    chip.textContent = s.label;
+    chip.addEventListener('click', ()=>{
+      state.okr.goal=s.goal; state.okr.context=s.context; state.okr.sample=s.sample; state.okr.role=s.role;
+      renderBuild(stage);
+    });
+    scRow.appendChild(chip);
+  });
+
+  ['goal','context','sample','role'].forEach(k=>{
+    const el = document.getElementById('f_'+k);
+    el.addEventListener('input', ()=>{
+      state.okr[k] = el.value;
+      document.getElementById('okrPreview').innerHTML = buildPreview();
+    });
+  });
+
+  document.getElementById('copyOkrBtn').addEventListener('click', ()=>{
+    copyText(fullOkrText(), 'copyOkrMsg');
+  });
+}
+
+function renderDeclare(stage){
+  stage.innerHTML = `
+    <div class="eyebrow">DECLARE — T-1</div>
+    <h1 class="step-title">팀 미션 선언문</h1>
+    <p class="step-desc">우리 팀이 5일간 만들 상품의 출발점을 한 장으로 정리합니다. 정답은 없어요, 일단 적어두고 Day 2에서 다듬으면 됩니다.</p>
+
+    <div class="row2">
+      <div class="field">
+        <label>팀명</label>
+        <input type="text" id="d_name" placeholder="예: 야식연구소" value="${escapeHtml(state.team.name)}">
+      </div>
+      <div class="field">
+        <label>팀원</label>
+        <input type="text" id="d_members" placeholder="이름을 쉼표로 구분" value="${escapeHtml(state.team.members)}">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>상품 카테고리</label>
+      <div class="chip-row" id="catRow"></div>
+    </div>
+
+    <div class="field">
+      <label>타겟 고객 한 줄</label>
+      <input type="text" id="d_target" placeholder="예: 시험기간 야식이 필요한 자취 대학생" value="${escapeHtml(state.team.target)}">
+    </div>
+    <div class="field">
+      <label>우리가 해결하려는 문제 한 줄</label>
+      <input type="text" id="d_problem" placeholder="예: 새벽엔 먹을 곳이 없어서 편의점 음식만 먹게 된다" value="${escapeHtml(state.team.problem)}">
+    </div>
+    <div class="field">
+      <label>상품 컨셉 시드 (한 문장)</label>
+      <input type="text" id="d_seed" placeholder="예: 자판기에서 바로 데워먹는 새벽 야식 키트" value="${escapeHtml(state.team.seed)}">
+    </div>
+
+    <div class="field">
+      <label>이 정보로 브레인스토밍 프롬프트 만들기</label>
+      <div class="preview" id="declarePreview">${declarePreview()}</div>
+      <div class="copy-row">
+        <button class="btn btn-ghost btn-sm" id="copyDeclareBtn">프롬프트 복사하기</button>
+        <span class="copied-msg" id="copyDeclareMsg">복사 완료!</span>
+      </div>
+    </div>
+  `;
+
+  const catRow = document.getElementById('catRow');
+  CATS.forEach(c=>{
+    const chip=document.createElement('div');
+    chip.className='chip'+(state.team.category===c?' sel':'');
+    chip.textContent=c;
+    chip.addEventListener('click',()=>{ state.team.category=c; renderDeclare(stage); });
+    catRow.appendChild(chip);
+  });
+
+  ['name','members','target','problem','seed'].forEach(k=>{
+    const el = document.getElementById('d_'+k);
+    el.addEventListener('input', ()=>{
+      state.team[k]=el.value;
+      document.getElementById('declarePreview').innerHTML = declarePreview();
+    });
+  });
+
+  document.getElementById('copyDeclareBtn').addEventListener('click', ()=>{
+    copyText(declareText(), 'copyDeclareMsg');
+  });
+}
+
+function declarePreview(){
+  const t = state.team;
+  return `<b>[Goal]</b> ${t.seed? escapeHtml(t.seed)+'에 대한 아이디어를 더 구체화하고 싶어.' : '<span class="ph">컨셉 시드를 입력하면 자동 완성됩니다…</span>'}\n\n<b>[Context]</b> 타겟은 ${t.target||'<span class="ph">…</span>'}. 우리가 풀려는 문제는 "${t.problem||'…'}"이고, 카테고리는 ${t.category||'미정'}이야.\n\n<b>[Sample]</b> 비슷한 컨셉의 기존 사례 3개와 차별점을 표로 정리해줘.\n\n<b>[Role]</b> 지금은 아이디어 확장과 사례 조사만 해줘. 다음 단계에서 구체적인 기획을 같이 잡을 거야.`;
+}
+
+function declareText(){
+  const t = state.team;
+  return `[Goal] ${t.seed||''}에 대한 아이디어를 더 구체화하고 싶어.\n[Context] 타겟은 ${t.target||''}. 우리가 풀려는 문제는 "${t.problem||''}"이고, 카테고리는 ${t.category||'미정'}이야.\n[Sample] 비슷한 컨셉의 기존 사례 3개와 차별점을 표로 정리해줘.\n[Role] 지금은 아이디어 확장과 사례 조사만 해줘. 다음 단계에서 구체적인 기획을 같이 잡을 거야.`;
+}
+
+function renderLaunch(stage){
+  const t = state.team;
+  const ticketText =
+`■ MISSION KIT — DAY 1
+팀명: ${t.name||'(미입력)'}
+팀원: ${t.members||'(미입력)'}
+카테고리: ${t.category||'(미입력)'}
+타겟: ${t.target||'(미입력)'}
+문제: ${t.problem||'(미입력)'}
+컨셉 시드: ${t.seed||'(미입력)'}
+
+▶ AI OKR 기본 프롬프트
+${fullOkrText()}
+
+▶ 브레인스토밍용 프롬프트
+${declareText()}
+
+— Day 2에서 이 키트를 그대로 들고 시장조사 템플릿으로 이어가세요.`;
+
+  stage.innerHTML = `
+    <div class="eyebrow">LAUNCH</div>
+    <div class="launch-banner">
+      <div class="big">🚀 MISSION KIT READY</div>
+      <div class="sub">아래 내용을 복사해서 구글독스에 붙여넣고 보관하세요.</div>
+    </div>
+    <div class="ticket">
+      <div class="ticket-inner">
+        <div class="ticket-head">DAY 1 · MISSION KIT</div>
+        <pre id="ticketText"></pre>
+      </div>
+    </div>
+    <div class="copy-row" style="margin-top:14px;">
+      <button class="btn btn-primary btn-sm" id="copyAllBtn">전체 복사하기</button>
+      <button class="btn btn-ghost btn-sm" id="downloadBtn">텍스트 파일로 저장</button>
+      <span class="copied-msg" id="copyAllMsg">복사 완료!</span>
+    </div>
+    <p class="step-desc" style="margin-top:20px;">Day 2에서는 이 컨셉을 가지고 NotebookLM·Gemini로 시장조사를 시작합니다. 좋은 미션 키트 완성했어요 — 수고하셨습니다!</p>
+  `;
+  document.getElementById('ticketText').textContent = ticketText;
+  document.getElementById('copyAllBtn').addEventListener('click', ()=>{
+    copyText(ticketText, 'copyAllMsg');
+  });
+  document.getElementById('downloadBtn').addEventListener('click', ()=>{
+    const blob = new Blob([ticketText], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (t.name||'mission')+'_day1_kit.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  });
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{
+  if(cur>0){ cur--; renderStage(); }
+});
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(cur<STEPS.length-1){ cur++; renderStage(); }
+});
+
+renderStage();
+</script>
+</body>
+</html>

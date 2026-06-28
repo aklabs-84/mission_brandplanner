@@ -1,0 +1,25 @@
+# ==========================================
+# AK LABS GIT DEPLOYMENT FILTER (.gitignore)
+# ==========================================
+
+# 1. 기본적으로 모든 파일 및 폴더 무시
+*
+
+# 2. 필수 실습 디렉토리 및 그 하위 파일들 예외적으로 허용 (화이트리스트)
+!day1/
+!day1/**
+!day2/
+!day2/**
+!day3/
+!day3/**
+!day4/
+!day4/**
+!day5/
+!day5/**
+!assets/
+!assets/**
+
+# 3. 루트 대문 메뉴판 및 설정 파일 예외 허용
+!mission_preview.html
+!index.html
+!.gitignore

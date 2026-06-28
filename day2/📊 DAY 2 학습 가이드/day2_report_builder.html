@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAY 2 시장조사 & 인사이트 보고서 | AK LABS Mission Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF2F6; --paper:#FFFFFF; --ink:#16243F; --ink-soft:#4A5A78;
+    --line:#CBD5E3; --line-soft:#E2E8F1;
+    --accent:#FF5A1F; --accent-dim:#FFE3D4; --accent-deep:#C8410E;
+    --teal:#0F8B8D; --teal-dim:#DCF1F1;
+    --good:#1C8C5A; --good-dim:#DEF3E8; --bad:#C0392B; --bad-dim:#FBE2DF;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0/100% 28px,
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px) 0 0/28px 100%,
+      var(--bg);
+    color:var(--ink); font-family:'Inter',sans-serif; min-height:100vh; padding:28px 16px 60px;
+  }
+  .app{max-width:880px;margin:0 auto;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{width:34px;height:34px;border-radius:8px;background:var(--ink);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Space Grotesk';font-weight:700;font-size:15px;transform:rotate(-3deg);}
+  .brand-text{font-family:'Space Grotesk';font-weight:700;font-size:15px;letter-spacing:.02em;}
+  .brand-sub{font-size:11px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase;margin-top:-2px;}
+  .day-badge{font-family:'JetBrains Mono';font-size:12px;background:var(--ink);color:#fff;padding:6px 12px;border-radius:999px;letter-spacing:.04em;}
+
+  .rail{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px 16px;margin-bottom:20px;box-shadow:0 1px 0 rgba(22,36,63,.03);}
+  .rail-title{font-size:11px;letter-spacing:.1em;color:var(--ink-soft);text-transform:uppercase;margin-bottom:14px;font-family:'JetBrains Mono';}
+  .rail-row{display:flex;align-items:center;}
+  .rail-seg{flex:1;height:3px;background:var(--line-soft);border-radius:2px;}
+  .rail-seg.lit{background:var(--accent);}
+  .rail-node{width:30px;height:30px;border-radius:50%;flex:none;border:2px solid var(--line);background:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:11px;font-weight:600;color:var(--ink-soft);position:relative;z-index:2;transition:all .25s;}
+  .rail-node.done{background:var(--ink);border-color:var(--ink);color:var(--accent);}
+  .rail-node.active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(1.15);box-shadow:0 0 0 5px var(--accent-dim);}
+  .lblset{display:flex;width:100%;justify-content:space-between;margin-top:8px;}
+  .lblset div{font-size:10px;font-family:'JetBrains Mono';color:var(--ink-soft);letter-spacing:.03em;text-align:center;width:60px;}
+  .lblset div.cur{color:var(--accent-deep);font-weight:700;}
+
+  .stage{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px;min-height:380px;}
+  .eyebrow{font-family:'JetBrains Mono';font-size:12px;color:var(--accent-deep);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+  h1.step-title{font-family:'Space Grotesk';font-size:26px;margin:0 0 6px;line-height:1.25;}
+  p.step-desc{color:var(--ink-soft);font-size:14.5px;line-height:1.6;margin:0 0 22px;max-width:640px;}
+
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink);}
+  .field .hint{font-size:12px;color:var(--ink-soft);margin-bottom:6px;line-height:1.5;}
+  textarea, input[type=text]{width:100%;font-family:'Inter';font-size:14px;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;background:#FCFDFE;color:var(--ink);resize:vertical;line-height:1.5;}
+  textarea:focus, input[type=text]:focus{outline:none;border-color:var(--accent);background:#fff;}
+  textarea{min-height:60px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  @media(max-width:640px){.row2,.row3{grid-template-columns:1fr;}}
+
+  .preview{background:var(--ink);color:#EAF0FF;border-radius:10px;padding:16px;font-family:'JetBrains Mono';font-size:12.5px;line-height:1.7;white-space:pre-wrap;margin-top:6px;min-height:70px;}
+  .preview .ph{color:#6B7C9E;}
+  .preview b{color:var(--accent);}
+
+  .btn{font-family:'Inter';font-weight:600;font-size:13.5px;border:none;cursor:pointer;padding:10px 18px;border-radius:9px;transition:all .15s;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-deep);}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--ink-soft);color:var(--ink);}
+  .btn-sm{padding:6px 12px;font-size:12px;}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+  .copy-row{display:flex;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap;}
+  .copied-msg{font-size:12px;color:var(--good);font-weight:600;opacity:0;transition:opacity .2s;}
+  .copied-msg.show{opacity:1;}
+
+  .qcard{border:1.5px solid var(--line);border-radius:12px;padding:18px 18px 16px;margin-bottom:16px;background:#FCFDFE;}
+  .qcard .qnum{font-family:'JetBrains Mono';font-size:11px;color:var(--ink-soft);}
+  .qprompt{background:var(--bad-dim);border-left:3px solid var(--bad);padding:10px 12px;border-radius:6px;font-family:'JetBrains Mono';font-size:13px;margin:8px 0 14px;line-height:1.6;}
+  .qopts{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
+  .qopt{border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13.5px;cursor:pointer;background:#fff;}
+  .qopt:hover{border-color:var(--accent);}
+  .qopt.correct{border-color:var(--good);background:var(--good-dim);font-weight:600;}
+  .qopt.wrong{border-color:var(--bad);background:var(--bad-dim);}
+  .qopt.disabled{cursor:default;}
+  .qfeedback{display:none;margin-top:10px;font-size:13px;line-height:1.6;}
+  .qfeedback.show{display:block;}
+  .qfeedback .label{font-weight:700;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--good);}
+  .qimproved{margin-top:8px;background:var(--good-dim);border-left:3px solid var(--good);padding:9px 12px;border-radius:6px;font-family:'JetBrains Mono';font-size:12.5px;line-height:1.6;}
+
+  .navbar{display:flex;justify-content:space-between;margin-top:18px;}
+  .progress-note{font-size:12px;color:var(--ink-soft);font-family:'JetBrains Mono';align-self:center;}
+
+  .ticket{background:repeating-linear-gradient(135deg, var(--ink) 0 14px, #1C2E50 14px 28px);color:#fff;border-radius:12px;padding:2px;margin-top:10px;}
+  .ticket-inner{background:var(--ink);border-radius:10px;padding:20px;}
+  .ticket pre{white-space:pre-wrap;font-family:'JetBrains Mono';font-size:12px;color:#EAF0FF;line-height:1.65;margin:0;}
+  .ticket-head{font-family:'Space Grotesk';font-size:15px;color:var(--accent);margin-bottom:10px;letter-spacing:.02em;}
+  .launch-banner{text-align:center;padding:10px 0 4px;}
+  .launch-banner .big{font-family:'Space Grotesk';font-size:36px;font-weight:700;color:var(--accent);opacity:0;transform:translateY(10px);animation:rise .6s .15s forwards;}
+  @keyframes rise{to{opacity:1;transform:translateY(0);}}
+  .launch-banner .sub{color:var(--ink-soft);font-size:13.5px;margin-top:4px;}
+
+  .checklist{display:flex;flex-direction:column;gap:8px;}
+  .check-item{display:flex;align-items:flex-start;gap:10px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:#fff;}
+  .check-item:hover{border-color:var(--teal);}
+  .check-item.on{background:var(--teal-dim);border-color:var(--teal);}
+  .check-box{width:18px;height:18px;border-radius:5px;border:2px solid var(--line);flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;}
+  .check-item.on .check-box{background:var(--teal);border-color:var(--teal);}
+  .check-text b{display:block;font-size:13.5px;}
+  .check-text span{font-size:12px;color:var(--ink-soft);}
+
+  .badge-tag{display:inline-block;font-family:'JetBrains Mono';font-size:11px;background:var(--teal-dim);color:var(--teal);padding:3px 9px;border-radius:999px;margin-bottom:8px;}
+  .skel-block{border:1.5px dashed var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#FCFDFE;}
+  .skel-block label{font-size:12.5px;color:var(--accent-deep);font-weight:700;display:block;margin-bottom:4px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">AK</div>
+      <div>
+        <div class="brand-text">AK LABS MISSION CONTROL</div>
+        <div class="brand-sub">[ ] 상품을 출시하라</div>
+      </div>
+    </div>
+    <div class="day-badge">DAY 02 / 05</div>
+  </div>
+
+  <div class="rail">
+    <div class="rail-title">MISSION COUNTDOWN</div>
+    <div class="rail-row" id="railTrack"></div>
+    <div class="lblset" id="railLabels"></div>
+  </div>
+
+  <div class="stage" id="stage"></div>
+
+  <div class="navbar">
+    <button class="btn btn-ghost" id="prevBtn">← 이전</button>
+    <div class="progress-note" id="progressNote"></div>
+    <button class="btn btn-primary" id="nextBtn">다음 →</button>
+  </div>
+</div>
+
+<script>
+const STEPS = ['KSA','RESEARCH','BUILD','LAUNCH'];
+let cur = 0;
+
+const state = {
+  ksa: {know:'', skill:'', situation:''},
+  checklist: {wide:false, cross:false, pick:false},
+  report: {title:'', lead:'', insight:'', solution:'', nextstep:''}
+};
+
+function escapeHtml(s){ return (s||'').replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function renderRail(){
+  const track = document.getElementById('railTrack');
+  const labels = document.getElementById('railLabels');
+  track.innerHTML='';
+  STEPS.forEach((s,i)=>{
+    const node = document.createElement('div');
+    node.className='rail-node'+(i<cur?' done':'')+(i===cur?' active':'');
+    node.textContent = i<cur ? '✓' : (i+1);
+    track.appendChild(node);
+    if(i<STEPS.length-1){
+      const seg=document.createElement('div');
+      seg.className='rail-seg'+(i<cur?' lit':'');
+      track.appendChild(seg);
+    }
+  });
+  labels.innerHTML = STEPS.map((s,i)=>`<div class="${i===cur?'cur':''}">${s}</div>`).join('');
+}
+
+function renderStage(){
+  renderRail();
+  const stage = document.getElementById('stage');
+  document.getElementById('progressNote').textContent = `STEP ${cur+1} / ${STEPS.length}`;
+  document.getElementById('prevBtn').disabled = (cur===0);
+  document.getElementById('nextBtn').textContent = (cur===STEPS.length-1) ? '보고서 키트 완성 ✓' : '다음 →';
+  if(cur===0) return renderKSA(stage);
+  if(cur===1) return renderResearch(stage);
+  if(cur===2) return renderBuild(stage);
+  if(cur===3) return renderLaunch(stage);
+}
+
+function renderKSA(stage){
+  stage.innerHTML = `
+    <div class="eyebrow">KSA — T-2</div>
+    <h1 class="step-title">AI에게 우리 팀 상황 알려주기</h1>
+    <p class="step-desc">AI는 우리 팀이 누군지 모릅니다. Knowledge(아는 것) · Skill(할 수 있는 것) · Situation(현재 상황) 3가지를 채워서 AI에게 맥락을 줘보세요.</p>
+
+    <div class="field">
+      <label>Knowledge — 우리가 이미 아는 것</label>
+      <div class="hint">예: 타겟이 자취 대학생이라는 건 알지만, 정확한 시장 규모는 모른다.</div>
+      <textarea id="k_know" placeholder="우리 팀이 이미 조사했거나 알고 있는 정보...">${escapeHtml(state.ksa.know)}</textarea>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>Skill — 우리가 쓸 수 있는 도구/시간</label>
+        <textarea id="k_skill" placeholder="NotebookLM, Gemini, 구글시트... 오늘 쓸 수 있는 시간은?">${escapeHtml(state.ksa.skill)}</textarea>
+      </div>
+      <div class="field">
+        <label>Situation — 지금 마감/형식</label>
+        <textarea id="k_situation" placeholder="2페이지 보고서, 오늘 수업 종료까지...">${escapeHtml(state.ksa.situation)}</textarea>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>완성된 KSA 프롬프트</label>
+      <div class="preview" id="ksaPreview">${ksaPreview()}</div>
+      <div class="copy-row">
+        <button class="btn btn-ghost btn-sm" id="copyKsaBtn">복사하기</button>
+        <span class="copied-msg" id="copyKsaMsg">복사 완료!</span>
+      </div>
+    </div>
+  `;
+  ['know','skill','situation'].forEach(k=>{
+    const el = document.getElementById('k_'+k);
+    el.addEventListener('input', ()=>{
+      state.ksa[k]=el.value;
+      document.getElementById('ksaPreview').innerHTML = ksaPreview();
+    });
+  });
+  document.getElementById('copyKsaBtn').addEventListener('click', ()=> copyText(ksaText(), 'copyKsaMsg'));
+}
+
+function ksaPreview(){
+  const k = state.ksa;
+  return `<b>[Knowledge]</b> ${k.know? escapeHtml(k.know) : '<span class="ph">이미 아는 것을 입력하세요…</span>'}\n\n<b>[Skill]</b> ${k.skill? escapeHtml(k.skill) : '<span class="ph">가용 도구·시간을 입력하세요…</span>'}\n\n<b>[Situation]</b> ${k.situation? escapeHtml(k.situation) : '<span class="ph">현재 마감/형식을 입력하세요…</span>'}\n\n이 정보를 참고해서, 우리 타겟 시장 데이터를 조사해줘. 출처를 같이 표시해줘.`;
+}
+function ksaText(){
+  const k = state.ksa;
+  return `[Knowledge] ${k.know}\n[Skill] ${k.skill}\n[Situation] ${k.situation}\n\n이 정보를 참고해서, 우리 타겟 시장 데이터를 조사해줘. 출처를 같이 표시해줘.`;
+}
+
+const CHECK_ITEMS = [
+  {key:'wide', title:'① 광범위 수집', desc:'NotebookLM에 자료를 넣고, 부족하면 [Research] 기능으로 AI가 직접 웹에서 소스를 더 찾게 했다'},
+  {key:'cross', title:'② 소스 신뢰도 정리', desc:'아래 "신뢰도 평가표" 프롬프트로 어떤 소스를 믿을지 걸러냈다'},
+  {key:'pick', title:'③ 대표 소스 선별', desc:'아래 "대표 소스 선정" 프롬프트로 주제별 핵심 자료 하나씩만 남겼다(주연/조연 구분)'}
+];
+
+const NOTEBOOKLM_PROMPTS = {
+  start: '우리 타겟이 속한 시장의 최근 3년 규모, 성장률, 상위 경쟁사 3개를 조사해줘. 모든 수치는 출처와 발행연도를 같이 표시해줘. 확인되지 않은 추정치는 "추정"이라고 표시해줘.\n\n(자료가 부족하면 NotebookLM의 [Research] 버튼을 눌러 AI가 직접 웹에서 소스를 찾게 하세요.)',
+  reliability: '업로드된 각 소스를 아래 기준으로 평가해 표로 정리해줘.\n\n[소스 종합 평가표]\n소스명 | 핵심 요약 | 발행일 | 저자명/소속 | 소스 구분 | 신뢰도 | 참고가치 점수\n\n[작성기준]\n- 핵심요약: 30자 이내, 한줄로\n- 소스 구분: 1차 자료(원자료·공식발표) / 2차 분석(해설·요약) / 의견·칼럼\n- 신뢰도: ★★★☆☆ 형식 (5점:공신력 있음 ~ 1점:출처 불명확)\n- 참고가치: 1~10점 (10점:핵심 근거로 직접 인용 가능 ~ 1점:참고 가치 낮음)',
+  representative: '이 노트북에 포함된 모든 소스를 검토해서, 가장 비중있게 다뤄진 주제 5가지를 선정해줘.\n각 주제별로 가장 풍부하게 다룬 소스 1개를 골라 아래 표로 정리해줘.\n\n[주제별 대표 소스]\n순위 | 핵심 주제/관점 | 대표 소스 | 선정 근거\n\n[작성기준]\n- 순위는 소스 전체에서 언급 빈도·서술 비중 기준\n- 선정 근거는 그 소스의 실제 표현·주장 방식을 근거로 작성\n- 외부 지식이나 개인 해석은 넣지 말 것\n- 소스에서 확인 안 되는 내용은 "명시되지 않음"으로 표기'
+};
+
+function renderResearch(stage){
+  stage.innerHTML = `
+    <div class="eyebrow">RESEARCH — T-1</div>
+    <h1 class="step-title">딥리서치 체크리스트</h1>
+    <p class="step-desc">시장조사는 "검색해서 그대로 붙여넣기"가 아닙니다. NotebookLM에 자료를 모으고, 아래 3단계를 거쳐 정리하세요. 체크가 끝나면 다음 단계에서 2페이지 보고서로 정리합니다.</p>
+    <div class="checklist" id="checklistWrap"></div>
+
+    <div class="field" style="margin-top:20px;">
+      <label>① 딥리서치 시작 프롬프트</label>
+      <div class="hint">NotebookLM에서 새 노트북 만들기 → 자료 업로드 → 채팅창에 붙여넣기</div>
+      <div class="preview">${escapeHtml(NOTEBOOKLM_PROMPTS.start)}</div>
+      <div class="copy-row"><button class="btn btn-ghost btn-sm" id="copyStartBtn">복사하기</button><span class="copied-msg" id="copyStartMsg">복사 완료!</span></div>
+    </div>
+
+    <div class="field" style="margin-top:18px;">
+      <label>② 소스 신뢰도 평가표 프롬프트</label>
+      <div class="hint">소스가 5개 이상 쌓였을 때, 어떤 자료를 믿을지 정리합니다</div>
+      <div class="preview">${escapeHtml(NOTEBOOKLM_PROMPTS.reliability)}</div>
+      <div class="copy-row"><button class="btn btn-ghost btn-sm" id="copyReliBtn">복사하기</button><span class="copied-msg" id="copyReliMsg">복사 완료!</span></div>
+    </div>
+
+    <div class="field" style="margin-top:18px;">
+      <label>③ 대표 소스 선정 프롬프트</label>
+      <div class="hint">평가표가 끝난 뒤, 주제별 핵심 자료 하나씩만 추려냅니다</div>
+      <div class="preview">${escapeHtml(NOTEBOOKLM_PROMPTS.representative)}</div>
+      <div class="copy-row"><button class="btn btn-ghost btn-sm" id="copyRepBtn">복사하기</button><span class="copied-msg" id="copyRepMsg">복사 완료!</span></div>
+    </div>
+  `;
+  const wrap = document.getElementById('checklistWrap');
+  CHECK_ITEMS.forEach(it=>{
+    const div = document.createElement('div');
+    div.className='check-item'+(state.checklist[it.key]?' on':'');
+    div.innerHTML = `<div class="check-box">${state.checklist[it.key]?'✓':''}</div><div class="check-text"><b>${it.title}</b><span>${it.desc}</span></div>`;
+    div.addEventListener('click', ()=>{
+      state.checklist[it.key] = !state.checklist[it.key];
+      renderResearch(stage);
+    });
+    wrap.appendChild(div);
+  });
+  document.getElementById('copyStartBtn').addEventListener('click', ()=> copyText(NOTEBOOKLM_PROMPTS.start, 'copyStartMsg'));
+  document.getElementById('copyReliBtn').addEventListener('click', ()=> copyText(NOTEBOOKLM_PROMPTS.reliability, 'copyReliMsg'));
+  document.getElementById('copyRepBtn').addEventListener('click', ()=> copyText(NOTEBOOKLM_PROMPTS.representative, 'copyRepMsg'));
+}
+
+function renderBuild(stage){
+  stage.innerHTML = `
+    <div class="eyebrow">BUILD</div>
+    <h1 class="step-title">2페이지 인사이트 보고서 빌더</h1>
+    <p class="step-desc">제목이 곧 결론이 되도록, 그리고 첫 2문장 안에 핵심이 들어가도록 채워보세요. 구글시트 차트 템플릿에서 만든 숫자를 가져와도 좋습니다.</p>
+
+    <div class="field">
+      <label>제목 (= 결론)</label>
+      <div class="hint">나쁜 예: "OO 시장 현황 보고" / 좋은 예: "연 7.3% 성장 중인 8조원 OO 시장, 진입 가능성 충분"</div>
+      <input type="text" id="r_title" placeholder="구체적인 숫자가 들어간 제목..." value="${escapeHtml(state.report.title)}">
+    </div>
+    <div class="field">
+      <label>첫 2문장 (핵심 결론 + 숫자)</label>
+      <textarea id="r_lead" placeholder="목표 타겟의 시장 규모는 OO원, 연 OO% 성장 중입니다. ...">${escapeHtml(state.report.lead)}</textarea>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label>문제/인사이트</label>
+        <textarea id="r_insight" placeholder="우리가 발견한 시장의 빈틈/기회는...">${escapeHtml(state.report.insight)}</textarea>
+      </div>
+      <div class="field">
+        <label>해결책/제안</label>
+        <textarea id="r_solution" placeholder="그래서 우리 상품은 이렇게 포지셔닝한다...">${escapeHtml(state.report.solution)}</textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label>다음 스텝</label>
+      <input type="text" id="r_nextstep" placeholder="예: 다음 시간까지 8장 기획서 초안을 만들겠습니다." value="${escapeHtml(state.report.nextstep)}">
+    </div>
+  `;
+  ['title','lead','insight','solution','nextstep'].forEach(k=>{
+    const el = document.getElementById('r_'+k);
+    el.addEventListener('input', ()=>{ state.report[k]=el.value; });
+  });
+}
+
+function renderLaunch(stage){
+  const r = state.report;
+  const ticketText =
+`■ MISSION KIT — DAY 2 (2페이지 인사이트 보고서 초안)
+
+[제목] ${r.title||'(미입력)'}
+
+[리드] ${r.lead||'(미입력)'}
+
+[인사이트] ${r.insight||'(미입력)'}
+
+[제안] ${r.solution||'(미입력)'}
+
+[다음 스텝] ${r.nextstep||'(미입력)'}
+
+— 구글독스에 붙여넣고, day2_chart_template.xlsx의 차트 3종을 이미지로 캡처해 같이 넣으면 2페이지 보고서가 완성됩니다.
+— Day 3에서는 이 인사이트를 가지고 8장 ISI 기획서를 만듭니다.`;
+
+  stage.innerHTML = `
+    <div class="eyebrow">LAUNCH</div>
+    <div class="launch-banner">
+      <div class="big">📊 REPORT KIT READY</div>
+      <div class="sub">차트 시트와 함께 구글독스에 정리하세요.</div>
+    </div>
+    <div class="ticket"><div class="ticket-inner">
+      <div class="ticket-head">DAY 2 · MISSION KIT</div>
+      <pre id="ticketText"></pre>
+    </div></div>
+    <div class="copy-row" style="margin-top:14px;">
+      <button class="btn btn-primary btn-sm" id="copyAllBtn">전체 복사하기</button>
+      <button class="btn btn-ghost btn-sm" id="downloadBtn">텍스트 파일로 저장</button>
+      <span class="copied-msg" id="copyAllMsg">복사 완료!</span>
+    </div>
+  `;
+  document.getElementById('ticketText').textContent = ticketText;
+  document.getElementById('copyAllBtn').addEventListener('click', ()=> copyText(ticketText, 'copyAllMsg'));
+  document.getElementById('downloadBtn').addEventListener('click', ()=>{
+    const blob = new Blob([ticketText], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'day2_report_kit.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  });
+}
+
+function copyText(text, msgId){
+  navigator.clipboard.writeText(text).then(()=>{
+    const msg = document.getElementById(msgId);
+    if(msg){ msg.classList.add('show'); setTimeout(()=>msg.classList.remove('show'),1500); }
+  });
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{ if(cur>0){cur--; renderStage();} });
+document.getElementById('nextBtn').addEventListener('click', ()=>{ if(cur<STEPS.length-1){cur++; renderStage();} });
+
+renderStage();
+</script>
+</body>
+</html>

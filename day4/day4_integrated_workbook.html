@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAY 4 노코드 웹 빌딩 통합 워크북 | AK LABS Mission Control</title>
+    <!-- Google Fonts & Tailwind CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            gold: '#C89B3B', /* 어텀 웜 골드 */
+                            goldDeep: '#9C7422',
+                            goldDim: '#F2ECE0', /* 소프트 골드 틴트 */
+                            charcoal: '#2D261E', /* 다크 브라운 차콜 */
+                            brownSoft: '#665D52', /* 소프트 흙빛 브라운 */
+                            bgWarm: '#F7F4EF', /* 차분한 소프트 피치 그레이지 배경 (눈부심 방지) */
+                            borderWarm: '#EAE3D5', /* 부드러운 피치 골드 브라운 경계선 */
+                            good: '#1C8C5A',
+                            goodDim: '#DEF3E8',
+                            bad: '#C0392B',
+                            badDim: '#FBE2DF',
+                            accent: '#EA580C',
+                            accentDim: '#FFEDE5',
+                            accentDeep: '#C2410C'
+                        }
+                    },
+                    boxShadow: {
+                        'premium': '0 8px 30px rgb(0 0 0 / 0.01), 0 1px 2px rgb(0 0 0 / 0.005)',
+                        'hover': '0 20px 40px -15px rgba(200, 155, 59, 0.08), 0 1px 10px rgba(0, 0, 0, 0.01)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 네이티브 스크롤바 최적화 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F7F4EF;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E0D9CB;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C4BAA9;
+        }
+
+        /* 피치 골드 그리드 격자 백그라운드 디자인 - 선을 톤다운 */
+        body {
+            background-color: #F7F4EF;
+            background-image: 
+                linear-gradient(rgba(234, 227, 213, 0.5) 1.5px, transparent 1.5px),
+                linear-gradient(90deg, rgba(234, 227, 213, 0.5) 1.5px, transparent 1.5px);
+            background-size: 32px 32px;
+        }
+
+        /* Bento Glassmorphism 패널 효과 - 차분한 아이보리 골드 필터 */
+        .glass-panel {
+            background: rgba(253, 252, 250, 0.94);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        
+        .tab-transition {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .layout-item {
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="text-brand-charcoal min-h-screen flex flex-col font-sans antialiased p-3 md:p-6 pb-16">
+
+    <div class="max-w-[1300px] w-full mx-auto flex flex-col gap-5">
+        
+        <!-- ==================== [TOPBAR HEADER] ==================== -->
+        <header class="glass-panel rounded-2xl p-4 md:p-5 border border-brand-borderWarm shadow-premium flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-charcoal text-brand-goldDim p-2.5 rounded-xl shadow-md transform -rotate-3 font-extrabold text-sm tracking-wider font-mono">
+                    AK
+                </div>
+                <div>
+                    <span class="text-xs font-black text-brand-gold uppercase tracking-wider block leading-none">Day 04 Mission Control</span>
+                    <h1 class="text-lg md:text-xl font-black text-brand-charcoal tracking-tight mt-1">AI 노코드 웹 빌딩 & 배포 통합 워크북</h1>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2.5">
+                <!-- 가이드 접기/펼치기 토글 버튼 -->
+                <button id="sidebar-toggle-btn" onclick="toggleSidebar()" class="px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-gold border border-brand-borderWarm bg-white hover:bg-brand-goldDim/30 transition-all duration-200 flex items-center gap-2 shadow-sm cursor-pointer focus:outline-none">
+                    <i class="fa-solid fa-columns text-xs"></i> 가이드 접기
+                </button>
+                <div class="px-3.5 py-1.5 rounded-full bg-brand-charcoal text-white font-mono text-xs font-bold tracking-wider">
+                    DAY 04 / 05
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== [MAIN LAYOUT GRID] ==================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            
+            <!-- ==================== [LEFT PANEL: 학습 가이드 & 용어 & 도구] ==================== -->
+            <section id="sidebar-panel" class="lg:col-span-5 flex flex-col gap-4">
+                
+                <!-- 서브 탭 스위처 -->
+                <div class="glass-panel rounded-2xl p-1.5 border border-brand-borderWarm shadow-premium flex gap-1">
+                    <button onclick="switchGuideTab(1)" id="guide-tab-btn-1" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition bg-brand-gold text-white shadow-sm">
+                        <i class="fa-solid fa-graduation-cap mr-1"></i> 학습 가이드
+                    </button>
+                    <button onclick="switchGuideTab(2)" id="guide-tab-btn-2" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-gold">
+                        <i class="fa-solid fa-book mr-1"></i> 용어 사전
+                    </button>
+                    <button onclick="switchGuideTab(3)" id="guide-tab-btn-3" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-gold">
+                        <i class="fa-solid fa-microchip mr-1"></i> AI 도구 정보
+                    </button>
+                </div>
+
+                <!-- 서브 탭 컨텐츠 박스 -->
+                <div class="glass-panel rounded-2xl p-5 md:p-6 border border-brand-borderWarm shadow-premium min-h-[540px]">
+                    
+                    <!-- [서브탭 1: 학습 가이드] -->
+                    <div id="guide-content-1" class="space-y-5">
+                        <div class="border-b border-brand-borderWarm pb-3">
+                            <span class="text-xs font-bold text-brand-gold uppercase tracking-wider"><i class="fa-solid fa-map mr-1"></i> No-Code Web Building</span>
+                            <h2 class="text-xl font-bold text-brand-charcoal mt-1">🌐 DAY 4 실습 가이드</h2>
+                            <p class="text-xs text-brand-brownSoft mt-1">구글 AI 기반 1인 기업 웹페이지 빌딩 & 실시간 배포</p>
+                        </div>
+
+                        <!-- 3줄 요약 - 폰트 상향 조정 -->
+                        <div class="p-4 rounded-xl bg-brand-goldDim/60 border border-brand-gold/10 space-y-2">
+                            <h4 class="text-sm font-bold text-brand-goldDeep flex items-center gap-1.5">
+                                <i class="fa-solid fa-star"></i> 오늘 우리가 할 일 (3줄 요약)
+                            </h4>
+                            <ul class="text-sm text-brand-charcoal space-y-1.5 list-decimal pl-4 leading-relaxed font-semibold">
+                                <li><b>NotebookLM & Gems</b>로 브랜드를 대변하는 AI 매니저 에이전트를 구축합니다.</li>
+                                <li><b>Gemini</b>로 대충 찍은 야식 이미지를 초고화질 광고 컷과 라벨 컷으로 새롭게 뽑아냅니다.</li>
+                                <li>구글 스티치에 프롬프트를 얹어 웹페이지를 빌딩한 뒤 <b>Netlify로 실시간 배포</b>합니다.</li>
+                            </ul>
+                        </div>
+
+                        <!-- 탭 링크 가이드 -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-bold text-brand-charcoal uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-regular fa-clock text-brand-gold"></i> 실전 툴 탭 4개 배치 가이드
+                            </h4>
+                            <div class="grid grid-cols-4 gap-1.5 text-center text-xs font-bold">
+                                <div class="p-2 rounded-lg border border-brand-borderWarm bg-white">
+                                    <span class="block text-brand-gold">탭 1. 구글문서</span>
+                                    <span class="text-[9px] text-brand-brownSoft mt-0.5 block">기획서 텍스트</span>
+                                </div>
+                                <div class="p-2 rounded-lg border border-brand-borderWarm bg-white">
+                                    <span class="block text-brand-gold">탭 2. NotebookLM</span>
+                                    <span class="text-[9px] text-brand-brownSoft mt-0.5 block">지식 동기화</span>
+                                </div>
+                                <div class="p-2 rounded-lg border border-brand-borderWarm bg-white">
+                                    <span class="block text-brand-gold">탭 3. Gemini</span>
+                                    <span class="text-[9px] text-brand-brownSoft mt-0.5 block">AI 매니저 Gems</span>
+                                </div>
+                                <div class="p-2 rounded-lg border border-brand-borderWarm bg-white">
+                                    <span class="block text-brand-gold">탭 4. Stitch</span>
+                                    <span class="text-[9px] text-brand-brownSoft mt-0.5 block">노코드 웹 빌딩</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 단계별 주요 과업 리스트 -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-bold text-brand-charcoal uppercase tracking-wider"><i class="fa-solid fa-list-check text-brand-gold"></i> 단계별 실습 프로토콜</h4>
+                            <div class="space-y-2.5 text-sm text-brand-brownSoft leading-relaxed">
+                                <div id="guide-item-quiz" class="p-4 rounded-xl bg-brand-goldDim/60 border border-brand-gold/20 transition">
+                                    <span class="font-bold text-brand-gold text-sm block">STEP 1. 레이아웃 퀴즈 풀기</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">고객 이탈을 줄이고 구매율을 극대화하는 6대 핵심 블록 배치(Hero, Problem, Solution 등)의 표준 순서를 맞추어 정합성을 확보합니다.</p>
+                                </div>
+                                <div id="guide-item-builder" class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition">
+                                    <span class="font-bold text-brand-gold text-sm block">STEP 2. 에셋 & 스티치 프롬프트 조립</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">우리 브랜드 기획안을 바탕으로 입력 양식을 채워 스티치 웹 빌딩 지시어 및 제미나이 3D 광고 이미지 전용 프롬프트를 복사합니다.</p>
+                                </div>
+                                <div id="guide-item-simulator" class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition">
+                                    <span class="font-bold text-brand-gold text-sm block">STEP 3~4. 스티치 편집 & 실시간 배포</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">시뮬레이터를 통해 AI 에디터 수정(다크모드, 리뷰 추가 등)을 사전에 검증하고 완성 코드를 Netlify에 배포해 실시간 URL을 획득합니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- [서브탭 2: 용어 사전] -->
+                    <div id="guide-content-2" class="space-y-5 hidden">
+                        <div class="border-b border-brand-borderWarm pb-4">
+                            <span class="text-xs font-bold text-brand-gold uppercase tracking-wider"><i class="fa-solid fa-book mr-1"></i> Glossary</span>
+                            <h2 class="text-xl font-bold text-brand-charcoal mt-1">📖 오늘의 용어 미니사전</h2>
+                        </div>
+
+                        <div class="space-y-4">
+                            <!-- 개념 1 -->
+                            <div onclick="openConceptModal(0)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-gold/45 hover:shadow-md transition duration-200">
+                                <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-brand-gold/10 text-brand-gold">개념 1</span> 랜딩 페이지 (Landing Page)
+                                </h3>
+                                <p class="text-xs text-brand-brownSoft leading-normal">
+                                    광고 링크나 QR코드를 타고 마주하는 웹사이트로, 불필요한 링크를 차단하고 '회원 가입', '입점 문의', '구매' 등의 **단 하나의 핵심 목표**에만 집중하게 만드는 비즈니스 기획 문서입니다.
+                                </p>
+                                <!-- 웹툰 토글 버튼 및 이미지 영역 -->
+                                <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
+                                    <button onclick="event.stopPropagation(); toggleWebtoon('wt-landingpage')" class="text-xs font-bold text-brand-gold hover:text-brand-goldDeep flex items-center gap-1 transition focus:outline-none cursor-pointer">
+                                        <i class="fa-regular fa-image text-xs"></i> <span id="wt-landingpage-btn-text">💡 4컷 웹툰 가이드 보기</span>
+                                    </button>
+                                    <div id="wt-landingpage" class="hidden mt-3 rounded-lg overflow-hidden border border-brand-borderWarm shadow-sm">
+                                        <img src="../assets/webtoon_landingpage.jpg" alt="랜딩페이지 웹툰" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 개념 2 -->
+                            <div onclick="openConceptModal(1)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-gold/45 hover:shadow-md transition duration-200">
+                                <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-amber-500/10 text-amber-600">개념 2</span> CTA — Call To Action
+                                </h3>
+                                <p class="text-xs text-brand-brownSoft leading-normal">
+                                    고객에게 '지금 클릭해 혜택받기' 등 구체적이고 혜택 지향적인 행동을 유도하도록 고안된 버튼이나 링크를 의미합니다. 단순 '제출/확인'보다 설득력이 높은 핵심 마케팅 요소입니다.
+                                </p>
+                                <!-- 웹툰 토글 버튼 및 이미지 영역 -->
+                                <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
+                                    <button onclick="event.stopPropagation(); toggleWebtoon('wt-cta')" class="text-xs font-bold text-brand-gold hover:text-brand-goldDeep flex items-center gap-1 transition focus:outline-none cursor-pointer">
+                                        <i class="fa-regular fa-image text-xs"></i> <span id="wt-cta-btn-text">💡 4컷 웹툰 가이드 보기</span>
+                                    </button>
+                                    <div id="wt-cta" class="hidden mt-3 rounded-lg overflow-hidden border border-brand-borderWarm shadow-sm">
+                                        <img src="../assets/webtoon_cta.jpg" alt="CTA 웹툰" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 개념 3 -->
+                            <div onclick="openConceptModal(2)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-gold/45 hover:shadow-md transition duration-200">
+                                <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-emerald-500/10 text-emerald-600">개념 3</span> Gemini Gems (젬스)
+                                </h3>
+                                <p class="text-xs text-brand-brownSoft leading-normal">
+                                    특정 브랜드 가이드, 마케팅 원칙 등의 지식 데이터를 주입해 두어, 언제 말을 걸어도 우리 기획서의 맥락과 규칙을 충실히 반영해 가이드를 출력해 내는 AI 맞춤형 매니저 기능입니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- [서브탭 3: AI 도구 정보] -->
+                    <div id="guide-content-3" class="space-y-5 hidden">
+                        <div class="border-b border-brand-borderWarm pb-4">
+                            <span class="text-xs font-bold text-brand-gold uppercase tracking-wider"><i class="fa-solid fa-microchip mr-1"></i> AI & No-Code Tools</span>
+                            <h2 class="text-xl font-bold text-brand-charcoal mt-1">🛠️ 노코드 도구 상세 명세</h2>
+                        </div>
+
+                        <div class="space-y-3.5 text-xs md:text-sm">
+                            <div class="p-3.5 rounded-xl bg-brand-bgWarm border border-brand-borderWarm flex gap-3">
+                                <i class="fa-solid fa-wand-magic-sparkles text-brand-gold text-lg mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-black text-brand-charcoal text-sm">Google Stitch (구글 스티치)</h4>
+                                    <p class="text-brand-brownSoft mt-1 leading-relaxed text-xs">디자이너와 코더 없이도, 텍스트 형태의 자연어 프롬프트 지시를 파싱하여 고성능 레이아웃 마크업과 웹 디자인을 동적으로 뚝딱 완성해 주는 구글의 노코드 툴입니다.</p>
+                                </div>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-brand-bgWarm border border-brand-borderWarm flex gap-3">
+                                <i class="fa-solid fa-cloud-arrow-up text-sky-500 text-lg mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-black text-brand-charcoal text-sm">Netlify (넷틀리파이)</h4>
+                                    <p class="text-brand-brownSoft mt-1 leading-relaxed text-xs">작성 완료된 프론트엔드 정적 웹 소스 코드를 서버 세팅 없이 즉각 업로드 호스팅해 주며, 외부에서 실제 스마트폰과 PC로 들어올 수 있도록 도메인 주소를 발급해 줍니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ==================== [RIGHT PANEL: 실습 워크페이스] ==================== -->
+            <section id="workspace-panel" class="lg:col-span-7 flex flex-col gap-4">
+                
+                <!-- 메인 실습 탭 스위처 -->
+                <div class="glass-panel rounded-2xl p-1.5 border border-brand-borderWarm shadow-premium flex gap-1">
+                    <button id="main-tab-btn-1" class="flex-1 py-3 text-sm md:text-base font-bold rounded-xl bg-brand-gold text-white shadow-sm cursor-default">
+                        <i class="fa-solid fa-laptop-code mr-1"></i> 실습 1: 스티치 웹 빌더
+                    </button>
+                    <div class="px-4 py-2 bg-brand-charcoal text-white rounded-xl text-xs font-mono font-bold flex items-center justify-center gap-1.5 shadow-sm">
+                        <span class="inline-block w-2 h-2 rounded-full bg-brand-gold animate-pulse"></span>
+                        TEAM: 
+                        <input type="text" id="teamName" placeholder="팀명 입력" class="bg-transparent text-white font-bold placeholder-brand-gold/50 outline-none w-20 text-center" oninput="saveTeamName(this.value)">
+                    </div>
+                </div>
+
+                <!-- ==================== [실습 1: 🌐 스티치 빌더 본문] ==================== -->
+                <div id="main-tool-1" class="space-y-5">
+                    
+                    <!-- 5단계 헤더 인디케이터 (고정 트랙 철도 스타일) -->
+                    <div class="glass-panel rounded-2xl p-4 border border-brand-borderWarm shadow-sm">
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                            <span class="text-sm font-bold text-brand-brownSoft uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-list-ol text-brand-gold"></i> 웹 사이트 빌딩 플로우</span>
+                            <div class="flex items-center gap-1.5 text-xs font-semibold">
+                                <span id="p-badge-1" onclick="goToStep(1)" class="cursor-pointer px-3 py-2 rounded-full bg-brand-goldDim text-brand-gold border border-brand-gold/20 font-bold text-xs md:text-sm">QUIZ</span>
+                                <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                                <span id="p-badge-2" onclick="goToStep(2)" class="cursor-pointer px-3 py-2 rounded-full text-brand-brownSoft hover:text-brand-gold transition text-xs md:text-sm">PROMPT</span>
+                                <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                                <span id="p-badge-3" onclick="goToStep(3)" class="cursor-pointer px-3 py-2 rounded-full text-brand-brownSoft hover:text-brand-gold transition text-xs md:text-sm">SIMULATOR</span>
+                                <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                                <span id="p-badge-4" onclick="goToStep(4)" class="cursor-pointer px-3 py-2 rounded-full text-brand-brownSoft hover:text-brand-gold transition text-xs md:text-sm">DEPLOY</span>
+                                <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                                <span id="p-badge-5" onclick="goToStep(5)" class="cursor-pointer px-3 py-2 rounded-full text-brand-brownSoft hover:text-brand-gold transition text-xs md:text-sm">SAVE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 단계별 컨텐츠 박스 (고유 ID 사용해 중복 충돌 차단) -->
+                    <div class="glass-panel rounded-2xl p-6 md:p-8 border border-brand-borderWarm min-h-[480px] flex flex-col justify-between">
+                        
+                        <!-- [STEP 1: 레이아웃 퀴즈] -->
+                        <div id="step-panel-1" class="space-y-4">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-gold uppercase tracking-wider font-mono">STEP 1 / 5 · REAL-TIME QUIZ</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">랜딩 페이지 레이아웃 정렬하기</h2>
+                                <p class="text-xs text-brand-brownSoft mt-1 leading-relaxed">
+                                    고객의 이탈을 막고 구매율(CTA)을 극대화하는 **표준 랜딩 페이지 설계 순서**에 맞게 카드를 위아래 버튼으로 조정해 보세요!
+                                </p>
+                            </div>
+
+                            <!-- 퀴즈 리스트 -->
+                            <div class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1" id="quiz-list">
+                                <!-- 동적 퀴즈 영역 -->
+                            </div>
+
+                            <!-- 퀴즈 결과 피드백 -->
+                            <div id="quiz-feedback" class="p-4 rounded-xl border border-brand-borderWarm hidden transition-all text-xs">
+                                <div class="flex items-center gap-3">
+                                    <div id="quiz-feedback-icon" class="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm shrink-0"></div>
+                                    <p id="quiz-feedback-text" class="font-semibold leading-relaxed"></p>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end pt-2">
+                                <button onclick="checkQuizResult()" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-gold text-white font-bold rounded-xl text-xs transition duration-150 cursor-pointer shadow">
+                                    순서 검증하기
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- [STEP 2: 프롬프트 빌더] -->
+                        <div id="step-panel-2" class="hidden space-y-5">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-gold uppercase tracking-wider font-mono">STEP 2 / 5 · PROMPT BUILDER</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">구글 스티치 & 제미나이 에셋 생성기</h2>
+                                <p class="text-xs text-brand-brownSoft mt-1 leading-relaxed">
+                                    우리 브랜드 핵심 기획을 입력하면 **[스티치 사이트 프롬프트]**와 **[제미나이 3D 광고 이미지 프롬프트]**가 실시간 자동 조립됩니다.
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                <div>
+                                    <label class="block font-bold text-brand-charcoal mb-1">브랜드 이름</label>
+                                    <input type="text" id="inp-brand-name" placeholder="예: 새벽끼니" oninput="assemblePrompt()" class="w-full p-2.5 border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-gold bg-white">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-brand-charcoal mb-1">대표 슬로건 (헤드라인)</label>
+                                    <input type="text" id="inp-slogan" placeholder="예: 시험기간 새벽 2시, 배고픈 당신을 위한 새벽끼니" oninput="assemblePrompt()" class="w-full p-2.5 border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-gold bg-white">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-brand-charcoal mb-1">대표 핵심 색상 (Color)</label>
+                                    <input type="text" id="inp-color" placeholder="예: 차분한 밤 하늘의 네이비(#1E293B)와 따뜻한 전구색 옐로우" oninput="assemblePrompt()" class="w-full p-2.5 border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-gold bg-white">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-brand-charcoal mb-1">타겟 고객군</label>
+                                    <input type="text" id="inp-target" placeholder="예: 시험기간 독서실에서 늦게까지 열공하는 자취 캠퍼스 대학생" oninput="assemblePrompt()" class="w-full p-2.5 border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-gold bg-white">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block font-bold text-brand-charcoal mb-1">제안하는 가치 & 해결책 (Solution & Benefit)</label>
+                                    <textarea id="inp-benefit" rows="2" placeholder="예: 1인분 조리 단 90초, 대학교 건물 자판기에서 즉석 가열 조리되는 든든하고 위로를 주는 간편 야식 키트" oninput="assemblePrompt()" class="w-full p-2.5 border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-gold resize-none bg-white"></textarea>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block font-bold text-brand-charcoal mb-1">행동 유도 버튼 문구 (CTA)</label>
+                                    <input type="text" id="inp-cta" placeholder="예: 90초 야식 50% 할인 쿠폰 받기 ➔" oninput="assemblePrompt()" class="w-full p-2.5 border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-gold bg-white">
+                                </div>
+                            </div>
+
+                            <!-- 프롬프트 출력 구역 -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
+                                <div class="bg-brand-charcoal rounded-xl p-4 border border-dashed border-brand-gold flex flex-col justify-between">
+                                    <span class="text-[9px] text-brand-gold font-bold bg-brand-goldDim px-2 py-0.5 rounded-full self-start mb-2">STITCH WEB PROMPT</span>
+                                    <pre id="stitch-prompt-preview" class="text-brand-goldDim text-[11px] whitespace-pre-wrap font-mono leading-relaxed max-h-[140px] overflow-y-auto pr-2 mb-3">입력을 완료하시면 자동으로 스티치 전용 기획 설계용 프롬프트가 구성됩니다...</pre>
+                                    <button onclick="copyPromptToClipboard('stitch-prompt-preview', '스티치 웹빌더 프롬프트')" class="w-full py-2 bg-brand-gold hover:bg-brand-goldDeep text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer">
+                                        <i class="fa-regular fa-copy"></i> 스티치 프롬프트 복사
+                                    </button>
+                                </div>
+
+                                <div class="bg-slate-900 rounded-xl p-4 border border-dashed border-sky-400 flex flex-col justify-between">
+                                    <span class="text-[9px] text-sky-400 font-bold bg-sky-950 px-2 py-0.5 rounded-full self-start mb-2">GEMINI IMAGE PROMPT</span>
+                                    <pre id="image-prompt-preview" class="text-sky-200 text-[11px] whitespace-pre-wrap font-mono leading-relaxed max-h-[140px] overflow-y-auto pr-2 mb-3">입력을 완료하시면 자동으로 제미나이 광고 컷 생성용 영문 최적화 프롬프트가 구성됩니다...</pre>
+                                    <button onclick="copyPromptToClipboard('image-prompt-preview', '제미나이 이미지 생성 프롬프트')" class="w-full py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer">
+                                        <i class="fa-regular fa-image"></i> 이미지 프롬프트 복사 (Gemini용)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- [STEP 3: 스티치 시뮬레이터] -->
+                        <div id="step-panel-3" class="hidden space-y-4">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-gold uppercase tracking-wider font-mono">STEP 3 / 5 · STITCH SIMULATOR</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">구글 스티치 실습 환경 미리보기</h2>
+                                <p class="text-xs text-brand-brownSoft mt-1 leading-relaxed">
+                                    구글 스티치의 대화형 편집 기능을 체험해 보세요! 제미나이에서 뽑아낸 나만의 이미지를 가상 업로드하거나, AI 피드백 명령을 입력해 볼 수 있습니다.
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+                                <!-- 가상 브라우저 프레임 (lg:col-span-7) -->
+                                <div id="sim-webframe" class="lg:col-span-7 bg-[#F8FAFC] border border-brand-borderWarm rounded-xl overflow-hidden shadow-inner flex flex-col justify-between min-h-[360px] transition-all duration-500">
+                                    <!-- 상단 주소창 -->
+                                    <div class="bg-white border-b border-brand-borderWarm/60 px-4 py-2.5 flex items-center justify-between">
+                                        <div class="flex items-center gap-1.5 shrink-0">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
+                                            <span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
+                                            <span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
+                                            <span id="sim-logo" class="ml-1.5 font-space text-[10px] font-bold tracking-tight text-brand-charcoal">BRAND LOGO</span>
+                                        </div>
+                                        <div class="flex gap-2 text-[9px] font-bold text-brand-brownSoft">
+                                            <span>소개</span>
+                                            <span>혜택</span>
+                                            <span>제품</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 본문 실시간 뷰 -->
+                                    <div id="sim-body-area" class="p-6 flex-grow flex flex-col justify-center items-center text-center space-y-3.5">
+                                        <span id="sim-badge" class="px-2 py-0.5 bg-brand-goldDim text-brand-goldDeep text-[9px] font-bold rounded-full">RECOMMEND</span>
+                                        <h3 id="sim-headline" class="text-sm md:text-base font-bold tracking-tight text-brand-charcoal transition-all">새벽 2시, 당신을 안아줄 따스한 야식</h3>
+                                        <p id="sim-benefit" class="text-[11px] text-brand-brownSoft max-w-sm transition-all leading-normal">건강에 부담 없는 원료로 온전히 채워진 하루 마무리 힐링 키트</p>
+                                        
+                                        <!-- 가상 이미지 박스 -->
+                                        <div class="w-full max-w-[200px] h-[100px] bg-white border border-dashed border-brand-borderWarm rounded-lg flex flex-col items-center justify-center p-1.5 relative group overflow-hidden shadow-inner">
+                                            <img id="sim-image" src="https://placehold.co/400x200/F4F2F7/27222E?text=Place+Holder" alt="Product Mock" class="max-h-full max-w-full rounded object-contain transition-transform duration-350 group-hover:scale-105">
+                                            <label class="absolute inset-0 bg-black/45 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                                <span class="text-white text-[10px] font-semibold bg-brand-charcoal px-2 py-1 rounded-lg">가상 이미지 업로드</span>
+                                                <input type="file" accept="image/*" class="hidden" onchange="simulateImageUpload(this)">
+                                            </label>
+                                        </div>
+
+                                        <!-- CTA 버튼 -->
+                                        <button id="sim-cta" class="px-3.5 py-2 bg-brand-charcoal text-white text-[11px] font-bold rounded-lg tracking-wide hover:opacity-90 transition">
+                                            지금 바로 시작하기 ➔
+                                        </button>
+                                    </div>
+
+                                    <!-- 웹 푸터 -->
+                                    <div class="bg-white border-t border-brand-borderWarm/60 px-4 py-1.5 text-center text-[9px] text-brand-brownSoft font-mono">
+                                        © 2026 <span id="sim-footer-brand">Brand</span>. Powered by Google Stitch.
+                                    </div>
+                                </div>
+
+                                <!-- AI 모의 챗 패널 (lg:col-span-5) -->
+                                <div class="lg:col-span-5 flex flex-col justify-between border border-brand-borderWarm rounded-xl bg-white p-4">
+                                    <div>
+                                        <div class="flex items-center gap-1.5 border-b border-brand-borderWarm/60 pb-2 mb-2">
+                                            <div class="w-5 h-5 rounded-full bg-brand-gold flex items-center justify-center text-white text-[10px] font-bold">✨</div>
+                                            <span class="text-xs font-bold text-brand-charcoal">스티치 AI 어시스턴트</span>
+                                        </div>
+                                        <div class="bg-brand-bgWarm rounded-lg p-3 text-[11px] leading-relaxed text-brand-brownSoft min-h-[160px] max-h-[200px] overflow-y-auto space-y-2" id="sim-chat-log">
+                                            <div class="text-brand-charcoal font-bold">🤖 Stitch AI:</div>
+                                            <div>"안녕하세요! 사이트 빌더 에디터입니다. 어떤 조율을 도와드릴까요?"</div>
+                                            <div class="italic text-brand-brownSoft/70">💡 입력 팁: '다크 모드', '색상 골드', '리뷰 추가' 등을 타이핑해 보세요!</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3 space-y-2">
+                                        <!-- 추천 지시어 단추 (칩) 배치 -->
+                                        <div class="flex flex-wrap gap-1.5 pb-2 border-b border-brand-borderWarm/40">
+                                            <button onclick="clickSuggestCmd('🌓 다크 모드로 전환해줘')" class="px-2.5 py-1.5 bg-brand-bgWarm hover:bg-brand-goldDim border border-brand-borderWarm rounded-lg text-[10px] font-bold text-brand-charcoal hover:text-brand-goldDeep transition cursor-pointer">🌓 다크 모드</button>
+                                            <button onclick="clickSuggestCmd('🎨 오렌지 포인트 컬러를 적용해줘')" class="px-2.5 py-1.5 bg-brand-bgWarm hover:bg-brand-goldDim border border-brand-borderWarm rounded-lg text-[10px] font-bold text-brand-charcoal hover:text-brand-goldDeep transition cursor-pointer">🎨 오렌지 포인트 컬러</button>
+                                            <button onclick="clickSuggestCmd('⭐ 별점 5점 리뷰 삽입해줘')" class="px-2.5 py-1.5 bg-brand-bgWarm hover:bg-brand-goldDim border border-brand-borderWarm rounded-lg text-[10px] font-bold text-brand-charcoal hover:text-brand-goldDeep transition cursor-pointer">⭐ 5점 리뷰</button>
+                                            <button onclick="clickSuggestCmd('🛍️ CTA 버튼 문구 강화해줘')" class="px-2.5 py-1.5 bg-brand-bgWarm hover:bg-brand-goldDim border border-brand-borderWarm rounded-lg text-[10px] font-bold text-brand-charcoal hover:text-brand-goldDeep transition cursor-pointer">🛍️ CTA 문구</button>
+                                            <button onclick="clickSuggestCmd('📸 따뜻한 제품 사진으로 교체해줘')" class="px-2.5 py-1.5 bg-brand-bgWarm hover:bg-brand-goldDim border border-brand-borderWarm rounded-lg text-[10px] font-bold text-brand-charcoal hover:text-brand-goldDeep transition cursor-pointer">📸 사진 교체</button>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="sim-user-input" placeholder="위 추천 단추를 누르거나, 수정 지시어를 적어보세요..." class="flex-grow px-3 py-2 text-xs border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-gold bg-brand-bgWarm/45" onkeypress="handleSimKeyPress(event)">
+                                            <button onclick="executeSimCommand()" class="px-4 py-2 bg-brand-charcoal text-white text-xs font-bold rounded-lg hover:bg-brand-gold transition duration-150 cursor-pointer shadow-sm">
+                                                실행
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- [STEP 4: 런칭 & 배포] -->
+                        <div id="step-panel-4" class="hidden space-y-5">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-gold uppercase tracking-wider font-mono">STEP 4 / 5 · LAUNCH & DEPLOY</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">전 세계로의 실시간 배포</h2>
+                                <p class="text-xs text-brand-brownSoft mt-1 leading-relaxed">
+                                    구글 스티치 가공이 완료되었다면, **Netlify**를 연동해 원클릭 배포를 완료하고 생성된 주소를 아래에 검증 등록하세요.
+                                </p>
+                            </div>
+
+                            <div class="bg-brand-goodDim/25 text-brand-good border border-brand-good/20 p-4 rounded-xl text-xs leading-relaxed space-y-1">
+                                <p class="font-bold">💡 넷틀리파이(Netlify) 론칭 가이드</p>
+                                <ul class="list-disc list-inside space-y-0.5">
+                                    <li>스티치에서 제공하는 소스코드를 별도 코딩 없이 원스톱 호스팅해 줍니다.</li>
+                                    <li>배포 후 발급되는 <code class="font-mono bg-white px-1 py-0.5 rounded border border-brand-borderWarm">*.netlify.app</code> 링크로 누구나 모바일, 태블릿, PC에서 우리 사이트에 들어올 수 있게 됩니다.</li>
+                                </ul>
+                            </div>
+
+                            <div class="space-y-3 pt-2">
+                                <label class="block text-xs font-bold text-brand-charcoal uppercase tracking-wider">발급받은 Netlify 실시간 라이브 URL 입력</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="inp-netlify-url" placeholder="https://your-brand-name.netlify.app" class="flex-grow px-3 py-2.5 text-xs rounded-lg border border-brand-borderWarm focus:outline-none focus:border-brand-gold bg-white">
+                                    <button onclick="verifyNetlifyUrl()" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-gold text-white text-xs font-bold rounded-lg transition shadow-sm cursor-pointer">
+                                        링크 확인하기
+                                    </button>
+                                </div>
+
+                                <!-- 배포 피드백 -->
+                                <div id="deploy-feedback" class="p-4 rounded-xl border border-brand-borderWarm hidden transition-all text-xs">
+                                    <div class="flex items-center gap-3">
+                                        <div id="deploy-feedback-icon" class="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm shrink-0"></div>
+                                        <p id="deploy-feedback-text" class="font-semibold leading-relaxed"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- [STEP 5: 결과 저장] -->
+                        <div id="step-panel-5" class="hidden space-y-4">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-gold uppercase tracking-wider font-mono">STEP 5 / 5 · SAVE & EXPORT</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">오늘의 실습 결과물 저장</h2>
+                                <p class="text-xs text-brand-brownSoft mt-1 leading-relaxed">
+                                    오늘 론칭 활동을 수행한 모든 데이터가 마크다운 블록으로 준비되었습니다. 복사하여 팀 미션 로그 Day 4 영역에 백업하세요.
+                                </p>
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="bg-brand-bgWarm rounded-xl p-4 border border-brand-borderWarm relative">
+                                    <span class="absolute top-3.5 right-4 font-mono text-[9px] text-brand-brownSoft bg-white px-2 py-0.5 rounded-full border">MARKDOWN READY</span>
+                                    <label class="block font-mono text-[10px] text-brand-brownSoft uppercase tracking-wider mb-2 font-bold">팀 로그 자동 기입용 데이터</label>
+                                    <textarea id="compiled-data-box" readonly rows="7" class="w-full p-3 font-mono text-xs bg-white border border-brand-borderWarm rounded-lg text-brand-charcoal resize-none focus:outline-none focus:ring-0"></textarea>
+                                </div>
+
+                                <div class="flex items-center gap-3 pt-2">
+                                    <button onclick="copyCompletedKit()" class="flex-1 py-3.5 bg-brand-gold hover:bg-brand-goldDeep text-white font-bold text-xs rounded-xl transition duration-150 shadow flex items-center justify-center gap-2 cursor-pointer">
+                                        <i class="fa-regular fa-copy text-sm"></i> 오늘 결과물 전체 복사하기
+                                    </button>
+                                    <button onclick="downloadDay4AsText()" class="flex-1 py-3.5 bg-white hover:bg-brand-bgWarm text-brand-charcoal border border-brand-borderWarm font-bold text-xs rounded-xl transition shadow-sm flex items-center justify-center gap-2 cursor-pointer">
+                                        <i class="fa-solid fa-file-arrow-down text-sm"></i> 텍스트 다운로드
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 하단 내비게이션 바 -->
+                        <div class="flex items-center justify-between border-t border-brand-borderWarm pt-5 mt-5">
+                            <button id="btn-prev" onclick="moveStep(-1)" class="px-5 py-3 rounded-xl font-bold text-sm bg-white border border-brand-borderWarm text-brand-brownSoft hover:text-brand-charcoal transition disabled:opacity-40 disabled:cursor-not-allowed shadow-sm cursor-pointer">
+                                ← 이전
+                            </button>
+                            <span class="font-mono text-xs text-brand-brownSoft font-bold">
+                                STEP <span id="current-step-text" class="text-brand-gold font-bold">1</span> / 5
+                            </span>
+                            <button id="btn-next" onclick="moveStep(1)" class="px-5 py-3 bg-brand-gold hover:bg-brand-goldDeep text-white font-bold text-sm rounded-xl transition shadow-lg shadow-brand-gold/10 cursor-pointer">
+                                다음 →
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </div>
+
+    <!-- ==================== [글로벌 개념 팝업 모달 (텍스트 전용)] ==================== -->
+    <div id="global-modal" class="fixed inset-0 bg-brand-charcoal/45 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+        <div id="global-modal-content" class="bg-white border border-brand-borderWarm rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300 max-h-[80vh] flex flex-col">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeGlobalModal()" class="absolute top-4 right-4 text-brand-brownSoft hover:text-brand-charcoal transition text-lg h-8 w-8 rounded-full hover:bg-brand-bgWarm flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <!-- 모달 헤더 -->
+            <div class="mb-4">
+                <span id="modal-badge" class="text-xs font-mono font-bold px-2 py-0.5 rounded"></span>
+                <h3 id="modal-title" class="text-lg font-extrabold text-brand-charcoal mt-1.5"></h3>
+            </div>
+            
+            <!-- 모달 바디 (스크롤 지원) -->
+            <div class="overflow-y-auto pr-1 space-y-4 flex-grow">
+                <p id="modal-desc" class="text-sm text-brand-charcoal leading-relaxed w-full whitespace-pre-wrap font-sans"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== [글로벌 이미지 전용 대형 팝업 모달] ==================== -->
+    <div id="image-modal" class="fixed inset-0 bg-brand-charcoal/80 backdrop-blur-md z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+        <div id="image-modal-content" class="relative max-w-4xl w-full mx-4 flex flex-col items-center transform scale-95 transition-all duration-300">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeImageModal()" class="absolute -top-12 right-0 text-white hover:text-brand-gold transition text-2xl h-10 w-10 rounded-full bg-brand-charcoal/45 hover:bg-brand-charcoal flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <!-- 이미지 엘리먼트 -->
+            <img id="image-modal-src" src="" alt="확대 웹툰 이미지" class="rounded-2xl border border-white/10 max-h-[85vh] w-auto object-contain shadow-2xl">
+        </div>
+    </div>
+
+    <!-- ==================== [글로벌 알림 토스트 (Toast)] ==================== -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-gold/30 shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-brand-gold text-base"></i>
+        <span id="toast-message">클립보드에 복사되었습니다!</span>
+    </div>
+
+    <!-- ==================== [INTERACTIVE CONTROL SCRIPT] ==================== -->
+    <script>
+        // 전역 상태 통합 관리 객체
+        const state = {
+            activeMainTab: 1,
+            activeGuideTab: 1,
+            
+            // 실습 1 (스티치 빌더) 상태
+            currentStep: 1,
+            isQuizCleared: false,
+            isDeployCleared: false,
+            teamName: '',
+            inputs: {
+                brandName: '',
+                slogan: '',
+                color: '',
+                target: '',
+                benefit: '',
+                cta: ''
+            },
+            netlifyUrl: '',
+            quizItems: [
+                { id: "cta", title: "5. Call to Action (CTA)", desc: "마지막 구매/도입 문의 등 핵심 행동 촉구 유도", order: 5 },
+                { id: "hero", title: "1. Hero Section", desc: "첫인상을 결정하는 메인 헤드라인 & 시각적 대표 이미지", order: 1 },
+                { id: "problem", title: "2. Problem Definition", desc: "사용자가 가진 뚜렷한 고통과 직면한 불편(Pain Point) 공감", order: 2 },
+                { id: "solution", title: "3. Solution Showcase", desc: "우리 상품이 어떻게 그 불편함을 완벽하게 해소하고 해결해 주는지 제안", order: 3 },
+                { id: "social", title: "4. Social Proof & Reviews", desc: "실제 리뷰, 수치, 신뢰 데이터를 기반으로 안심하고 쓰도록 증명", order: 4 },
+                { id: "footer", title: "6. Footer & Info", desc: "사업자 정보, 저작권, 관련 규정 및 추가 참고 링크 배치", order: 6 }
+            ]
+        };
+
+        // 페이지 로딩 시 초기 바인딩
+        window.addEventListener('DOMContentLoaded', () => {
+            // 로컬 스토리지 복원
+            const savedTeam = localStorage.getItem('day4_team_name');
+            if (savedTeam) {
+                document.getElementById('teamName').value = savedTeam;
+                state.teamName = savedTeam;
+            }
+
+            shuffleQuizItems();
+            renderQuiz();
+            assemblePrompt();
+            goToStep(1);
+
+            // 글로벌 모달 클릭 해제 바인딩
+            document.getElementById('global-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeGlobalModal();
+            });
+            document.getElementById('image-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeImageModal();
+            });
+        });
+
+        // 팀명 저장
+        function saveTeamName(val) {
+            localStorage.setItem('day4_team_name', val);
+            state.teamName = val;
+            assemblePrompt();
+            compileFinalData();
+        }
+
+        // 퀴즈 셔플
+        function shuffleQuizItems() {
+            state.quizItems.sort(() => Math.random() - 0.5);
+        }
+
+        // 퀴즈 렌더링
+        function renderQuiz() {
+            const container = document.getElementById('quiz-list');
+            container.innerHTML = '';
+
+            state.quizItems.forEach((item, index) => {
+                const isFirst = index === 0;
+                const isLast = index === state.quizItems.length - 1;
+
+                container.innerHTML += `
+                    <div class="layout-item flex items-center justify-between border border-brand-borderWarm rounded-xl p-4 bg-white hover:border-brand-gold transition-all shadow-sm">
+                        <div class="pr-3 text-xs">
+                            <span class="font-space text-[10px] font-bold text-brand-goldDeep bg-brand-goldDim px-2 py-0.5 rounded-full mr-1.5">BLOCK</span>
+                            <span class="font-mono font-bold text-brand-charcoal">${item.title}</span>
+                            <p class="text-[11px] text-brand-brownSoft mt-1 leading-normal">${item.desc}</p>
+                        </div>
+                        <div class="flex flex-col gap-1 shrink-0">
+                            <button onclick="moveQuizItem(${index}, -1)" ${isFirst ? 'disabled class="opacity-25 cursor-not-allowed"' : 'class="p-1 hover:bg-brand-bgWarm rounded transition cursor-pointer"'} title="위로 이동">
+                                <svg class="w-4 h-4 text-brand-brownSoft" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                            </button>
+                            <button onclick="moveQuizItem(${index}, 1)" ${isLast ? 'disabled class="opacity-25 cursor-not-allowed"' : 'class="p-1 hover:bg-brand-bgWarm rounded transition cursor-pointer"'} title="아래로 이동">
+                                <svg class="w-4 h-4 text-brand-brownSoft" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function moveQuizItem(idx, dir) {
+            const targetIdx = idx + dir;
+            if (targetIdx < 0 || targetIdx >= state.quizItems.length) return;
+
+            // 스왑
+            const temp = state.quizItems[idx];
+            state.quizItems[idx] = state.quizItems[targetIdx];
+            state.quizItems[targetIdx] = temp;
+
+            renderQuiz();
+            compileFinalData();
+        }
+
+        // 퀴즈 결과 검증
+        function checkQuizResult() {
+            const feedback = document.getElementById('quiz-feedback');
+            const feedbackText = document.getElementById('quiz-feedback-text');
+            const feedbackIcon = document.getElementById('quiz-feedback-icon');
+
+            let correct = true;
+            for (let i = 0; i < state.quizItems.length; i++) {
+                if (state.quizItems[i].order !== i + 1) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            feedback.classList.remove('hidden');
+            if (correct) {
+                state.isQuizCleared = true;
+                feedback.className = "mt-4 p-4 rounded-xl border border-brand-good bg-brand-goodDim/25 text-brand-good";
+                feedbackIcon.innerHTML = "✓";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-brand-good text-white flex items-center justify-center font-bold text-xs shrink-0";
+                feedbackText.innerText = "정답입니다! 사용자가 접속해 이탈을 방지하고 순차적으로 설득하여 행동(CTA)을 유도하는 정석적인 마케팅 빌드업 구조입니다. 다음 단계로 넘어가세요.";
+            } else {
+                state.isQuizCleared = false;
+                feedback.className = "mt-4 p-4 rounded-xl border border-brand-bad bg-brand-badDim/40 text-brand-bad";
+                feedbackIcon.innerHTML = "✕";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-brand-bad text-white flex items-center justify-center font-bold text-xs shrink-0";
+                feedbackText.innerText = "블록 정렬 순서가 맞지 않습니다. 고객이 페이지에 머무르게 하려면 첫 화면에 가치(Hero)를 보여주고, 공감대 형성(Problem) ➔ 대안 제시(Solution) ➔ 안심 보증(Reviews) 순서가 적당합니다. 다시 시도해 보세요!";
+            }
+            compileFinalData();
+        }
+
+        // 프롬프트 조립
+        function assemblePrompt() {
+            state.inputs.brandName = document.getElementById('inp-brand-name').value || "새벽끼니";
+            state.inputs.slogan = document.getElementById('inp-slogan').value || "시험기간 새벽 2시, 배고픈 당신을 달래줄 든든한 90초 야식";
+            state.inputs.color = document.getElementById('inp-color').value || "차분한 밤의 다크 블루(#1E293B)와 따뜻한 전구색 옐로우";
+            state.inputs.target = document.getElementById('inp-target').value || "새벽까지 시험공부나 연구를 진행하는 자취 대학생 및 연구원";
+            state.inputs.benefit = document.getElementById('inp-benefit').value || "1인분 조리 단 90초, 대학교 건물 자판기에서 즉석 가열되어 나오는 든든한 야식 키트 서비스";
+            state.inputs.cta = document.getElementById('inp-cta').value || "90초 야식 50% 할인 쿠폰 받기 ➔";
+
+            // 스티치용 웹 프롬프트
+            const stitchPromptText = `구글 스티치(Stitch)에서 작동할 고효율 랜딩 페이지 구조 생성을 요청합니다:
+
+[브랜드명]: ${state.inputs.brandName}
+[서비스/제품 정의]: ${state.inputs.slogan}
+[설계 분위기 및 지배 색상]: ${state.inputs.color}
+[공략 대상 고객 (Target)]: ${state.inputs.target}
+[핵심 가치 제안 (Solution)]: ${state.inputs.benefit}
+[메인 목표 행동 유도 (CTA 버튼)]: ${state.inputs.cta}
+
+[필수 구조 구성 지시]:
+1. Hero Section: "${state.inputs.brandName}" 브랜드 로고와 대담하고 시각적인 슬로건 "${state.inputs.slogan}"이 강조되게 해주세요.
+2. Problem: "${state.inputs.target}" 고객이 일상에서 가장 느끼는 주요 문제와 스트레스 공감대를 다뤄주세요.
+3. Solution: "${state.inputs.benefit}"를 해결책으로 자연스럽게 소개하며, 3단 레이아웃을 통해 세부 이점을 시각적으로 분할해 주세요.
+4. Social Proof: 신뢰성을 보장하는 만족도 높은 3가지 인용구 리뷰를 삽입해주세요.
+5. CTA: 눈에 띄는 색상의 보더라인/버튼 형태로 "${state.inputs.cta}" 앵커를 추가하고 클릭 시 원활히 링크 타겟팅 되도록 배포 환경을 고려해 조립해 주세요.`;
+
+            document.getElementById('stitch-prompt-preview').innerText = stitchPromptText;
+
+            // 제미나이 3D 광고 이미지 프롬프트
+            const imgPromptText = `A professional, hyper-realistic commercial product photograph of "${state.inputs.brandName}" food container. 
+A warm, steaming food cup or packaging kit with delicious details visible. The label on the container clearly reads "${state.inputs.brandName}" in elegant modern Korean typography.
+Set against a cozy dark background featuring tones of ${state.inputs.color}. Soft steam rising elegantly from the warm food container.
+Placed on a wooden desk next to open books, notes, and a warm glowing lamp in a quiet university library study room at late night, capturing a comforting, cozy, and highly emotional atmosphere.
+Hyper-detailed food photography, professional food styling, warm color grading, cinematic lighting, 8k resolution, depth of field.`;
+
+            document.getElementById('image-prompt-preview').innerText = imgPromptText;
+
+            // 시뮬레이터 비주얼 변경 연동
+            document.getElementById('sim-logo').innerText = state.inputs.brandName.toUpperCase() + " LOGO";
+            document.getElementById('sim-headline').innerText = state.inputs.slogan;
+            document.getElementById('sim-benefit').innerText = state.inputs.benefit;
+            document.getElementById('sim-cta').innerText = state.inputs.cta;
+            document.getElementById('sim-footer-brand').innerText = state.inputs.brandName;
+
+            compileFinalData();
+        }
+
+        // 개별 프롬프트 복사
+        function copyPromptToClipboard(elementId, labelName) {
+            const txt = document.getElementById(elementId).innerText;
+            const temp = document.createElement("textarea");
+            temp.value = txt;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+
+            showToast(`${labelName}가 복사되었습니다!`);
+        }
+
+        // 가상 이미지 업로드
+        function simulateImageUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('sim-image').src = e.target.result;
+                    const chatLog = document.getElementById('sim-chat-log');
+                    chatLog.innerHTML += `
+                        <div class="text-brand-good font-bold mt-2">✨ 이미지 업로드 완료:</div>
+                        <div>제미나이에서 생성된 고유 제품 이미지가 가상 시뮬레이터에 성공적으로 연동되었습니다!</div>
+                    `;
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 시뮬레이터 칩 클릭 연동 함수
+        function clickSuggestCmd(cmdText) {
+            const input = document.getElementById('sim-user-input');
+            input.value = cmdText;
+            executeSimCommand();
+        }
+
+        // 시뮬레이터 명령 처리
+        function handleSimKeyPress(e) {
+            if (e.key === 'Enter') {
+                executeSimCommand();
+            }
+        }
+
+        function executeSimCommand() {
+            const input = document.getElementById('sim-user-input');
+            const cmd = input.value.trim();
+            if (!cmd) return;
+
+            const chatLog = document.getElementById('sim-chat-log');
+            const webFrame = document.getElementById('sim-webframe');
+
+            chatLog.innerHTML += `<div class="text-brand-goldDeep font-bold mt-2">👤 사용자:</div><div>"${cmd}"</div>`;
+            input.value = '';
+
+            chatLog.innerHTML += `<div class="text-brand-charcoal font-bold mt-1">🤖 Stitch AI (조율 중...):</div><div id="sim-typing" class="italic text-brand-brownSoft/60 font-semibold animate-pulse">명령을 처리하고 있습니다. 잠시만 기다려주세요...</div>`;
+            chatLog.scrollTop = chatLog.scrollHeight;
+
+            setTimeout(() => {
+                const typing = document.getElementById('sim-typing');
+                if (typing) typing.remove();
+
+                let resp = "";
+                if (cmd.includes("다크") || cmd.includes("dark") || cmd.includes("어둡게")) {
+                    webFrame.className = "lg:col-span-7 bg-[#1E293B] border border-gray-700 rounded-xl overflow-hidden shadow-inner flex flex-col justify-between min-h-[360px] transition-all duration-500 text-white p-0";
+                    document.getElementById('sim-headline').className = "text-sm md:text-base font-bold tracking-tight text-white transition-all";
+                    document.getElementById('sim-benefit').className = "text-[11px] text-gray-300 max-w-sm transition-all leading-normal";
+                    document.getElementById('sim-cta').className = "px-3.5 py-2 bg-brand-gold text-white text-[11px] font-bold rounded-lg tracking-wide hover:opacity-90 transition";
+                    resp = "요청대로 전반적인 랜딩 페이지 분위기를 야간 독서실 분위기의 차분한 다크 톤(#1E293B)으로 전면 조정했습니다.";
+                } else if (cmd.includes("오렌지") || cmd.includes("색상") || cmd.includes("orange")) {
+                    document.getElementById('sim-badge').className = "px-2 py-0.5 bg-orange-100 text-orange-600 text-[9px] font-bold rounded-full border border-orange-400";
+                    document.getElementById('sim-cta').className = "px-3.5 py-2 bg-orange-500 text-white text-[11px] font-bold rounded-lg tracking-wide hover:bg-orange-600 transition";
+                    resp = "브랜드 정체성을 강조하기 위해, 방문자의 시선이 머무는 핵심 배지와 최종 클릭 버튼(CTA)의 색상을 활기찬 오렌지 포인트 컬러로 통일하여 매칭 완료했습니다!";
+                } else if (cmd.includes("리뷰") || cmd.includes("후기")) {
+                    document.getElementById('sim-benefit').innerHTML = "⭐⭐⭐⭐⭐<br>\"밤늦게 자판기에서 90초 만에 나오는 든든한 야식이 생겨 삶의 질이 수직 상승했습니다!\"";
+                    resp = "신뢰 요소 확보를 위해 대시보드 메인 중앙에 실제 고객의 별점 5점 리뷰 텍스트를 배치했습니다.";
+                } else if (cmd.includes("사진") || cmd.includes("이미지") || cmd.includes("교체")) {
+                    document.getElementById('sim-image').src = "https://placehold.co/400x200/FFA500/FFFFFF?text=Steaming+Comfort+Food";
+                    resp = "제품 이미지를 모락모락 김이 피어오르는 차분한 야식 컵밥 가상 이미지 카드로 업데이트 적용시켰습니다.";
+                } else if (cmd.includes("CTA") || cmd.includes("버튼") || cmd.includes("문구") || cmd.includes("강화")) {
+                    const ctaCopy = state.inputs.cta || "90초 야식 50% 할인 쿠폰 받기 ➔";
+                    document.getElementById('sim-cta').innerText = ctaCopy;
+                    resp = `행동 유도 버튼 문구를 타겟 고객의 가치를 저격하는 구체적인 혜택 문구인 [ ${ctaCopy} ] 로 수정 매핑했습니다.`;
+                } else {
+                    resp = `요청하신 지시 사항을 명확히 처리하지 못했습니다. 스티치 어시스턴트의 가상 검증을 테스트하려면, 아래에 제공된 5가지 '추천 AI 지시어' 단추(다크 모드, 오렌지 매칭 등)를 클릭해 보세요!`;
+                }
+
+                chatLog.innerHTML += `<div class="text-brand-charcoal font-bold mt-1">🤖 Stitch AI:</div><div>"${resp}"</div>`;
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }, 1200);
+        }
+
+        // Netlify URL verification
+        function verifyNetlifyUrl() {
+            const urlInput = document.getElementById('inp-netlify-url').value.trim();
+            const feedback = document.getElementById('deploy-feedback');
+            const feedbackText = document.getElementById('deploy-feedback-text');
+            const feedbackIcon = document.getElementById('deploy-feedback-icon');
+
+            if (!urlInput) {
+                feedback.classList.remove('hidden');
+                feedback.className = "p-4 rounded-xl border border-brand-bad bg-brand-badDim/40 text-brand-bad text-xs";
+                feedbackIcon.innerHTML = "✕";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-brand-bad text-white flex items-center justify-center font-bold text-xs shrink-0";
+                feedbackText.innerText = "배포된 Netlify 주소를 올바르게 채워주세요.";
+                state.isDeployCleared = false;
+                return;
+            }
+
+            const isUrl = urlInput.startsWith("http://") || urlInput.startsWith("https://");
+            const isNetlify = urlInput.includes("netlify.app") || urlInput.includes("stitch.google");
+
+            feedback.classList.remove('hidden');
+            if (isUrl && isNetlify) {
+                state.netlifyUrl = urlInput;
+                state.isDeployCleared = true;
+                feedback.className = "p-4 rounded-xl border border-brand-good bg-brand-goodDim/25 text-brand-good text-xs shadow-sm";
+                feedbackIcon.innerHTML = "✓";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-brand-good text-white flex items-center justify-center font-bold text-sm shrink-0";
+                feedbackText.innerHTML = `멋집니다! 실시간 라이브 주소 형식이 올바르게 승인되었습니다. 이제 전 세계에 여러분의 브랜드 채널이 열렸습니다.<br><a href="${urlInput}" target="_blank" class="underline font-bold">배포 완료된 사이트 새 창으로 열기 ➔</a>`;
+            } else if (isUrl) {
+                state.netlifyUrl = urlInput;
+                state.isDeployCleared = true;
+                feedback.className = "p-4 rounded-xl border border-yellow-300 bg-yellow-50 text-yellow-800 text-xs shadow-sm";
+                feedbackIcon.innerHTML = "⚠";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-yellow-500 text-white flex items-center justify-center font-bold text-sm shrink-0";
+                feedbackText.innerText = "실시간 도메인 형식이 확인되었습니다. Netlify 고유 도메인 혹은 개별 도메인이 맞는지 정상 작동 여부를 브라우저 탭에서 한 번 더 체크해주세요.";
+            } else {
+                state.isDeployCleared = false;
+                feedback.className = "p-4 rounded-xl border border-brand-bad bg-brand-badDim/40 text-brand-bad text-xs shadow-sm";
+                feedbackIcon.innerHTML = "✕";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-brand-bad text-white flex items-center justify-center font-bold text-xs shrink-0";
+                feedbackText.innerText = "올바른 URL 형식(https://...)으로 작성해 주세요. 넷틀리파이에서 발급된 원본 주소를 복사-붙여넣기 하시는 것을 강력 추천합니다.";
+            }
+            compileFinalData();
+        }
+
+        // Step Management Navigation logic
+        function moveStep(direction) {
+            let nextStep = state.currentStep + direction;
+            if (nextStep >= 1 && nextStep <= 5) {
+                goToStep(nextStep);
+            }
+        }
+
+        function goToStep(stepNum) {
+            // Hide all panels
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`step-panel-${i}`).classList.add('hidden');
+                
+                // reset rail state indicator styling
+                const badge = document.getElementById(`p-badge-${i}`);
+                if (i < stepNum) {
+                    badge.className = "cursor-pointer px-3 py-2 rounded-full bg-brand-goodDim text-brand-good border border-brand-good/20 font-semibold text-xs md:text-sm";
+                } else if (i === stepNum) {
+                    badge.className = "cursor-pointer px-3 py-2 rounded-full bg-brand-goldDim text-brand-gold border border-brand-gold/20 font-bold text-xs md:text-sm shadow-sm";
+                } else {
+                    badge.className = "cursor-pointer px-3 py-2 rounded-full text-brand-brownSoft text-xs md:text-sm";
+                }
+            }
+
+            // Show active panel
+            document.getElementById(`step-panel-${stepNum}`).classList.remove('hidden');
+            state.currentStep = stepNum;
+
+            // Update footer controls text
+            document.getElementById('current-step-text').innerText = state.currentStep;
+            
+            // Disable buttons if at boundaries
+            document.getElementById('btn-prev').disabled = (state.currentStep === 1);
+            document.getElementById('btn-prev').style.opacity = (state.currentStep === 1) ? "0.4" : "1";
+            document.getElementById('btn-next').innerText = (state.currentStep === 5) ? "실습 완료 🎉" : "다음 단계 →";
+
+            // 좌측 학습 가이드 하이라이트 동기화
+            const guideKeys = ['quiz', 'builder', 'simulator'];
+            guideKeys.forEach((key, idx) => {
+                const guideItem = document.getElementById(`guide-item-${key}`);
+                if (idx + 1 === stepNum || (key === 'simulator' && stepNum >= 3)) {
+                    guideItem.className = "p-4 rounded-xl bg-brand-goldDim/60 border border-brand-gold/20 transition shadow-inner";
+                } else {
+                    guideItem.className = "p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition";
+                }
+            });
+
+            if (state.currentStep === 5) {
+                compileFinalData();
+            }
+        }
+
+        // Final Output Markdown Assembler
+        function compileFinalData() {
+            const team = document.getElementById('teamName').value || "[미입력 팀]";
+            const brand = state.inputs.brandName || "[미입력]";
+            const slogan = state.inputs.slogan || "[미입력]";
+            const target = state.inputs.target || "[미입력]";
+            const color = state.inputs.color || "[미입력]";
+            const benefit = state.inputs.benefit || "[미입력]";
+            const cta = state.inputs.cta || "[미입력]";
+            const netlifyUrl = document.getElementById('inp-netlify-url').value || "[미등록 배포 주소]";
+
+            const layoutOrderStr = state.quizItems.map((item, idx) => `${idx + 1}. ${item.title}`).join('\n');
+            const layoutStatus = state.isQuizCleared ? "통과 (정석 설계 매칭 완료)" : "확인 필요 (사용자 커스텀 배치 구조)";
+
+            const outputData = `### 🌐 DAY 4 미션 결과 리포트 (팀: ${team})
+
+#### 1. 랜딩 페이지 레이아웃 매칭 검증
+- **레이아웃 매칭 상태**: ${layoutStatus}
+- **우리가 수립한 설계 순서**:
+${layoutOrderStr}
+
+#### 2. 브랜드 핵심 프롬프트 빌딩 에셋 (Stitch & Gemini Image)
+- **대상 브랜드**: ${brand} (${slogan})
+- **주요 타겟 고객층**: ${target}
+- **조율된 테마 색상**: ${color}
+- **핵심 고객 제공 혜택**: ${benefit}
+- **설정된 액션 촉구(CTA) 버튼**: [ ${cta} ]
+
+- **제미나이 이미지 생성 전용 프롬프트**:
+\`\`\`text
+A professional, hyper-realistic commercial product photograph of "${brand}" food container. Warm, steaming food cup with delicious details visible. The label on the container clearly reads "${brand}" in elegant modern Korean typography. Set against a cozy dark background featuring tones of ${color}. Soft steam rising elegantly from the warm food container. Placed on a wooden desk next to open books, notes, and a warm glowing lamp in a quiet university library study room at late night, capturing a comforting, cozy, and highly emotional atmosphere. Hyper-detailed food photography, professional food styling, warm color grading, cinematic lighting, 8k resolution, depth of field.
+\`\`\`
+
+#### 3. 실시간 글로벌 웹 배포 정보 (Netlify)
+- **실시간 도메인 연결 주소**: ${netlifyUrl}
+- **웹 빌더 플랫폼 가이드**: Google Stitch를 사용해 구조 설계 및 컴포넌트 디테일 편집을 성공적으로 완수하고 Netlify 호스팅 인프라와 양방향 커넥션을 승인 완료함.`;
+
+            document.getElementById('compiled-data-box').value = outputData;
+        }
+
+        function copyCompletedKit() {
+            const copyBox = document.getElementById('compiled-data-box');
+            copyBox.select();
+            try {
+                document.execCommand('copy');
+                showToast("팀 로그 연동용 마크다운 데이터가 완벽하게 복사되었습니다!");
+            } catch (e) {
+                showToast("복사 실패. 브라우저 설정을 확인하세요.");
+            }
+        }
+
+        function downloadDay4AsText() {
+            const txt = document.getElementById('compiled-data-box').value;
+            const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `day4_deploy_kit.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("텍스트 다운로드가 완료되었습니다.");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('hidden');
+            toast.className = "fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-gold/30 shadow-xl flex items-center gap-2 transform translate-y-0 opacity-100 transition duration-300 z-50 animate-bounce";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-gold/30 shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50";
+            }, 3000);
+        }
+
+        // ==================== [글로벌 이중 모달 시스템] ====================
+        function openGlobalModal(badgeText, badgeBgClass, title, desc) {
+            const modal = document.getElementById('global-modal');
+            const content = document.getElementById('global-modal-content');
+            const badge = document.getElementById('modal-badge');
+            const mTitle = document.getElementById('modal-title');
+            const mDesc = document.getElementById('modal-desc');
+            
+            badge.textContent = badgeText;
+            badge.className = `text-xs font-mono font-bold px-2 py-0.5 rounded ${badgeBgClass}`;
+            mTitle.textContent = title;
+            mDesc.textContent = desc;
+            
+            modal.classList.remove('hidden');
+            modal.offsetHeight; 
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeGlobalModal() {
+            const modal = document.getElementById('global-modal');
+            const content = document.getElementById('global-modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function openConceptModal(idx) {
+            const concepts = [
+                {
+                    badgeText: "개념 1",
+                    badgeBgClass: "bg-brand-gold/10 text-brand-gold",
+                    title: "랜딩 페이지 (Landing Page)",
+                    desc: "광고나 링크를 클릭한 후 도달하는 비즈니스용 단일 구조의 마케팅 전용 웹사이트입니다.\n\n- 목표: 고객이 불필요한 서핑 링크로 빠지지 않고, 오직 '제품 상세 확인' 및 '최종 가입/구매'라는 하나의 타겟 행동만 성취하게 설계합니다.\n- 구조: 문제 공감부터 신뢰도 보증(Review), 그리고 명확한 CTA 버튼 배치로 흐름을 이어가야 전환율이 상승합니다."
+                },
+                {
+                    badgeText: "개념 2",
+                    badgeBgClass: "bg-amber-500/10 text-amber-600",
+                    title: "CTA (Call To Action - 행동 유도)",
+                    desc: "방문자에게 망설임 없이 행동을 유도하게 배치하는 마케팅 클릭 요소입니다.\n\n- 설계 팁: 단순 '확인'이나 '제출' 같은 수동적 명사 대신, 고객이 얻을 혜택을 명시하는 구체적인 동사 표현(예: '90초 즉석 야식 50% 할인 쿠폰 받기 ➔')을 장착하여 매력적인 선택지를 제공합니다."
+                },
+                {
+                    badgeText: "개념 3",
+                    badgeBgClass: "bg-emerald-500/10 text-emerald-600",
+                    title: "Gemini Gems (젬스)",
+                    desc: "일차별로 변화하는 우리 브랜드 가이드라인과 톤앤매너 규칙(Instruction)을 AI 백그라운드에 미리 묶어둔 기능입니다.\n\n- 장점: 매번 복잡한 조건이나 기획서 텍스트를 새로 주입해 줄 필요 없이, 언제 말을 걸어도 우리 브랜드의 매니저 자격을 상실하지 않고 그에 부합한 웹 카피와 에셋을 출력해 줍니다."
+                }
+            ];
+            const data = concepts[idx];
+            openGlobalModal(data.badgeText, data.badgeBgClass, data.title, data.desc);
+        }
+
+        function openImageModal(imgSrc) {
+            const modal = document.getElementById('image-modal');
+            const content = document.getElementById('image-modal-content');
+            const modalImg = document.getElementById('image-modal-src');
+            modalImg.src = imgSrc;
+            
+            modal.classList.remove('hidden');
+            modal.offsetHeight;
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            const content = document.getElementById('image-modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function toggleWebtoon(id) {
+            const el = document.getElementById(id);
+            const btnText = document.getElementById(`${id}-btn-text`);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                btnText.textContent = "💡 웹툰 가이드 숨기기";
+            } else {
+                el.classList.add('hidden');
+                btnText.textContent = "💡 4컷 웹툰 가이드 보기";
+            }
+        }
+
+        // ==================== [가이드 접기/펼치기 토글] ====================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar-panel');
+            const workspace = document.getElementById('workspace-panel');
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                workspace.className = "lg:col-span-7 flex flex-col gap-4";
+                toggleBtn.innerHTML = '<i class="fa-solid fa-columns text-xs"></i> 가이드 접기';
+                toggleBtn.className = "px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-gold border border-brand-borderWarm bg-white hover:bg-brand-goldDim/30 transition-all duration-200 flex items-center gap-2 shadow-sm cursor-pointer";
+            } else {
+                sidebar.classList.add('hidden');
+                workspace.className = "lg:col-span-12 flex flex-col gap-4 transition-all duration-300";
+                toggleBtn.innerHTML = '<i class="fa-solid fa-columns text-xs"></i> 가이드 펼치기';
+                toggleBtn.className = "px-4 py-2 text-sm font-bold rounded-lg text-brand-gold border border-brand-gold/20 bg-brand-goldDim hover:bg-brand-gold hover:text-white transition-all duration-200 flex items-center gap-2 shadow-sm cursor-pointer";
+            }
+        }
+
+        // ==================== [서브 탭 전환] ====================
+        function switchGuideTab(tabIdx) {
+            state.activeGuideTab = tabIdx;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`guide-tab-btn-${i}`);
+                const content = document.getElementById(`guide-content-${i}`);
+                if (i === tabIdx) {
+                    btn.className = "flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition bg-brand-gold text-white shadow-sm";
+                    content.classList.remove('hidden');
+                } else {
+                    btn.className = "flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-gold";
+                    content.classList.add('hidden');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

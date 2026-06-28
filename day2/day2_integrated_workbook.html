@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAY 2 시장조사 & 시각화 통합 워크북 | AK LABS Mission Control</title>
+    <!-- Google Fonts & Tailwind CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Outfit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            green: '#6E8E4A', /* 톤다운된 세이지 올리브 그린 (눈 보호) */
+                            greenDeep: '#496A32',
+                            greenDim: '#E7ECE2', /* 부드러운 그린 틴트 */
+                            charcoal: '#253320', /* 깊은 가독성 다크 차콜 */
+                            brownSoft: '#5A6C56', /* 톤다운된 브라운 그린 */
+                            bgWarm: '#F1F3EE', /* 웜 세이지 그레이지 배경 (눈부심 방지) */
+                            borderWarm: '#E2E6DE', /* 더 부드러워진 연경계 */
+                            good: '#197B4E',
+                            goodDim: '#DCEFE3',
+                        }
+                    },
+                    boxShadow: {
+                        'premium': '0 8px 30px rgb(0 0 0 / 0.01), 0 1px 2px rgb(0 0 0 / 0.005)',
+                        'hover': '0 20px 40px -15px rgba(110, 142, 74, 0.08), 0 1px 10px rgba(0, 0, 0, 0.01)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 네이티브 스크롤바 최적화 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F3EE;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D2D8CD;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C0C8BA;
+        }
+
+        /* 세이지 그리드 격자 백그라운드 디자인 - 선을 더 연하게 톤다운 */
+        body {
+            background-color: #F1F3EE;
+            background-image: 
+                linear-gradient(rgba(226, 230, 222, 0.6) 1.5px, transparent 1.5px),
+                linear-gradient(90deg, rgba(226, 230, 222, 0.6) 1.5px, transparent 1.5px);
+            background-size: 32px 32px;
+        }
+
+        /* Bento Glassmorphism 패널 효과 - 더 차분한 아이보리 필터 */
+        .glass-panel {
+            background: rgba(250, 251, 249, 0.94);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        
+        .tab-transition {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="text-brand-charcoal min-h-screen flex flex-col font-sans antialiased p-3 md:p-6 pb-16">
+
+    <div class="max-w-[1300px] w-full mx-auto flex flex-col gap-5">
+        
+        <!-- ==================== [TOPBAR HEADER] ==================== -->
+        <header class="glass-panel rounded-2xl p-4 md:p-5 border border-brand-borderWarm shadow-premium flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-brand-green text-white p-2.5 rounded-xl shadow-md transform -rotate-3 font-extrabold text-sm tracking-wider font-mono">
+                    AK
+                </div>
+                <div>
+                    <span class="text-xs font-black text-brand-green uppercase tracking-wider block leading-none">Day 02 Mission Control</span>
+                    <h1 class="text-lg md:text-xl font-black text-brand-charcoal tracking-tight mt-1">시장조사 & 데이터 시각화 통합 워크북</h1>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2.5">
+                <!-- 가이드 접기/펼치기 토글 버튼 -->
+                <button id="sidebar-toggle-btn" onclick="toggleSidebar()" class="px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-green border border-brand-borderWarm bg-white hover:bg-brand-greenDim/30 transition-all duration-200 flex items-center gap-2 shadow-sm cursor-pointer focus:outline-none">
+                    <i class="fa-solid fa-columns text-xs"></i> 가이드 접기
+                </button>
+                <div class="px-3.5 py-1.5 rounded-full bg-brand-charcoal text-white font-mono text-xs font-bold tracking-wider">
+                    DAY 02 / 05
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================== [MAIN LAYOUT GRID] ==================== -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            
+            <!-- ==================== [LEFT PANEL: 학습 가이드 & 용어 & 도구] ==================== -->
+            <section id="sidebar-panel" class="lg:col-span-5 flex flex-col gap-4">
+                
+                <!-- 서브 탭 스위처 -->
+                <div class="glass-panel rounded-2xl p-1.5 border border-brand-borderWarm shadow-premium flex gap-1">
+                    <button onclick="switchGuideTab(1)" id="guide-tab-btn-1" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition bg-brand-green text-white shadow-sm">
+                        <i class="fa-solid fa-graduation-cap mr-1"></i> 학습 가이드
+                    </button>
+                    <button onclick="switchGuideTab(2)" id="guide-tab-btn-2" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-green">
+                        <i class="fa-solid fa-book mr-1"></i> 용어 사전
+                    </button>
+                    <button onclick="switchGuideTab(3)" id="guide-tab-btn-3" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-green">
+                        <i class="fa-solid fa-microchip mr-1"></i> AI 도구 정보
+                    </button>
+                </div>
+
+                <!-- 서브 탭 컨텐츠 박스 -->
+                <div class="glass-panel rounded-2xl p-5 md:p-6 border border-brand-borderWarm shadow-premium min-h-[520px]">
+                    
+                    <!-- [서브탭 1: 학습 가이드] -->
+                    <div id="guide-content-1" class="space-y-5">
+                        <div class="border-b border-brand-borderWarm pb-3">
+                            <span class="text-xs font-bold text-brand-green uppercase tracking-wider"><i class="fa-solid fa-map mr-1"></i> Market Research</span>
+                            <h2 class="text-xl font-bold text-brand-charcoal mt-1">📊 DAY 2 실습 가이드</h2>
+                            <p class="text-xs text-brand-brownSoft mt-1">시장조사 시작하기 & 인사이트 보고서 만들기</p>
+                        </div>
+
+                        <!-- 3줄 요약 - 폰트 상향 조정 -->
+                        <div class="p-4 rounded-xl bg-brand-greenDim/60 border border-brand-green/10 space-y-2">
+                            <h4 class="text-sm font-bold text-brand-greenDeep flex items-center gap-1.5">
+                                <i class="fa-solid fa-star"></i> 오늘 우리가 할 일 (3줄 요약)
+                            </h4>
+                            <ul class="text-sm text-brand-charcoal space-y-1.5 list-decimal pl-4 leading-relaxed font-semibold">
+                                <li>AI에게 우리 팀 상황(KSA)을 설명해 정교한 초안 맥락을 줍니다.</li>
+                                <li><b>NotebookLM</b>으로 신뢰할 만한 시장 데이터를 모으고 선별합니다.</li>
+                                <li>수치와 차트를 결합해 <b>2페이지 인사이트 보고서</b>를 완성합니다.</li>
+                            </ul>
+                        </div>
+
+                        <!-- 타임 테이블 및 연동 -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-bold text-brand-charcoal uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-regular fa-clock text-brand-green"></i> 실습 추천 일정표 & 연동 리스크
+                            </h4>
+                            <div class="grid grid-cols-4 gap-2 text-center text-xs font-bold">
+                                <div class="p-2 rounded-lg border border-brand-borderWarm bg-white">
+                                    <span class="block text-brand-green">KSA 세팅</span>
+                                    <span class="text-[10px] text-brand-brownSoft mt-0.5 block">5분 소요</span>
+                                </div>
+                                <div class="p-2 rounded-lg border border-brand-borderWarm bg-white">
+                                    <span class="block text-brand-green">자료 수집</span>
+                                    <span class="text-[10px] text-brand-brownSoft mt-0.5 block">25분 소요</span>
+                                </div>
+                                <div class="p-2 rounded-lg border border-brand-borderWarm bg-white">
+                                    <span class="block text-brand-green">보고서 채우기</span>
+                                    <span class="text-[10px] text-brand-brownSoft mt-0.5 block">20분 소요</span>
+                                </div>
+                                <div class="p-2 rounded-lg border border-brand-borderWarm bg-white">
+                                    <span class="block text-brand-green">차트 & 완료</span>
+                                    <span class="text-[10px] text-brand-brownSoft mt-0.5 block">10분 소요</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 단계별 주요 미션 체크 포인트 - 가독성 상향 -->
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-bold text-brand-charcoal uppercase tracking-wider"><i class="fa-solid fa-list-check text-brand-green"></i> 주요 과업 리스트</h4>
+                            <div class="space-y-2.5 text-sm text-brand-brownSoft leading-relaxed">
+                                <div id="guide-item-ksa" class="p-4 rounded-xl bg-brand-greenDim/60 border border-brand-green/20 transition">
+                                    <span class="font-bold text-brand-green text-sm block">STEP 2. KSA 상황 설명 단계</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">우리가 이미 아는 것(Knowledge) · 가용 도구/시간(Skill) · 목표 마감/형식(Situation)을 AI에 학습시켜 정교한 답변 유도 프롬프트를 복사합니다.</p>
+                                </div>
+                                <div id="guide-item-research" class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition">
+                                    <span class="font-bold text-brand-green text-sm block">STEP 3. NotebookLM 딥리서치 단계</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">무분별한 웹 검색 대신, NotebookLM에 신뢰자료를 넣고 ① 수집 ➔ ② 신뢰도 정리 ➔ ③ 대표 소스 선정의 3단계 리서치 프롬프트를 단계적으로 복사해 테스트합니다.</p>
+                                </div>
+                                <div id="guide-item-build" class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition">
+                                    <span class="font-bold text-brand-green text-sm block">STEP 4. 2페이지 보고서 작성 단계</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">정리한 핵심 숫자를 바탕으로 보고서의 제목(=결론), 리드 2문장, 인사이트, 해결책을 폼에 채워 구조화합니다. 구글시트 차트 템플릿도 동시에 활용하세요.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- [서브탭 2: 용어 사전] -->
+                    <div id="guide-content-2" class="space-y-5 hidden">
+                        <div class="border-b border-brand-borderWarm pb-4">
+                            <span class="text-xs font-bold text-brand-green uppercase tracking-wider"><i class="fa-solid fa-book mr-1"></i> Glossary</span>
+                            <h2 class="text-xl font-bold text-brand-charcoal mt-1">📖 오늘의 용어 미니사전</h2>
+                        </div>
+
+                        <div class="space-y-4">
+                            <!-- 개념 1 -->
+                            <div onclick="openConceptModal(0)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-green/45 hover:shadow-md transition duration-200">
+                                <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-brand-green/10 text-brand-green">개념 1</span> KSA 프롬프팅
+                                </h3>
+                                <p class="text-xs text-brand-brownSoft leading-normal">
+                                    AI에게 질문을 시작하기 전, 우리가 이미 아는 정보(<b>Knowledge</b>), 가용 가능한 도구와 자원(<b>Skill</b>), 현재의 구체적 제약 상황(<b>Situation</b>)을 전달하여 타겟형 솔루션을 도출하게 만드는 맥락 제시 기법입니다.
+                                </p>
+                                <!-- 웹툰 토글 버튼 및 이미지 영역 -->
+                                <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
+                                    <button onclick="event.stopPropagation(); toggleWebtoon('wt-ksa')" class="text-xs font-bold text-brand-green hover:text-brand-greenDeep flex items-center gap-1 transition focus:outline-none cursor-pointer">
+                                        <i class="fa-regular fa-image text-xs"></i> <span id="wt-ksa-btn-text">💡 4컷 웹툰 가이드 보기</span>
+                                    </button>
+                                    <div id="wt-ksa" class="hidden mt-3 rounded-lg overflow-hidden border border-brand-borderWarm shadow-sm">
+                                        <img src="../assets/webtoon_ksa.jpg" alt="KSA 프롬프팅 웹툰" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 개념 2 -->
+                            <div onclick="openConceptModal(1)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-green/45 hover:shadow-md transition duration-200">
+                                <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-violet-500/10 text-violet-600">개념 2</span> 딥리서치 (Deep Research)
+                                </h3>
+                                <p class="text-xs text-brand-brownSoft leading-normal">
+                                    한 차례의 검색에 그치지 않고, 다양한 1차/2차 원자료들을 모아 교차 검증하고 신뢰도 평가 점수를 부여한 뒤 최종적인 알짜 지식만 선별해 내는 다면적인 비즈니스 조사 기법입니다.
+                                </p>
+                                <!-- 웹툰 토글 버튼 및 이미지 영역 -->
+                                <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
+                                    <button onclick="event.stopPropagation(); toggleWebtoon('wt-research')" class="text-xs font-bold text-brand-green hover:text-brand-greenDeep flex items-center gap-1 transition focus:outline-none cursor-pointer">
+                                        <i class="fa-regular fa-image text-xs"></i> <span id="wt-research-btn-text">💡 4컷 웹툰 가이드 보기</span>
+                                    </button>
+                                    <div id="wt-research" class="hidden mt-3 rounded-lg overflow-hidden border border-brand-borderWarm shadow-sm">
+                                        <img src="../assets/webtoon_deep_research.jpg" alt="딥리서치 웹툰" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 개념 3 -->
+                            <div onclick="openConceptModal(2)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-green/45 hover:shadow-md transition duration-200">
+                                <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-emerald-500/10 text-emerald-600">개념 3</span> 두괄식 (제목 = 결론)
+                                </h3>
+                                <p class="text-xs text-brand-brownSoft leading-normal">
+                                    보고 대상자가 첫 문장 또는 제목만 읽고도 전체의 결과와 요점을 즉시 장악할 수 있게 핵심 문구와 핵심 숫자를 맨 앞에 먼저 배치하는 역피라미드 비즈니스 글쓰기 원칙입니다.
+                                </p>
+                                <!-- 웹툰 토글 버튼 및 이미지 영역 -->
+                                <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
+                                    <button onclick="event.stopPropagation(); toggleWebtoon('wt-conclusion')" class="text-xs font-bold text-brand-green hover:text-brand-greenDeep flex items-center gap-1 transition focus:outline-none cursor-pointer">
+                                        <i class="fa-regular fa-image text-xs"></i> <span id="wt-conclusion-btn-text">💡 4컷 웹툰 가이드 보기</span>
+                                    </button>
+                                    <div id="wt-conclusion" class="hidden mt-3 rounded-lg overflow-hidden border border-brand-borderWarm shadow-sm">
+                                        <img src="../assets/webtoon_conclusion_first.jpg" alt="두괄식 작성기 웹툰" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- [서브탭 3: AI 도구 정보] -->
+                    <div id="guide-content-3" class="space-y-5 hidden">
+                        <div class="border-b border-brand-borderWarm pb-4">
+                            <span class="text-xs font-bold text-brand-green uppercase tracking-wider"><i class="fa-solid fa-microchip mr-1"></i> AI Tools</span>
+                            <h2 class="text-xl font-bold text-brand-charcoal mt-1">🛠️ Google AI 도구 핵심 가이드</h2>
+                        </div>
+
+                        <div class="space-y-3.5 text-xs md:text-sm">
+                            <div class="p-3.5 rounded-xl bg-brand-bgWarm border border-brand-borderWarm flex gap-3">
+                                <i class="fa-solid fa-folder-open text-brand-green text-lg mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-black text-brand-charcoal text-sm">NotebookLM</h4>
+                                    <p class="text-brand-brownSoft mt-1 leading-relaxed text-xs">내가 직접 업로드한 커스텀 자료(기사 링크, PDF) 내부에서만 사실에 입각한 답변을 제공하여 가짜 뉴스나 환각 정보 발생을 구조적으로 차단합니다.</p>
+                                </div>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-brand-bgWarm border border-brand-borderWarm flex gap-3">
+                                <i class="fa-solid fa-robot text-violet-500 text-lg mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-black text-brand-charcoal text-sm">Gemini (제미나이)</h4>
+                                    <p class="text-brand-brownSoft mt-1 leading-relaxed text-xs">구글의 실시간 웹 검색 엔진 기능과 초거대 언어 처리를 결합해 최신의 원격 도큐먼트 분석 및 정량 수치 연산에 우수한 능력을 발휘합니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ==================== [RIGHT PANEL: 실습 워크페이스] ==================== -->
+            <section id="workspace-panel" class="lg:col-span-7 flex flex-col gap-4">
+                
+                <!-- 메인 실습 탭 스위처 -->
+                <div class="glass-panel rounded-2xl p-1.5 border border-brand-borderWarm shadow-premium flex gap-1">
+                    <button onclick="switchMainTab(1)" id="main-tab-btn-1" class="flex-1 py-3 text-sm md:text-base font-bold rounded-xl transition-all tab-transition bg-brand-green text-white shadow-sm">
+                        <i class="fa-solid fa-file-invoice-dollar mr-1"></i> 실습 1: 리포트 빌더 (KSA)
+                    </button>
+                    <button onclick="switchMainTab(2)" id="main-tab-btn-2" class="flex-1 py-3 text-sm md:text-base font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-green">
+                        <i class="fa-solid fa-images mr-1"></i> 실습 2: 시각화 마스터 (Canvas)
+                    </button>
+                </div>
+
+                <!-- ==================== [실습 1: 📊 리포트 빌더] ==================== -->
+                <div id="main-tool-1" class="space-y-6">
+                    
+                    <!-- 4단계 헤더 인디케이터 -->
+                    <div class="glass-panel rounded-2xl p-4 border border-brand-borderWarm shadow-sm">
+                        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                            <span class="text-sm font-bold text-brand-brownSoft uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-list-ol text-brand-green"></i> 보고서 설계 빌드 플로우</span>
+                            <div class="flex items-center gap-2 text-xs font-semibold">
+                                <span id="p-badge-0" onclick="goToReportStep(0)" class="cursor-pointer px-3.5 py-2 rounded-full bg-brand-green/10 text-brand-green border border-brand-green/20 font-bold text-xs md:text-sm">KSA</span>
+                                <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                                <span id="p-badge-1" onclick="goToReportStep(1)" class="cursor-pointer px-3.5 py-2 rounded-full text-brand-brownSoft hover:text-brand-green transition text-xs md:text-sm">RESEARCH</span>
+                                <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                                <span id="p-badge-2" onclick="goToReportStep(2)" class="cursor-pointer px-3.5 py-2 rounded-full text-brand-brownSoft hover:text-brand-green transition text-xs md:text-sm">BUILD</span>
+                                <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                                <span id="p-badge-3" onclick="goToReportStep(3)" class="cursor-pointer px-3.5 py-2 rounded-full text-brand-brownSoft hover:text-brand-green transition text-xs md:text-sm">LAUNCH</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 단계별 뷰 컨테이너 -->
+                    <div class="glass-panel rounded-2xl p-6 md:p-8 border border-brand-borderWarm min-h-[480px] flex flex-col justify-between">
+                        
+                        <!-- [1-0. KSA 입력 화면] -->
+                        <div id="report-view-0" class="space-y-6">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-green uppercase tracking-wider font-mono">STEP 1 / 4 · KSA INPUT</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">AI에게 우리 팀 상황(KSA) 알려주기</h2>
+                                <p class="text-sm text-brand-brownSoft mt-1 leading-relaxed">팀이 이미 조사한 내용(K)과 가용 도구(S), 마감일과 보고 형식(A)을 구조적으로 엮어 Gemini에 지시할 프롬프트를 완성합니다.</p>
+                            </div>
+                            
+                            <div class="space-y-4 text-sm">
+                                <div class="field">
+                                    <label class="block text-sm font-bold text-brand-charcoal mb-1">Knowledge - 우리가 이미 아는 것 (컨셉 시드)</label>
+                                    <textarea id="ksa-k" oninput="syncKsaPreview()" placeholder="예: 어제 정한 상품명은 '에코이츠'이며, 2030 1인 가구를 겨냥해 다회용기 배달 서비스를 설계하려 한다." class="w-full text-sm p-3 border border-brand-borderWarm rounded-xl bg-brand-bgWarm/45 focus:outline-none focus:border-brand-green transition duration-150 min-h-[60px]"></textarea>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="field">
+                                        <label class="block text-sm font-bold text-brand-charcoal mb-1">Skill - 가용 도구 및 리서치 시간</label>
+                                        <textarea id="ksa-s" oninput="syncKsaPreview()" placeholder="예: NotebookLM, Gemini. 오늘 리서치 시간은 2시간 가량 가용함." class="w-full text-sm p-3 border border-brand-borderWarm rounded-xl bg-brand-bgWarm/45 focus:outline-none focus:border-brand-green transition duration-150 min-h-[60px]"></textarea>
+                                    </div>
+                                    <div class="field">
+                                        <label class="block text-sm font-bold text-brand-charcoal mb-1">Situation - 현재 보고서 마감 및 포맷</label>
+                                        <textarea id="ksa-a" oninput="syncKsaPreview()" placeholder="예: 오늘 6시까지 2페이지 분량의 기획용 인사이트 보고서 초안 완성해야 함." class="w-full text-sm p-3 border border-brand-borderWarm rounded-xl bg-brand-bgWarm/45 focus:outline-none focus:border-brand-green transition duration-150 min-h-[60px]"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-2 pt-2">
+                                <span class="text-sm font-bold text-brand-charcoal flex items-center gap-1.5"><i class="fa-solid fa-terminal text-brand-green"></i> 실시간 KSA 분석 프롬프트 프리뷰</span>
+                                <div class="relative">
+                                    <div id="ksa-prompt-preview" class="p-4 rounded-xl bg-brand-charcoal text-brand-greenDim text-sm font-mono whitespace-pre-wrap leading-relaxed min-h-[100px]"></div>
+                                    <button id="copy-ksa-btn" onclick="copyToClipboard('ksa-prompt-preview', 'copy-ksa-btn')" class="absolute top-3.5 right-3.5 px-4 py-2 bg-brand-green hover:bg-brand-greenDeep text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer">
+                                        <i class="fa-regular fa-copy text-xs"></i> 복사하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- [1-1. RESEARCH 화면 (NotebookLM)] -->
+                        <div id="report-view-1" class="hidden space-y-6">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-green uppercase tracking-wider font-mono">STEP 2 / 4 · DEEP RESEARCH</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">NotebookLM을 활용한 딥리서치 단계</h2>
+                                <p class="text-sm text-brand-brownSoft mt-1 leading-relaxed">자료를 모으고 신뢰도를 거쳐 주제별 1등 대표 소스를 선정하는 3단계 전용 지시어 패키지입니다.</p>
+                            </div>
+
+                            <!-- 3단계 체크리스트 -->
+                            <div class="space-y-2">
+                                <span class="text-sm font-bold text-brand-charcoal"><i class="fa-solid fa-list-check text-brand-green mr-1"></i> 딥리서치 이행 체크리스트</span>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <label onclick="toggleCheckItem(0)" id="chk-box-0" class="cursor-pointer p-4 rounded-xl border border-brand-borderWarm bg-white flex items-start gap-2.5 hover:border-brand-green transition duration-200">
+                                        <input type="checkbox" id="chk-input-0" class="mt-1 accent-brand-green" pointer-events-none>
+                                        <div class="leading-tight">
+                                            <span class="text-sm font-bold block text-brand-charcoal">① 광범위 수집 완료</span>
+                                            <span class="text-xs text-brand-brownSoft block mt-0.5">소스를 5개 이상 채워 넣음</span>
+                                        </div>
+                                    </label>
+                                    <label onclick="toggleCheckItem(1)" id="chk-box-1" class="cursor-pointer p-4 rounded-xl border border-brand-borderWarm bg-white flex items-start gap-2.5 hover:border-brand-green transition duration-200">
+                                        <input type="checkbox" id="chk-input-1" class="mt-1 accent-brand-green" pointer-events-none>
+                                        <div class="leading-tight">
+                                            <span class="text-sm font-bold block text-brand-charcoal">② 신뢰도 평가 완료</span>
+                                            <span class="text-xs text-brand-brownSoft block mt-0.5">소스 종합 평가표 작성함</span>
+                                        </div>
+                                    </label>
+                                    <label onclick="toggleCheckItem(2)" id="chk-box-2" class="cursor-pointer p-4 rounded-xl border border-brand-borderWarm bg-white flex items-start gap-2.5 hover:border-brand-green transition duration-200">
+                                        <input type="checkbox" id="chk-input-2" class="mt-1 accent-brand-green" pointer-events-none>
+                                        <div class="leading-tight">
+                                            <span class="text-sm font-bold block text-brand-charcoal">③ 대표 소스 선별 완료</span>
+                                            <span class="text-xs text-brand-brownSoft block mt-0.5">핵심 5개 주제로 압축함</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 복사용 프롬프트 목록 -->
+                            <div class="space-y-4 pt-2">
+                                <div class="p-4 rounded-xl border border-brand-borderWarm bg-brand-bgWarm/45 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-brand-charcoal"><i class="fa-solid fa-play text-brand-green mr-1"></i> ① 딥리서치 수집 시작 지시어</span>
+                                        <button onclick="copyToClipboard('prompt-research-1', this)" class="px-3 py-1.5 bg-brand-charcoal hover:bg-brand-charcoal/90 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer">
+                                            <i class="fa-regular fa-copy"></i> 지시어 복사
+                                        </button>
+                                    </div>
+                                    <pre id="prompt-research-1" class="text-xs font-mono text-brand-brownSoft bg-white p-3 rounded-lg border border-brand-borderWarm leading-relaxed whitespace-pre-wrap max-h-24 overflow-y-auto">우리 타겟이 속한 시장의 최근 3년 규모, 성장률, 상위 경쟁사 3개를 조사해줘. 모든 수치는 출처와 발행연도를 같이 표시해줘. 확인되지 않은 추정치는 "추정"이라고 표시해줘.
+(자료가 부족하면 NotebookLM의 [Research] 버튼을 눌러 AI가 직접 웹에서 소스를 찾게 하세요.)</pre>
+                                </div>
+
+                                <div class="p-4 rounded-xl border border-brand-borderWarm bg-brand-bgWarm/45 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-brand-charcoal"><i class="fa-solid fa-star-half-stroke text-brand-green mr-1"></i> ② 소스 신뢰도 평가표 지시어</span>
+                                        <button onclick="copyToClipboard('prompt-research-2', this)" class="px-3 py-1.5 bg-brand-charcoal hover:bg-brand-charcoal/90 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer">
+                                            <i class="fa-regular fa-copy"></i> 지시어 복사
+                                        </button>
+                                    </div>
+                                    <pre id="prompt-research-2" class="text-xs font-mono text-brand-brownSoft bg-white p-3 rounded-lg border border-brand-borderWarm leading-relaxed whitespace-pre-wrap max-h-24 overflow-y-auto">업로드된 각 소스를 아래 기준으로 평가해 표로 정리해줘.
+
+[소스 종합 평가표]
+소스명 | 핵심 요약 | 발행일 | 저자명/소속 | 소스 구분 | 신뢰도 | 참고가치 점수
+
+[작성기준]
+- 핵심요약: 30자 이내, 한줄로
+- 소스 구분: 1차 자료(원자료·공식발표) / 2차 분석(해설·요약) / 의견·칼럼
+- 신뢰도: ★★★☆☆ 형식 (5점:공신력 있음 ~ 1점:출처 불명확)
+- 참고가치: 1~10점 (10점:핵심 근거로 직접 인용 가능 ~ 1점:참고 가치 낮음)</pre>
+                                </div>
+
+                                <div class="p-4 rounded-xl border border-brand-borderWarm bg-brand-bgWarm/45 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-bold text-brand-charcoal"><i class="fa-solid fa-list-ol text-brand-green mr-1"></i> ③ 주제별 대표 소스 선정 지시어</span>
+                                        <button onclick="copyToClipboard('prompt-research-3', this)" class="px-3 py-1.5 bg-brand-charcoal hover:bg-brand-charcoal/90 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow cursor-pointer">
+                                            <i class="fa-regular fa-copy"></i> 지시어 복사
+                                        </button>
+                                    </div>
+                                    <pre id="prompt-research-3" class="text-xs font-mono text-brand-brownSoft bg-white p-3 rounded-lg border border-brand-borderWarm leading-relaxed whitespace-pre-wrap max-h-24 overflow-y-auto">이 노트북에 포함된 모든 소스를 검토해서, 가장 비중있게 다뤄진 주제 5가지를 선정해줘.
+각 주제별로 가장 풍부하게 다룬 소스 1개를 골라 아래 표로 정리해줘.
+
+[주제별 대표 소스]
+순위 | 핵심 주제/관점 | 대표 소스 | 선정 근거
+
+[작성기준]
+- 순위는 소스 전체에서 언급 빈도·서술 비중 기준
+- 선정 근거는 그 소스의 실제 표현·주장 방식을 근거로 작성
+- 외부 지식이나 개인 해석은 넣지 말 것
+- 소스에서 확인 안 되는 내용은 "명시되지 않음"으로 표기</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- [1-2. BUILD 화면 (보고서 정보 입력)] -->
+                        <div id="report-view-2" class="hidden space-y-6">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-green uppercase tracking-wider font-mono">STEP 3 / 4 · REPORT BUILD</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">2페이지 인사이트 보고서 초안 채우기</h2>
+                                <p class="text-sm text-brand-brownSoft mt-1 leading-relaxed">두괄식 제목 선정 규칙에 유의하여 리포트 필수 구성 항목을 채워 뼈대를 완성합니다.</p>
+                            </div>
+
+                            <div class="space-y-4 text-sm">
+                                <div class="field">
+                                    <label class="block text-sm font-bold text-brand-charcoal mb-1">1. 보고서 제목 (= 결론)</label>
+                                    <div class="text-xs text-brand-brownSoft mb-1.5 leading-relaxed">나쁜 예: "대학생 타겟 마케팅 시장 조사 현황"<br>좋은 예: "<b>[연 7.2% 성장]</b> 2030 대학생 1인 가구 반찬 정기배달 8조원 틈새 시장 포착"</div>
+                                    <input type="text" id="rep-title" oninput="syncReportBuild()" placeholder="숫자와 결론을 결합한 제목 입력..." class="w-full text-sm p-3 border border-brand-borderWarm rounded-xl bg-brand-bgWarm/45 focus:outline-none focus:border-brand-green transition">
+                                </div>
+
+                                <div class="field">
+                                    <label class="block text-sm font-bold text-brand-charcoal mb-1">2. 리드 문장 (첫 2문장 내에 핵심 수치 요약)</label>
+                                    <textarea id="rep-lead" oninput="syncReportBuild()" placeholder="예: 이번 조사 결과, 국내 다회용기 친환경 배달 시장은 연평균 15% 성장세를 보이며 20대 타겟층의 포인터 가입율이 35%에 육박하는 것으로 확인되었습니다." class="w-full text-sm p-3 border border-brand-borderWarm rounded-xl bg-brand-bgWarm/45 focus:outline-none focus:border-brand-green transition min-h-[65px]"></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="field">
+                                        <label class="block text-sm font-bold text-brand-charcoal mb-1">3. 문제점 및 시장 분석 기회</label>
+                                        <textarea id="rep-insight" oninput="syncReportBuild()" placeholder="우리가 NotebookLM 딥리서치를 통해 확인한 시장의 페인 포인트와 기회 요인은..." class="w-full text-sm p-3 border border-brand-borderWarm rounded-xl bg-brand-bgWarm/45 focus:outline-none focus:border-brand-green transition min-h-[70px]"></textarea>
+                                    </div>
+                                    <div class="field">
+                                        <label class="block text-sm font-bold text-brand-charcoal mb-1">4. 해결 방안 및 우리 제안</label>
+                                        <textarea id="rep-solution" oninput="syncReportBuild()" placeholder="우리의 상품 아이디어가 어떻게 시장의 틈새를 공략하고 가치를 제공할 것인가..." class="w-full text-sm p-3 border border-brand-borderWarm rounded-xl bg-brand-bgWarm/45 focus:outline-none focus:border-brand-green transition min-h-[70px]"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label class="block text-sm font-bold text-brand-charcoal mb-1">5. 향후 추진 스텝 (Next Step)</label>
+                                    <input type="text" id="rep-nextstep" oninput="syncReportBuild()" placeholder="예: 시장 지표를 기반으로 Day 3 수업에서 8장 세부 ISI 기획 장표를 구성하겠습니다." class="w-full text-sm p-3 border border-brand-borderWarm rounded-xl bg-brand-bgWarm/45 focus:outline-none focus:border-brand-green transition">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- [1-3. LAUNCH 화면 (최종 복사 및 파일 저장)] -->
+                        <div id="report-view-3" class="hidden space-y-6">
+                            <div class="border-b border-brand-borderWarm pb-3">
+                                <span class="text-xs font-bold text-brand-green uppercase tracking-wider font-mono">STEP 4 / 4 · LAUNCH READY</span>
+                                <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">DAY 2 리포트 미션 키트 준비 완료</h2>
+                                <p class="text-sm text-brand-brownSoft mt-1">완성된 2페이지 리포트 구조 텍스트를 복사하거나 파일로 내려받아 구글 독스에 정리하세요.</p>
+                            </div>
+
+                            <div class="p-2 border border-dashed border-brand-borderWarm rounded-xl bg-brand-bgWarm/35">
+                                <div class="p-5 rounded-lg bg-brand-charcoal text-brand-greenDim font-mono text-xs md:text-sm leading-relaxed whitespace-pre-wrap max-h-80 overflow-y-auto" id="final-report-area"></div>
+                            </div>
+
+                            <div class="flex items-center gap-3 pt-2">
+                                <button id="copy-final-btn" onclick="copyToClipboard('final-report-area', 'copy-final-btn')" class="flex-1 py-3.5 rounded-xl bg-brand-green hover:bg-brand-greenDeep text-white text-sm font-bold transition shadow cursor-pointer">
+                                    <i class="fa-regular fa-copy mr-1 text-sm"></i> 전체 내용 복사하기
+                                </button>
+                                <button onclick="downloadAsText()" class="flex-1 py-3.5 rounded-xl bg-white hover:bg-brand-bgWarm text-brand-charcoal border border-brand-borderWarm text-sm font-bold transition shadow-sm cursor-pointer">
+                                    <i class="fa-solid fa-file-arrow-down mr-1 text-sm"></i> 텍스트 파일 저장
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 하단 내비게이션 -->
+                        <div class="flex items-center justify-between border-t border-brand-borderWarm pt-6 mt-6">
+                            <button id="prevReportBtn" onclick="prevReportStep()" class="px-5 py-3 rounded-xl font-bold text-sm bg-white border border-brand-borderWarm text-brand-brownSoft hover:text-brand-charcoal transition disabled:opacity-40 disabled:cursor-not-allowed shadow-sm cursor-pointer">
+                                ← 이전
+                            </button>
+                            <span id="report-step-indicator" class="text-sm font-bold text-brand-brownSoft font-mono">STEP 1 / 4</span>
+                            <button id="nextReportBtn" onclick="nextReportStep()" class="px-5 py-3 rounded-xl font-bold text-sm bg-brand-green hover:bg-brand-greenDeep text-white shadow-lg shadow-brand-green/10 transition cursor-pointer">
+                                다음 →
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ==================== [실습 2: 🎨 시각화 마스터 (Gemini Canvas)] ==================== -->
+                <div id="main-tool-2" class="hidden space-y-5">
+                    
+                    <!-- 2단 그리드 시나리오 네비게이터 -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+                        
+                        <!-- 시나리오 리스트 사이드바 (md:col-span-4) -->
+                        <div class="md:col-span-4 flex flex-col gap-2">
+                            <span class="text-xs font-black text-brand-brownSoft uppercase tracking-wider block mb-1">시각화 실습 시나리오</span>
+                            
+                            <!-- 1번 탭 -->
+                            <button onclick="switchScenario(1)" id="sc-btn-1" class="w-full text-left p-3.5 rounded-xl font-bold text-sm flex items-start gap-2.5 transition border bg-brand-greenDim border-brand-green/20 text-brand-green shadow-sm">
+                                <span class="bg-brand-green text-white w-5 h-5 rounded-md text-xs flex items-center justify-center shrink-0">1</span>
+                                <div class="leading-tight">
+                                    <span class="font-extrabold block text-[10px] uppercase text-brand-greenDeep mb-0.5">UX/UI 와이어프레임</span>
+                                    친환경 에코이츠 앱
+                                </div>
+                            </button>
+
+                            <!-- 2번 탭 -->
+                            <button onclick="switchScenario(2)" id="sc-btn-2" class="w-full text-left p-3.5 rounded-xl font-bold text-sm flex items-start gap-2.5 transition border bg-white border-brand-borderWarm text-brand-brownSoft hover:bg-brand-greenDim/30 hover:text-brand-green">
+                                <span class="bg-brand-borderWarm text-brand-brownSoft w-5 h-5 rounded-md text-xs flex items-center justify-center shrink-0">2</span>
+                                <div class="leading-tight">
+                                    <span class="font-extrabold block text-[10px] uppercase text-brand-brownSoft mb-0.5">시스템 아키텍처</span>
+                                    스마트홈 가전 제어
+                                </div>
+                            </button>
+
+                            <!-- 3번 탭 -->
+                            <button onclick="switchScenario(3)" id="sc-btn-3" class="w-full text-left p-3.5 rounded-xl font-bold text-sm flex items-start gap-2.5 transition border bg-white border-brand-borderWarm text-brand-brownSoft hover:bg-brand-greenDim/30 hover:text-brand-green">
+                                <span class="bg-brand-borderWarm text-brand-brownSoft w-5 h-5 rounded-md text-xs flex items-center justify-center shrink-0">3</span>
+                                <div class="leading-tight">
+                                    <span class="font-extrabold block text-[10px] uppercase text-brand-brownSoft mb-0.5">데이터 분석 / 3D</span>
+                                    글로벌 VR/AR 시장
+                                </div>
+                            </button>
+
+                            <!-- 4번 탭 -->
+                            <button onclick="switchScenario(4)" id="sc-btn-4" class="w-full text-left p-3.5 rounded-xl font-bold text-sm flex items-start gap-2.5 transition border bg-white border-brand-borderWarm text-brand-brownSoft hover:bg-brand-greenDim/30 hover:text-brand-green">
+                                <span class="bg-brand-borderWarm text-brand-brownSoft w-5 h-5 rounded-md text-xs flex items-center justify-center shrink-0">4</span>
+                                <div class="leading-tight">
+                                    <span class="font-extrabold block text-[10px] uppercase text-brand-brownSoft mb-0.5">공간 분석 / 히트맵</span>
+                                    청년 은둔 비율 지도
+                                </div>
+                            </button>
+
+                            <!-- 5번 탭 -->
+                            <button onclick="switchScenario(5)" id="sc-btn-5" class="w-full text-left p-3.5 rounded-xl font-bold text-sm flex items-start gap-2.5 transition border bg-white border-brand-borderWarm text-brand-brownSoft hover:bg-brand-greenDim/30 hover:text-brand-green">
+                                <span class="bg-brand-borderWarm text-brand-brownSoft w-5 h-5 rounded-md text-xs flex items-center justify-center shrink-0">5</span>
+                                <div class="leading-tight">
+                                    <span class="font-extrabold block text-[10px] uppercase text-brand-brownSoft mb-0.5">역량 모델링 / 차트</span>
+                                    포트폴리오 프로필
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- 시나리오 디테일 패널 (md:col-span-8) -->
+                        <div class="md:col-span-8 space-y-4">
+                            
+                            <!-- 1. 타이틀 카드 -->
+                            <div class="glass-panel rounded-2xl p-5 border border-brand-borderWarm shadow-sm relative overflow-hidden">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-11 h-11 rounded-xl bg-brand-green/10 text-brand-green flex items-center justify-center text-base font-bold" id="sc-icon">
+                                        <i class="fa-solid fa-mobile-screen-button"></i>
+                                    </span>
+                                    <div>
+                                        <span class="text-[10px] font-bold text-brand-green tracking-wider block uppercase mb-0.5" id="sc-label">실습 시나리오 01</span>
+                                        <h3 class="text-base md:text-lg font-black text-brand-charcoal tracking-tight" id="sc-title">친환경 배달 앱 "에코이츠" 와이어프레임 설계</h3>
+                                    </div>
+                                </div>
+                                <p class="mt-3 text-sm text-brand-brownSoft leading-relaxed border-t border-brand-borderWarm/60 pt-3" id="sc-desc">
+                                    사용자가 친환경 용기를 선택하여 탄소 배출 포인트를 획득하기까지의 사용자 여정(User Journey)을 바탕으로, 실제 모바일 화면 컴포넌트들을 설계합니다.
+                                </p>
+                            </div>
+
+                            <!-- 2. 도메인 지식 (3열 구조) -->
+                            <div class="glass-panel rounded-2xl p-5 border border-brand-borderWarm shadow-sm space-y-3">
+                                <h4 class="font-black text-sm text-brand-charcoal flex items-center gap-1.5"><span class="bg-brand-greenDim text-brand-green text-[10px] px-2 py-0.5 rounded font-mono font-bold">1단계</span> 가이드 학습: 필수 도메인 지식</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs" id="sc-domain-cards"></div>
+                            </div>
+
+                            <!-- 3. 프롬프팅 전략 -->
+                            <div class="glass-panel rounded-2xl p-5 border border-brand-borderWarm shadow-sm space-y-3">
+                                <h4 class="font-black text-sm text-brand-charcoal flex items-center gap-1.5"><span class="bg-brand-greenDim text-brand-green text-[10px] px-2 py-0.5 rounded font-mono font-bold">2단계</span> 프롬프트 엔지니어링 전략</h4>
+                                <div class="space-y-2 text-sm text-brand-charcoal" id="sc-strategy-list"></div>
+                            </div>
+
+                            <!-- 4. 최종 프롬프트 복사 -->
+                            <div class="glass-panel rounded-2xl p-5 border border-brand-borderWarm shadow-sm space-y-3">
+                                <div class="flex items-center justify-between border-b border-brand-borderWarm/60 pb-2">
+                                    <h4 class="font-black text-sm text-brand-charcoal flex items-center gap-1.5"><span class="bg-brand-green text-white text-[10px] px-2 py-0.5 rounded font-mono font-bold">3단계</span> 최종 지침 프롬프트 복사</h4>
+                                    <button id="copy-sc-prompt-btn" onclick="copyToClipboard('sc-prompt-text', 'copy-sc-prompt-btn')" class="bg-brand-charcoal text-white hover:bg-brand-charcoal/90 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                                        <i class="fa-regular fa-copy text-xs"></i> 프롬프트 복사
+                                    </button>
+                                </div>
+                                <div class="relative bg-brand-charcoal rounded-xl p-4 border border-brand-borderWarm/40">
+                                    <pre id="sc-prompt-text" class="text-brand-greenDim text-xs whitespace-pre-wrap font-mono leading-relaxed max-h-48 overflow-y-auto"></pre>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+        </div>
+    </div>
+
+    <!-- ==================== [글로벌 개념 팝업 모달 (텍스트 전용)] ==================== -->
+    <div id="global-modal" class="fixed inset-0 bg-brand-charcoal/45 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+        <div id="global-modal-content" class="bg-white border border-brand-borderWarm rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300 max-h-[80vh] flex flex-col">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeGlobalModal()" class="absolute top-4 right-4 text-brand-brownSoft hover:text-brand-charcoal transition text-lg h-8 w-8 rounded-full hover:bg-brand-bgWarm flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <!-- 모달 헤더 -->
+            <div class="mb-4">
+                <span id="modal-badge" class="text-xs font-mono font-bold px-2 py-0.5 rounded"></span>
+                <h3 id="modal-title" class="text-lg font-extrabold text-brand-charcoal mt-1.5"></h3>
+            </div>
+            
+            <!-- 모달 바디 (스크롤 지원) -->
+            <div class="overflow-y-auto pr-1 space-y-4 flex-grow">
+                <p id="modal-desc" class="text-sm text-brand-charcoal leading-relaxed w-full whitespace-pre-wrap font-sans"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== [글로벌 이미지 전용 대형 팝업 모달] ==================== -->
+    <div id="image-modal" class="fixed inset-0 bg-brand-charcoal/80 backdrop-blur-md z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+        <div id="image-modal-content" class="relative max-w-4xl w-full mx-4 flex flex-col items-center transform scale-95 transition-all duration-300">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeImageModal()" class="absolute -top-12 right-0 text-white hover:text-brand-green transition text-2xl h-10 w-10 rounded-full bg-brand-charcoal/45 hover:bg-brand-charcoal flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <!-- 이미지 엘리먼트 -->
+            <img id="image-modal-src" src="" alt="확대 웹툰 이미지" class="rounded-2xl border border-white/10 max-h-[85vh] w-auto object-contain shadow-2xl">
+        </div>
+    </div>
+
+    <!-- ==================== [글로벌 알림 토스트 (Toast)] ==================== -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-green/30 shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-brand-green text-base"></i>
+        <span id="toast-message">클립보드에 복사되었습니다!</span>
+    </div>
+
+    <!-- ==================== [INTERACTIVE CONTROL SCRIPT] ==================== -->
+    <script>
+        // 전역 상태 통합 관리 객체
+        const state = {
+            activeMainTab: 1, // 1: 리포트 빌더, 2: 시각화 마스터
+            activeGuideTab: 1, // 1: 학습 가이드, 2: 용어사전, 3: AI도구
+            
+            // 실습 1 (리포트 빌더) 관련 상태
+            report: {
+                currentStep: 0,
+                ksa: { know: '', skill: '', situation: '' },
+                checklist: [false, false, false], // 광범위 수집, 신뢰도 평가, 대표 선정
+                build: { title: '', lead: '', insight: '', solution: '', nextstep: '' }
+            },
+
+            // 실습 2 (시각화 마스터) 현재 시나리오 인덱스 (1~5)
+            activeScenario: 1
+        };
+
+        // ==================== [글로벌 유틸리티] ====================
+        function escapeHtml(s) {
+            return (s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.className = "fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-green/30 shadow-xl flex items-center gap-2 transform translate-y-0 opacity-100 transition duration-300 z-50";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-green/30 shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50";
+            }, 3000);
+        }
+
+        function copyToClipboard(elementId, btnId) {
+            const txt = document.getElementById(elementId).innerText || document.getElementById(elementId).textContent;
+            
+            const el = document.createElement('textarea');
+            el.value = txt;
+            document.body.appendChild(el);
+            el.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast("클립보드에 성공적으로 복사되었습니다!");
+            } catch (err) {
+                showToast("복사에 실패했습니다. 브라우저 설정을 확인하세요.");
+            }
+            document.body.removeChild(el);
+        }
+
+        // ==================== [좌측 가이드 접기/펼치기] ====================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar-panel');
+            const workspace = document.getElementById('workspace-panel');
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                workspace.className = "lg:col-span-7 flex flex-col gap-4";
+                toggleBtn.innerHTML = '<i class="fa-solid fa-columns text-xs"></i> 가이드 접기';
+                toggleBtn.className = "px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-green border border-brand-borderWarm bg-white hover:bg-brand-greenDim/30 transition-all duration-200 flex items-center gap-2 shadow-sm cursor-pointer";
+            } else {
+                sidebar.classList.add('hidden');
+                workspace.className = "lg:col-span-12 flex flex-col gap-4 transition-all duration-300";
+                toggleBtn.innerHTML = '<i class="fa-solid fa-columns text-xs"></i> 가이드 펼치기';
+                toggleBtn.className = "px-4 py-2 text-sm font-bold rounded-lg text-brand-green border border-brand-green/20 bg-brand-greenDim hover:bg-brand-green hover:text-white transition-all duration-200 flex items-center gap-2 shadow-sm cursor-pointer";
+            }
+        }
+
+        // ==================== [탭 전환 제어 로직] ====================
+        function switchMainTab(tabIdx) {
+            state.activeMainTab = tabIdx;
+            const btn1 = document.getElementById('main-tab-btn-1');
+            const btn2 = document.getElementById('main-tab-btn-2');
+            const tool1 = document.getElementById('main-tool-1');
+            const tool2 = document.getElementById('main-tool-2');
+
+            if (tabIdx === 1) {
+                btn1.className = "flex-1 py-3 text-sm md:text-base font-bold rounded-xl transition-all tab-transition bg-brand-green text-white shadow-sm";
+                btn2.className = "flex-1 py-3 text-sm md:text-base font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-green";
+                tool1.classList.remove('hidden');
+                tool2.classList.add('hidden');
+            } else {
+                btn2.className = "flex-1 py-3 text-sm md:text-base font-bold rounded-xl transition-all tab-transition bg-brand-green text-white shadow-sm";
+                btn1.className = "flex-1 py-3 text-sm md:text-base font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-green";
+                tool2.classList.remove('hidden');
+                tool1.classList.add('hidden');
+                // 시나리오 최초 렌더링 동기화
+                switchScenario(state.activeScenario);
+            }
+        }
+
+        function switchGuideTab(tabIdx) {
+            state.activeGuideTab = tabIdx;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`guide-tab-btn-${i}`);
+                const content = document.getElementById(`guide-content-${i}`);
+                if (i === tabIdx) {
+                    btn.className = "flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition bg-brand-green text-white shadow-sm";
+                    content.classList.remove('hidden');
+                } else {
+                    btn.className = "flex-1 py-2.5 text-sm font-bold rounded-xl transition-all tab-transition text-brand-brownSoft hover:text-brand-green";
+                    content.classList.add('hidden');
+                }
+            }
+        }
+
+        // ==================== [글로벌 이중 모달 제어 함수] ====================
+        function openGlobalModal(badgeText, badgeBgClass, title, desc) {
+            const modal = document.getElementById('global-modal');
+            const content = document.getElementById('global-modal-content');
+            const badge = document.getElementById('modal-badge');
+            const mTitle = document.getElementById('modal-title');
+            const mDesc = document.getElementById('modal-desc');
+            
+            badge.textContent = badgeText;
+            badge.className = `text-xs font-mono font-bold px-2 py-0.5 rounded ${badgeBgClass}`;
+            mTitle.textContent = title;
+            mDesc.textContent = desc;
+            
+            modal.classList.remove('hidden');
+            modal.offsetHeight; 
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeGlobalModal() {
+            const modal = document.getElementById('global-modal');
+            const content = document.getElementById('global-modal-content');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // 용어사전 카드 클릭용
+        function openConceptModal(idx) {
+            const concepts = [
+                {
+                    badgeText: "개념 1",
+                    badgeBgClass: "bg-brand-green/10 text-brand-green",
+                    title: "KSA 프롬프팅",
+                    desc: "AI 스피치 및 마케팅 기획 초안 도출 시 최적의 답을 유도하기 위해 질문(프롬프트)에 맥락적 요소를 명확히 부여하는 구조화 전략입니다.\n\n[주요 축 구성]\n- Knowledge (지식): 우리 팀이 현재까지 확보하거나 정의한 사실 (예: 다회용기 배달, 2030 가구)\n- Skill (도구/자원): 오늘 과업을 위해 동원 가능한 자산 (예: NotebookLM, 구글시트 및 3시간의 가용 시간)\n- Situation (상황): 최종적으로 맞춰야 하는 형식과 마감선 (예: 2페이지 리포트 양식)\n\n이 3대 요소를 사전에 정돈해 제시하면, AI가 상황을 오해해 생뚱맞은 답변을 내놓는 리스크를 대폭 경감시킬 수 있습니다."
+                },
+                {
+                    badgeText: "개념 2",
+                    badgeBgClass: "bg-violet-500/10 text-violet-600",
+                    title: "딥리서치 (Deep Research)",
+                    desc: "단순히 지엽적인 실시간 기사나 검색 데이터 하나를 긁어오는 것에 그치지 않고, 다양한 1차 정보 소스들을 취합하여 신뢰 가치를 다각도로 검토하고 엄선하는 종합 탐색 방법론입니다.\n\n[NotebookLM 연동 3단계]\n1. 자료 수집: 웹 기사나 리포트 소스를 5개 이상 넉넉하게 탑재합니다.\n2. 신뢰도 평가: AI를 통해 발행연도, 출처 공신력을 기준으로 소스 종합 평가표를 작성합니다.\n3. 대표 소스 선정: 겹치는 지식을 축소하고, 주제별로 기여 가치가 가장 우수한 대표 소스 하나씩만 남겨 팩트 체크를 완료합니다."
+                },
+                {
+                    badgeText: "개념 3",
+                    badgeBgClass: "bg-emerald-500/10 text-emerald-600",
+                    title: "두괄식 (제목 = 결론)",
+                    desc: "바쁜 의사결정권자나 청중을 설득하기 위해 기획서와 성과 보고서의 가장 윗자리인 제목과 첫머리에 최종 결론과 명확한 통계 숫자를 먼저 던져놓고 개시하는 강력한 문서 작성 기법입니다.\n\n[적용 요령]\n- 나쁜 예: '8월 홍보 결과 보고'\n- 좋은 예: '[ROI 120% 돌파] 모바일 카카오 광고 활성화를 통한 8월 홍보 성과 보고'\n\n전체 내용을 전부 읽지 않더라도 핵심 성과가 즉각 뇌리에 각인되도록 만들어 인지 효율성을 최대치로 늘려 줍니다."
+                }
+            ];
+            const data = concepts[idx];
+            openGlobalModal(data.badgeText, data.badgeBgClass, data.title, data.desc);
+        }
+
+        // 이미지 단독 확대용 모달 제어 함수
+        function openImageModal(imgSrc) {
+            const modal = document.getElementById('image-modal');
+            const content = document.getElementById('image-modal-content');
+            const modalImg = document.getElementById('image-modal-src');
+            
+            modalImg.src = imgSrc;
+            
+            modal.classList.remove('hidden');
+            modal.offsetHeight;
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        // 이미지 모달 닫기
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            const content = document.getElementById('image-modal-content');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // 웹툰 토글
+        function toggleWebtoon(id) {
+            const el = document.getElementById(id);
+            const btnText = document.getElementById(`${id}-btn-text`);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                btnText.textContent = "💡 웹툰 가이드 숨기기";
+            } else {
+                el.classList.add('hidden');
+                btnText.textContent = "💡 4컷 웹툰 가이드 보기";
+            }
+        }
+
+        // ==================== [실습 1: 📊 리포트 빌더 로직] ====================
+        function goToReportStep(stepIdx) {
+            state.report.currentStep = stepIdx;
+            
+            // 뷰 토글
+            for (let i = 0; i <= 3; i++) {
+                const view = document.getElementById(`report-view-${i}`);
+                const badge = document.getElementById(`p-badge-${i}`);
+                if (i === stepIdx) {
+                    view.classList.remove('hidden');
+                    badge.className = "cursor-pointer px-3.5 py-2 rounded-full bg-brand-greenDim text-brand-green border border-brand-green/20 font-bold text-xs md:text-sm shadow-sm";
+                } else if (i < stepIdx) {
+                    view.classList.add('hidden');
+                    badge.className = "cursor-pointer px-3.5 py-2 rounded-full bg-brand-goodDim text-brand-good border border-brand-good/20 font-semibold text-xs md:text-sm";
+                } else {
+                    view.classList.add('hidden');
+                    badge.className = "cursor-pointer px-3.5 py-2 rounded-full text-brand-brownSoft text-xs md:text-sm";
+                }
+            }
+
+            // 좌측 학습 가이드 하이라이트 동기화
+            const guideSteps = ['ksa', 'research', 'build'];
+            guideSteps.forEach((step, idx) => {
+                const guideItem = document.getElementById(`guide-item-${step}`);
+                if (idx === stepIdx) {
+                    guideItem.className = "p-4 rounded-xl bg-brand-greenDim/60 border border-brand-green/20 transition shadow-inner";
+                } else {
+                    guideItem.className = "p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition";
+                }
+            });
+
+            // 내비게이션 버튼 및 인디케이터 동기화
+            document.getElementById('prevReportBtn').disabled = (stepIdx === 0);
+            document.getElementById('nextReportBtn').textContent = (stepIdx === 3) ? '리포트 키트 완성 ✓' : '다음 →';
+            document.getElementById('report-step-indicator').textContent = `STEP ${stepIdx + 1} / 4`;
+
+            if (stepIdx === 3) {
+                buildFinalReport();
+            }
+        }
+
+        // 리포트 이전 스텝으로 이동
+        function prevReportStep() {
+            if (state.report.currentStep > 0) {
+                goToReportStep(state.report.currentStep - 1);
+            }
+        }
+
+        // 리포트 다음 스텝으로 이동
+        function nextReportStep() {
+            if (state.report.currentStep < 3) {
+                goToReportStep(state.report.currentStep + 1);
+            } else {
+                showToast("🎉 2페이지 인사이트 보고서 키트 준비 완료! 텍스트 복사 및 다운로드로 소장하세요.");
+            }
+        }
+
+        // KSA 데이터 동기화 및 프리뷰 빌드
+        function syncKsaPreview() {
+            state.report.ksa.know = document.getElementById('ksa-k').value;
+            state.report.ksa.skill = document.getElementById('ksa-s').value;
+            state.report.ksa.situation = document.getElementById('ksa-a').value;
+
+            const know = state.report.ksa.know ? escapeHtml(state.report.ksa.know) : '<span class="text-brand-brownSoft/60">우리가 아는 컨셉 시드 입력...</span>';
+            const skill = state.report.ksa.skill ? escapeHtml(state.report.ksa.skill) : '<span class="text-brand-brownSoft/60">NotebookLM 등 가용 도구/시간...</span>';
+            const situation = state.report.ksa.situation ? escapeHtml(state.report.ksa.situation) : '<span class="text-brand-brownSoft/60">2페이지 보고서 마감선...</span>';
+
+            const previewHtml = `<b>[Knowledge]</b> ${know}\n\n<b>[Skill]</b> ${skill}\n\n<b>[Situation]</b> ${situation}\n\n이 정보를 참고해서, 우리 타겟 시장 데이터를 조사해줘. 출처를 같이 표시해줘.`;
+            document.getElementById('ksa-prompt-preview').innerHTML = previewHtml;
+        }
+
+        // 리서치 체크박스 상태 제어
+        function toggleCheckItem(idx) {
+            const chkInput = document.getElementById(`chk-input-${idx}`);
+            const chkBox = document.getElementById(`chk-box-${idx}`);
+            
+            // 토글 처리
+            state.report.checklist[idx] = !state.report.checklist[idx];
+            chkInput.checked = state.report.checklist[idx];
+
+            if (state.report.checklist[idx]) {
+                chkBox.className = "cursor-pointer p-4 rounded-xl border border-brand-good bg-brand-goodDim/45 flex items-start gap-2.5 transition duration-200 shadow-inner";
+            } else {
+                chkBox.className = "cursor-pointer p-4 rounded-xl border border-brand-borderWarm bg-white flex items-start gap-2.5 hover:border-brand-green transition duration-200";
+            }
+        }
+
+        // 보고서 작성 폼 동기화
+        function syncReportBuild() {
+            state.report.build.title = document.getElementById('rep-title').value;
+            state.report.build.lead = document.getElementById('rep-lead').value;
+            state.report.build.insight = document.getElementById('rep-insight').value;
+            state.report.build.solution = document.getElementById('rep-solution').value;
+            state.report.build.nextstep = document.getElementById('rep-nextstep').value;
+        }
+
+        // 최종 보고서 빌드 렌더링
+        function buildFinalReport() {
+            const b = state.report.build;
+            const finalStr = 
+`■ MISSION KIT — DAY 2 (2페이지 인사이트 보고서 초안)
+
+[제목] ${b.title || '(미입력)'}
+
+[리드] ${b.lead || '(미입력)'}
+
+[인사이트] ${b.insight || '(미입력)'}
+
+[제안] ${b.solution || '(미입력)'}
+
+[다음 스텝] ${b.nextstep || '(미입력)'}
+
+— 구글독스에 붙여넣고, day2_chart_template.xlsx의 차트 3종을 이미지로 캡처해 같이 넣으면 2페이지 보고서가 완성됩니다.
+— Day 3에서는 이 인사이트를 가지고 8장 ISI 기획서를 만듭니다.`;
+
+            document.getElementById('final-report-area').textContent = finalStr;
+        }
+
+        // 로컬 텍스트 파일 저장
+        function downloadAsText() {
+            const txt = document.getElementById('final-report-area').textContent;
+            const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `day2_insight_report_kit.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("텍스트 파일이 성공적으로 다운로드되었습니다.");
+        }
+
+
+        // ==================== [실습 2: 🎨 시각화 마스터 로직] ====================
+        const SCENARIOS = {
+            1: {
+                iconClass: "fa-mobile-screen-button",
+                label: "실습 시나리오 01",
+                title: "친환경 배달 앱 '에코이츠' 와이어프레임 설계",
+                desc: "사용자가 친환경 용기를 선택하여 탄소 배출 포인트를 획득하기까지의 사용자 여정(User Journey)을 바탕으로, 실제 모바일 화면 컴포넌트들을 설계합니다. 캔버스의 실시간 HTML 미리보기 기능을 결합해 아이디어가 즉시 인터랙티브 구조로 구현되는 쾌감을 줍니다.",
+                domain: [
+                    { key: "와이어프레임(Wireframe)", val: "화면에 실제 이미지나 정밀 색을 칠하기 전, 정보의 논리 구조와 레이아웃 위치를 선(Wire)과 사각형(Frame) 단위로 뼈대를 가시화하는 설계도입니다." },
+                    { key: "핵심 UI 컴포넌트", val: "배달 앱 필수 구조인 헤더/네비게이션바, 아이템 카드(Card UI), 최종 사용자 전환을 강력히 유도하는 CTA(Call To Action) 클릭 버튼의 배치가 핵심입니다." },
+                    { key: "친환경 브랜딩 컬러 대비", val: "친환경을 연상시키는 자연색 Deep Green(#2E7D32) 컬러를 강조 컬러로 사용하고, 배경은 화이트, 비활성 영역은 Light Gray를 주어 명확한 시각적 대비를 줍니다." }
+                ],
+                strategies: [
+                    "<strong>역할(Role) 부여:</strong> 일반 AI가 아닌, 친환경 모바일 서비스를 수십 회 론칭한 <strong>'10년 차 수석 UI/UX 디자이너'</strong>의 역할을 부여해 디테일을 확보합니다.",
+                    "<strong>구조의 정량화:</strong> 단순 앱 구현이 아니라 메인홈, 메뉴상세, 장바구니, 탄소 완료 페이지 등 <strong>'4개 핵심 화면과 구성 요소'</strong>를 정확히 리스팅하여 지정합니다.",
+                    "<strong>형식 제약:</strong> 웹 브라우저가 직접 그려주는 캔버스 미리보기 특성을 고려하여 <strong>'HTML과 CSS가 통합된 단일 코드'</strong>로 출력을 가이드합니다."
+                ],
+                prompt: `너는 친환경 서비스를 전문으로 설계하는 10년 차 UI/UX 디자이너이자 서비스 기획자야. 
+아래 제공된 [기획 아이디어 자료]를 바탕으로, 모바일 앱의 정보 구조(IA)와 사용자의 시각적 흐름을 고려하여 화면의 구조를 설계하는 '와이어프레임(Wireframe)'을 제작해 줘.
+
+[기획 아이디어 자료]
+- 서비스명: 에코이츠 (EcoEats)
+- 핵심 컨셉: 친환경 다회용기 사용 배달, 탄소 배출 저감 포인트 매칭
+- 타겟: 환경 보호에 관심이 많고 모바일 결제에 익숙한 2030 1인 가구
+
+[시각화 지침 및 디자인 시스템 제약 조건]
+1. 출력 형태: 캔버스 웹 미리보기 화면에서 실제 UI 구조를 확인할 수 있도록 'HTML과 CSS가 포함된 단일 코드'로 작성해 줘.
+2. 화면 구성: 모바일 뷰 크기(375px)의 프레임 안에 [메인 홈 -> 상세 메뉴 -> 장바구니/주문 -> 탄소 저감 완료 페이지]의 4개 핵심 화면 레이아웃이 세로로 스크롤 되며 보이게 구성해 줘.
+3. 컴포넌트 필수 요소:
+   - 메인 홈: 헤더(주소 설정, 검색창), 친환경 카테고리 탭, 가게 리스트 카드 UI(가게명, 별점, 다회용기 사용 여부 뱃지 포함)
+   - 상세 메뉴: 상단 대표 이미지 영역, 메뉴 선택 카드, 하단의 고정된 녹색 CTA(Call To Action) '장바구니 담기' 버튼
+   - 완료 페이지: 사용자가 이번 주문으로 아낀 탄소 배출량을 직관적으로 보여주는 그래픽 요소 박스
+4. 스타일 가이드: 친환경 브랜딩을 위해 메인 컬러는 신뢰감을 주는 Deep Green(#2E7D32)을 사용하고, 텍스트 가독성을 위해 배경은 White, 서브 요소는 Light Gray(#F5F5F5)로 깔끔하게 대비를 주어 선과 상자 중심의 와이어프레임 형태로 표현해 줘.
+
+위 지침을 모두 반영하여 캔버스에서 바로 확인 가능한 반응형 UI 코드를 출력해 줘.`
+            },
+            2: {
+                iconClass: "fa-diagram-project",
+                label: "실습 시나리오 02",
+                title: "스마트 홈 AI 작동 구조 아키텍처 다이어그램",
+                desc: "사용자가 인공지능 스피커에 \"에어컨 틀어줘\"라고 말한 후 거실의 에어컨이 켜지기까지의 전체 클라이언트-서버 시스템 구조와 흐름을 시각화합니다. 텍스트로 적어둔 시스템 로직을 캔버스가 인식해 완벽한 '시스템 관계도' 그래픽 코드로 그려내는 과정을 배웁니다.",
+                domain: [
+                    { key: "시스템 아키텍처(Architecture)", val: "하드웨어, 서버 네트워크, AI 모듈 등 다양한 구성 요소들이 어떻게 유기적으로 맞물려 일하는지 데이터 이동 경로를 통해 명세한 전체 지도입니다." },
+                    { key: "스마트홈 흐름 3단계", val: "인공지능 스피커를 통한 사용자 입력(Input), 클라우드 서버 및 생성형 AI 두뇌의 연산 처리(Process), 실제 가전을 가동하는 출력(Output) 흐름을 타야 합니다." },
+                    { key: "Mermaid flowchart 기초", val: "텍스트 문법으로 관계형 다이어그램을 그려주는 코딩 언어입니다. 'graph TD'는 탑다운 하향식 레이아웃을 뜻하며, '-->'를 기호로 노드와 노드 사이를 연결합니다." }
+                ],
+                strategies: [
+                    "<strong>도표 전용 출력 가이드:</strong> AI에게 <strong>'Mermaid flowchart'</strong>라는 정확한 문법 규칙 형식을 지정하여 가독성 높은 다이어그램을 깨짐 없이 유도합니다.",
+                    "<strong>노드 형상(Shape)의 제약:</strong> 데이터베이스, 하드웨어 장치, 사용자 인터랙션 노드를 단순 사각형이 아닌 각기 알맞은 기호 모양으로 변환시켜 완성도를 극대화합니다.",
+                    "<strong>관계성 텍스트 라벨링:</strong> 화살표 선 위에 어떤 패킷 데이터나 제어 신호가 날아다니는지 세밀하게 텍스트를 적어 가시화 수준을 올립니다."
+                ],
+                prompt: `너는 복잡한 하드웨어와 소프트웨어의 상호작용을 명쾌하게 시각화하는 수석 시스템 아키텍트(System Architect)야.
+아래 제공된 [스마트홈 작동 시나리오]의 데이터의 흐름과 관계를 분석하여, 시스템의 구조를 한눈에 파악할 수 있는 논리적 아키텍처 다이어그램을 생성해 줘.
+
+[스마트홈 작동 시나리오]
+사용자가 "지니야, 거실 에어컨 24도로 켜줘"라고 음성 명령을 내린다. 스마트 스피커의 마이크가 이를 수집해 클라우드 서버로 오디오 데이터를 전송한다. 클라우드 서버는 연동된 '생성형 AI 추론 모델'에 텍스트 분석을 요청하고, AI 모델은 의도(Intent)를 파악해 "에어컨 제어: 온도 24도"라는 결과값을 반환한다. 서버는 이 명령을 홈 IoT 게이트웨이를 거쳐 거실의 실제 에어컨 하드웨어로 전송하고, 에어컨이 켜지며 사용자에게 "에어컨을 24도로 가동합니다"라는 안내음이 출력된다.
+
+[시각화 및 Mermaid 지침 조건]
+1. 출력 형태: 캔버스에서 다이어그램 그래프로 즉시 렌더링될 수 있도록 'Mermaid flowchart 코드'로만 출력해 줘.
+2. 구조 설계: 데이터가 위에서 아래로 직관적으로 흐르도록 탑다운 방식(graph TD)을 사용해 줘.
+3. 데이터 관계 정의: 흐름은 [사용자 음성 입력] ➔ [스마트 스피커] ➔ [클라우드 서버] ➔ [AI 추론 모델] ➔ [홈 IoT 게이트웨이] ➔ [거실 에어컨 하드웨어 작동] 순으로 유기적인 화살표(-->)로 연결되어야 해.
+4. 컴포넌트 역할 구분 (기호 활용):
+   - 사용자의 입력과 최종 출력 하드웨어는 원형이나 둥근 사각형 기호((텍스트))를 사용해 줘.
+   - 중앙 처리 장치인 클라우드 서버와 AI 모델은 데이터베이스나 강조된 사각형 기호[(데이터베이스)]를 사용해 역할 차이를 명확히 시각화해 줘.
+   - 화살표 사이사이에 |데이터 종류|를 적어 어떤 데이터(예: 음성 파일, 텍스트 명령, 제어 신호)가 이동하는지 라벨링해 줘.`
+            },
+            3: {
+                iconClass: "fa-cube",
+                label: "실습 시나리오 03",
+                title: "글로벌 VR/AR 시장 규모 3D 인터랙티브 차트",
+                desc: "단순 텍스트나 고정된 2D 표로 정리된 글로벌 테크 시장 규모 성장 지표를 입체적이고 역동적인 3D 차트 형태로 변형합니다. 마우스 휠을 통해 줌인하고 회전시키며, 연도별 상세 수치를 호버 인터랙션으로 확인하는 몰입감 넘치는 투자자 설득 보고서 장표를 만듭니다.",
+                domain: [
+                    { key: "시각 변수(Visual Variables)", val: "숫자가 지닌 크기와 중요도를 뇌가 빠르게 이해하도록 막대의 높이, 면적의 너비, 색상의 깊이(명도, 채도) 등으로 다채롭게 치환하는 데이터 디자인 기법입니다." },
+                    { key: "3D 데이터 가상 공간 축", val: "평면 X(시간), Y(성장 수치) 외에 깊이를 뜻하는 Z축을 가진 3차원 공간에서 투시 효과와 그라데이션 광원을 통해 강력한 극적 성장의 흐름을 연출할 수 있습니다." },
+                    { key: "인터랙티브 호버 피드백", val: "마우스를 그래픽에 올릴 때만(Hover) 디테일한 툴팁 수치를 노출하고, 3D 카메라 궤도 제어(Orbit Controls)를 가능하게 해 사용자의 몰입적 탐색을 유도합니다." }
+                ],
+                strategies: [
+                    "<strong>3D 렌더링 라이브러리 지정:</strong> 브라우저 내에서 완벽한 GPU 3D 가속 렌더링을 지원하는 <strong>'Three.js'</strong>나 순수 3D HTML Canvas를 활용하도록 라이브러리 의존성을 제어합니다.",
+                    "<strong>시각적 가중치 연출:</strong> 성장이 폭발적으로 진행되는 주요 연도를 AI가 판단하게 하고, 해당 시점부터 <strong>'더 밝고 선명한 네온 컬러 그라데이션'</strong>으로 렌더링해 장표 집중도를 높입니다.",
+                    "<strong>동적 툴팁 구조 지시:</strong> 정보 은닉(Information Hiding) 기법을 반영하여 마우스 올렸을 때만 말풍선이 나오는 정확한 DOM 마크업 제어를 프롬프트에 담습니다."
+                ],
+                prompt: `너는 글로벌 빅테크 트렌드를 분석하고 투자자들을 설득하기 위한 보고서를 작성하는 데이터 분석가(Data Analyst)야.
+아래 제공된 [연도별 VR/AR 시장 규모 데이터]의 수치적 특징과 변화율을 직관적으로 보여줄 수 있도록 입체적인 시각화 자료를 만들어 줘.
+
+[연도별 VR/AR 시장 규모 데이터]
+- 2024년: 450억 달러
+- 2025년: 620억 달러
+- 2026년: 890억 달러 (생성형 AI 결합으로 폭발적 성장기)
+- 2027년: 1,200억 달러
+- 2028년: 1,650억 달러 (예상치)
+
+[시각화 리터러시 및 3D 렌더링 제약 조건]
+1. 출력 형태: 사용자가 마우스로 각도를 돌려보고 상호작용할 수 있도록 캔버스 지원용 'Three.js 또는 HTML5 Canvas 기반의 인터랙티브 3D 막대 그래프(Bar Chart) 코드'를 작성해 줘.
+2. 데이터 시각화 속성:
+   - X축은 시간(2024년~2028년), Y축은 시장 규모(억 달러)로 설정해 줘.
+   - 연도가 지날수록 시장이 '폭발적으로 급성장'한다는 시각적 인상을 극대화하기 위해, 막대의 높이를 수치에 비례하여 명확하게 차이 나도록 설계해 줘.
+   - 색상의 채도 대비를 활용하여, 성장이 가장 가파른 2026년 이후의 막대는 점점 더 짙고 선명한 네온 블루 그라데이션 컬러로 채워 시각적 강조 효과를 줘.
+3. UX 인터랙션 제어: 사용자가 특정 연도의 3D 막대 위에 마우스를 올리면(Hover), 해당 연도의 정확한 숫자 데이터("000억 달러")와 전년 대비 성장률(%)이 말풍선 모양의 툴팁(Tooltip)으로 깔끔하게 표시되는 기능을 포함해 줘. 화면이 난잡하지 않게 평소에는 숨겨두어야 해.`
+            },
+            4: {
+                iconClass: "fa-map-location-dot",
+                label: "실습 시나리오 04",
+                title: "지역별 청년 고립 비율 대한민국 지도 히트맵",
+                desc: "단순 텍스트 배열이나 차트로는 와닿지 않는 지리 공간적 인구 소외 통계를 한반도 지도 레이어 위에 온도 편차처럼 히트맵으로 뿌립니다. 데이터 시각화의 명도/채도 대비를 사용해 청년들의 밀집된 아픔이 있는 거점을 직관적으로 보도자료처럼 시각화합니다.",
+                domain: [
+                    { key: "공간 데이터(Geospatial Data)", val: "위치 값(도시명, 행정구역, 위경도 좌표)이 표의 행과 결합하여, 지역에 연계된 데이터 특징과 분포 양상을 지도 위에 고스란히 맵핑해 분석하는 지식 영역입니다." },
+                    { key: "히트맵(Heatmap) 색온도", val: "데이터의 수치가 집중되고 높은 영역은 위험/주의를 뜻하는 짙은 레드 계열(Warm), 수치가 미미하고 안전한 영역은 노란/살구색 계열(Cool)로 칠해 명시성을 높입니다." },
+                    { key: "도시 거점 라벨링 규칙", val: "너무 촘촘하고 세밀한 행정구역 이름은 텍스트 오버랩 현상으로 가독성을 해칩니다. 전체 지도를 대표할 수 있는 거점 도시(Anchor)를 골라 주요 폰트 라벨을 달아 정돈해야 합니다." }
+                ],
+                strategies: [
+                    "<strong>지도 아웃라인 리소스 가이드:</strong> AI에게 빈 지도가 깨지는 일을 방지하고자 브라우저에서 바로 동적 스타일링 제어가 가능한 <strong>'SVG(Scalable Vector Graphics) 지도 아웃라인'</strong>을 사용하도록 한계를 지정합니다.",
+                    "<strong>엄격한 헥스코드(Hex) 매핑:</strong> 붉은색, 살구색 등 주관적인 단어 표현 대신 정확한 헥사 계열의 색상 코드(예: 버건디 #B71C1C 등)를 명세하여 고유 톤앤매너를 확보합니다.",
+                    "<strong>텍스트 가시성 세밀화:</strong> 지도 백그라운드 색상 위에서도 겹쳐진 라벨링이 또렷하게 보이게 하기 위해 <strong>'text-shadow(그림자)'</strong> 속성 구현을 강제로 요구합니다."
+                ],
+                prompt: `너는 사회 변화와 인구 통계를 시각화하여 대중에게 직관적인 메시지를 전달하는 인포그래픽 전문가(Infographic Designer)야.
+아래의 [대한민국 주요 도시별 청년 고립 및 은둔 비율 통계 리스트]를 바탕으로, 지역별 편차와 문제의 심각성을 지리적 공간 위에서 파악할 수 있는 시각화 자료를 제작해 줘.
+
+[대한민국 주요 도시별 청년 고립 및 은둔 비율 통계 리스트]
+- 서울/수도권: 6.8% (청년 인구 밀집으로 인한 절대적 고립자 수 최고)
+- 부산/경남: 4.2%
+- 대구/경북: 5.1% (일자리 감소로 인한 심리적 고립 가속화)
+- 광주/전남: 3.8%
+- 대전/충청: 4.5%
+- 강원/제주: 3.2%
+
+[공간 데이터 매핑 및 히트맵 디자인 제약 조건]
+1. 출력 형태: 웹 브라우저에서 바로 랜더링되어 화면에 표시되는 'HTML/CSS 및 SVG 기반의 지도 히트맵(Heatmap) 시각화 코드'를 짜줘.
+2. 지도 아웃라인 및 배치: 대한민국 전도 모양을 단순화한 SVG 아웃라인 지도를 화면 중앙에 배치하고, 각 행정구역 레이어를 분리해 줘.
+3. 색상 농도(채도) 대비 법칙 적용: 히트맵 원리에 따라 비율이 가장 높아 심각성이 큰 '수도권(서울)'과 '대구/경북' 지역은 경각심을 주는 짙은 버건디/붉은색(#B71C1C) 계열로 채우고, 비율이 낮아 상대적으로 안전한 지역은 연한 노란색이나 살구색 계열로 매핑하여 시각적 온도 차이(Contrast)를 극대화해 줘.
+4. 가독성 및 라벨링 규칙: 지도가 텍스트로 인해 복잡해지지 않도록 모든 자잘한 시군구 명칭은 제외하고, 주요 거점 도시(서울, 부산, 대구, 광주, 대전) 5곳의 위치에만 깔끔하고 가독성 높은 폰트로 도시 이름과 비율(%) 라벨을 얹어줘. 글자가 지도 색상과 겹쳐 안 보이지 않도록 글자 뒤에 흰색 미세한 그림자(Text-shadow)를 처리해 줘.`
+            },
+            5: {
+                iconClass: "fa-chart-pie",
+                label: "실습 시나리오 05",
+                title: "나의 커리어 핵심 역량 인포그래픽 프로필",
+                desc: "흩어져 있는 자기소개서 경험 요약을 분석해, 스스로 정량 점수(1~5점)를 산정하고 다각형 거미줄 모양 역량 그래프로 렌더링합니다. 인사담당자의 고속 스캐닝 습성을 고려해 개인 브랜딩을 최적화할 수 있는 강력한 포트폴리오용 역량 컴포넌트를 설계합니다.",
+                domain: [
+                    { key: "역량 모델링(Competency)", val: "자소서 속 줄글 형태의 단순 이력 기술에서 벗어나 채용 담당자가 요구하는 표준 직무 전문성, 협업/소통, 도전정신 등 핵심 평가 차원으로 세분화하여 구조화하는 과정입니다." },
+                    { key: "레이더 차트(Radar Chart)", val: "중심부에서 바깥 다방면의 축으로 뻗어 나가는 다각형 면적 그래프입니다. 지원자의 강점 영역 비대칭 상태와 전반적인 성장의 '육각형 인재 밸런스'를 보기 가장 우수합니다." },
+                    { key: "신뢰의 퍼스널 브랜딩 블루", val: "색채 심리학적으로 신뢰감, 지적인 전문성, 논리력을 상징해 IT 테크 포트폴리오나 입사 원서의 메인 역량에 가장 어울리는 컬러인 Classic Blue(#0D47A1)를 차트 투명면과 연결합니다." }
+                ],
+                strategies: [
+                    "<strong>정성 데이터의 정량 점수화 지시:</strong> '자기소개서를 바탕으로 역량 지표를 1~5점 척도로 정밀 가중치를 직접 산정하라'고 지시하여 AI가 스스로 의미 있는 그래프 수치를 파싱하도록 만듭니다.",
+                    "<strong>차트용 오픈소스 라이브러리 탑재:</strong> 브라우저 위에서 미려한 선과 애니메이션을 그리는 차트 전용 라이브러리(예: Chart.js CDN 로딩 또는 Pure SVG) 구조를 조건으로 명세합니다.",
+                    "<strong>인사 한 줄 평 공간 확보:</strong> 단순 도표만 보여주면 해석이 어렵습니다. 차트 아래에 인사담당자 관점에서 '이 평가 점수를 내린 정당한 근거 요약 글'을 함께 엮도록 레이아웃 형식을 통제합니다."
+                ],
+                prompt: `너는 수많은 지원자 중 탁월한 인재를 찾아내는 대기업 인사담당자(HR Manager)이자, 개인의 브랜딩을 돕는 커리어 코치야.
+제공된 나의 [자기소개서 경험 요약 자료]를 정량적으로 분석하여, 나의 역량 밸런스를 입체적으로 증명할 수 있는 포트폴리오용 시각화 장표를 만들어 줘.
+
+[자기소개서 경험 요약 자료]
+- 전공 및 기술: 컴퓨터공학 전공, 파이썬 기반 데이터 분석 프로젝트 2회 수행, 데이터 정제 숙련도 높음.
+- 대외 활동: IT 연합동아리에서 기획자/개발자 간 소통을 조율하는 팀장 역할 수행, 갈등 해결 경험 있음.
+- 도전 및 문제해결: 공모전 도중 데이터 유실 위기를 크롤링 스크립트를 새로 짜서 밤샘 작업으로 해결, 최우수상 수상.
+- 글로벌 역량: 토익 850점 보유, 교내 외국인 유학생 멘토링 프로그램 6개월 참여.
+
+[다면 평가 모델링 및 레이더 차트 디자인 제약 조건]
+1. 출력 형태: 포트폴리오 웹사이트에 컴포넌트로 바로 삽입할 수 있는 'HTML과 JavaScript(Chart.js 라이브러리 활용 혹은 순수 SVG) 기반의 다각형 레이더 차트(Radar Chart) 코드'를 작성해 줘.
+2. 데이터 정량화(Quantification): 내가 준 경험 요약 자료를 기반으로 인사담당자 관점에서 [직무 전문성, 협업 및 소통, 문제 해결력, 글로벌 역량, 도전 정신]의 5가지 축을 도출하고, 각각 1점부터 5점 만점 중 몇 점에 해당하는지 타당한 점수를 산정하여 차트 데이터 데이터셋(Dataset)에 입력해 줘. (예: 문제해결력 5점, 글로벌 3.5점 등)
+3. 퍼스널 브랜딩 스타일 가이드: 대학생의 스마트함과 신뢰감, 전문성을 상징하는 'Classic Blue(#0D47A1)'를 메인 테마 컬러로 설정해 줘. 레이더 차트의 중심선과 가이드 그물망은 은은한 Light Gray로 처리하고, 내 역량이 채워지는 다각형 면적은 투명도 30%가 적용된 블루 컬러로 채워 영역의 크기(육각형 인재의 형태)가 한눈에 들어오게 디자인해 줘.
+4. 요약 문서 결합: 시각화 차트 바로 아래 혹은 옆 공간에, 왜 이 점수를 부여했는지 인사담당자의 시선으로 분석한 한 줄 평 요약 텍스트를 개조식으로 함께 깔끔하게 배치해 줘.`
+            }
+        };
+
+        // 시나리오 서브 탭 변경 함수
+        function switchScenario(scIdx) {
+            state.activeScenario = scIdx;
+            const data = SCENARIOS[scIdx];
+
+            // 1. 버튼 하이라이트 동기화
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById(`sc-btn-${i}`);
+                const circleSpan = btn.querySelector('span');
+                const titleSpan = btn.querySelector('div span');
+                if (i === scIdx) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl font-bold text-sm flex items-start gap-2.5 transition border bg-brand-greenDim border-brand-green/20 text-brand-green shadow-sm";
+                    circleSpan.className = "bg-brand-green text-white w-5 h-5 rounded-md text-xs flex items-center justify-center shrink-0";
+                    if (titleSpan) titleSpan.className = "font-extrabold block text-[10px] uppercase text-brand-greenDeep mb-0.5";
+                } else {
+                    btn.className = "w-full text-left p-3.5 rounded-xl font-bold text-sm flex items-start gap-2.5 transition border bg-white border-brand-borderWarm text-brand-brownSoft hover:bg-brand-greenDim/30 hover:text-brand-green";
+                    circleSpan.className = "bg-brand-borderWarm text-brand-brownSoft w-5 h-5 rounded-md text-xs flex items-center justify-center shrink-0";
+                    if (titleSpan) titleSpan.className = "font-extrabold block text-[10px] uppercase text-brand-brownSoft mb-0.5";
+                }
+            }
+
+            // 2. 내용 주입
+            document.getElementById('sc-icon').innerHTML = `<i class="fa-solid ${data.iconClass}"></i>`;
+            document.getElementById('sc-label').textContent = data.label;
+            document.getElementById('sc-title').textContent = data.title;
+            document.getElementById('sc-desc').textContent = data.desc;
+
+            // 3. 도메인 지식 카드 주입
+            let domainHtml = '';
+            data.domain.forEach(d => {
+                domainHtml += `
+                    <div class="bg-brand-bgWarm border border-brand-borderWarm p-3 rounded-lg leading-relaxed shadow-inner">
+                        <span class="font-extrabold text-brand-green block mb-0.5">${d.key}</span>
+                        <p class="text-xs text-brand-brownSoft">${d.val}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('sc-domain-cards').innerHTML = domainHtml;
+
+            // 4. 프롬프팅 전략 리스트 주입
+            let strategyHtml = '';
+            data.strategies.forEach(s => {
+                strategyHtml += `
+                    <div class="flex items-start gap-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-brand-green mt-1.5 shrink-0"></div>
+                        <p>${s}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('sc-strategy-list').innerHTML = strategyHtml;
+
+            // 5. 프롬프트 텍스트 주입
+            document.getElementById('sc-prompt-text').textContent = data.prompt;
+        }
+
+
+        // ==================== [페이지 로드 초기화] ====================
+        window.addEventListener('DOMContentLoaded', () => {
+            // 초기 렌더링 바인딩
+            goToReportStep(0);
+            syncKsaPreview();
+            syncReportBuild();
+
+            // 글로벌 모달 뒷배경 클릭 시 닫기 핸들러 바인딩
+            const modal = document.getElementById('global-modal');
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeGlobalModal();
+                }
+            });
+
+            const imgModal = document.getElementById('image-modal');
+            imgModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeImageModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

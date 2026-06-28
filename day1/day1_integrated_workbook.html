@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAY 1 올인원 워크북 | AK LABS Mission Control</title>
+    <!-- Tailwind CSS (V3.4) CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icon CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Space Grotesk', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            orange: '#FF6B35',
+                            orangeDeep: '#D94E1F',
+                            orangeDim: '#FFF0E8',
+                            navy: '#2C3E50',
+                            navySoft: '#5A6F85',
+                            bgWarm: '#FDFBF7',
+                            bgCard: '#FFFFFF',
+                            borderWarm: '#F2EAE1',
+                            charcoal: '#2C333F',
+                            brownSoft: '#6E6259',
+                            teal: '#1A9396',
+                            tealDim: '#E6F4F4',
+                            good: '#4F772D',
+                            goodDim: '#EAF0E2',
+                            bad: '#C0392B',
+                            badDim: '#FBE2DF'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* 네이티브 CSS 향상 및 커스텀 스크롤 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(242, 234, 225, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 53, 0.3);
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 107, 53, 0.6);
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(242, 234, 225, 0.8);
+            box-shadow: 0 10px 30px -10px rgba(110, 98, 89, 0.08), 0 1px 3px rgba(110, 98, 89, 0.02);
+        }
+        
+        .glass-card {
+            background: #FFFFFF;
+            border: 1px solid #F2EAE1;
+            box-shadow: 0 4px 18px -4px rgba(110, 98, 89, 0.04);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            background: #FFFFFF;
+            border-color: rgba(255, 107, 53, 0.3);
+            box-shadow: 0 12px 30px -8px rgba(110, 98, 89, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* 마인드맵 라인 애니메이션 */
+        .pulse-line {
+            background: linear-gradient(90deg, #FF6B35, #A78BFA, #FF6B35);
+            background-size: 200% auto;
+            animation: shineLine 3s linear infinite;
+        }
+        
+        @keyframes shineLine {
+            to { background-position: 200% center; }
+        }
+    </style>
+</head>
+<body class="bg-brand-bgWarm text-brand-charcoal font-sans min-h-screen flex flex-col selection:bg-brand-orange selection:text-white">
+
+    <!-- 상단 대시보드 헤더 -->
+    <header class="glass-panel sticky top-0 z-50 px-6 py-4 border-b border-brand-borderWarm shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- 로고 및 타이틀 -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-orange to-violet-500 flex items-center justify-center font-display font-extrabold text-white text-lg shadow-md shadow-brand-orange/20 rotate-[-3deg]">
+                    AK
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-lg text-brand-charcoal tracking-tight flex items-center gap-2">
+                        AK LABS MISSION CONTROL <span class="text-xs px-2 py-0.5 rounded bg-brand-orange/10 text-brand-orange border border-brand-orange/20 font-sans">DAY 01</span>
+                    </h1>
+                    <p class="text-xs text-brand-brownSoft">Day 1 온라인 학습 가이드 & 실습 통합 대시보드</p>
+                </div>
+            </div>
+            
+            <!-- 실습 도구 메인 스위처 탭 -->
+            <div class="flex items-center gap-3">
+                <button id="sidebar-toggle-btn" onclick="toggleSidebar()" class="px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-orange border border-brand-borderWarm bg-white hover:bg-brand-orangeDim/30 transition-all duration-200 flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-columns text-xs"></i> 가이드 접기
+                </button>
+                <div class="flex bg-brand-orangeDim p-1 rounded-xl border border-brand-orange/10 gap-1">
+                    <button id="main-tab-1" onclick="switchMainTab(1)" class="px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 flex items-center gap-2 bg-brand-orange text-white shadow-sm">
+                        <i class="fa-solid fa-rocket text-xs"></i> 실습 1: AI OKR & 미션 빌더
+                    </button>
+                    <button id="main-tab-2" onclick="switchMainTab(2)" class="px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-orange transition-all duration-200 flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-xs"></i> 실습 2: 발표 마스터 워크북
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+ 
+    <!-- 대시보드 메인 2열 그리드 -->
+    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden">
+        
+        <!-- ==================== [좌측 패널: 학습 가이드 & 서브 정보] ==================== -->
+        <section id="sidebar-panel" class="lg:col-span-5 flex flex-col gap-4 h-fit lg:max-h-[calc(100vh-140px)] overflow-y-auto lg:sticky lg:top-[90px] pr-1">
+            
+            <!-- 가이드 탭 컨트롤 -->
+            <div class="flex bg-brand-orangeDim p-1 rounded-xl border border-brand-orange/10 w-full">
+                <button id="guide-subtab-1" onclick="switchGuideTab(1)" class="flex-1 py-2 text-xs font-bold rounded-lg text-center transition-all bg-white text-brand-orange shadow-sm">
+                    <i class="fa-regular fa-compass mr-1"></i> 학습 가이드
+                </button>
+                <button id="guide-subtab-2" onclick="switchGuideTab(2)" class="flex-1 py-2 text-xs font-bold rounded-lg text-center transition-all text-brand-brownSoft hover:text-brand-orange">
+                    <i class="fa-solid fa-book-open mr-1"></i> 용어 사전
+                </button>
+                <button id="guide-subtab-3" onclick="switchGuideTab(3)" class="flex-1 py-2 text-xs font-bold rounded-lg text-center transition-all text-brand-brownSoft hover:text-brand-orange">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> AI 도구 정보
+                </button>
+            </div>
+
+            <!-- 가이드 패널 카드 -->
+            <div class="glass-panel rounded-2xl p-6 border border-brand-borderWarm flex flex-col gap-6 text-sm leading-relaxed">
+                
+                <!-- [서브탭 1: 학습 가이드 본문] -->
+                <div id="guide-content-1" class="space-y-6">
+                    <div class="border-b border-brand-borderWarm pb-4">
+                        <span class="text-xs font-bold text-brand-orange uppercase tracking-wider"><i class="fa-solid fa-map-location-dot mr-1"></i> Road Map</span>
+                        <h2 class="text-xl font-bold text-brand-charcoal mt-1">🚀 Day 1 학습 가이드</h2>
+                        <p class="text-xs text-brand-brownSoft mt-1">AI와 작전 짜기 & 우리 팀 미션 시작하기</p>
+                    </div>
+
+                    <!-- 3줄 요약 Bento 카드 -->
+                    <div class="bg-brand-orangeDim/50 border border-brand-orange/20 rounded-2xl p-5 space-y-3">
+                        <h3 class="font-bold text-brand-orange text-xs uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-list-check"></i> 오늘 우리가 할 일 (3줄 요약)</h3>
+                        <ol class="list-decimal list-inside text-xs text-brand-charcoal space-y-2 leading-relaxed">
+                            <li>AI에게 질문할 때 <b>왜 이상한 답이 나오는지</b> 분석합니다.</li>
+                            <li><b>AI OKR</b> 프레임워크로 "제대로 된 질문"을 설계해봅니다.</li>
+                            <li>우리 팀이 5일 동안 디벨롭할 <b>가상의 상품</b>을 선정합니다.</li>
+                        </ol>
+                    </div>
+
+                    <!-- 실시간 탭 연결에 따른 동적 가이드 텍스트 -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 text-xs font-bold text-brand-brownSoft">
+                            <span class="w-1.5 h-1.5 rounded-full bg-brand-orange animate-ping"></span>
+                            현재 실습 도구 맞춤 가이드
+                        </div>
+
+                        <!-- 실습 1 가이드 뷰 -->
+                        <div id="guide-step-tool1" class="space-y-4 text-xs text-brand-charcoal">
+                            <!-- 실습 1 - 0단계 브리핑 -->
+                            <div class="step-guide-item p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm transition" id="guide-item-briefing">
+                                <h4 class="font-bold text-brand-charcoal text-sm mb-1">📢 BRIEFING 단계</h4>
+                                <p class="text-brand-brownSoft leading-normal">5일 동안 우리 팀은 상품을 시장조사하고 제안서를 써서 발표자료까지 "출시"합니다. 준비가 되셨다면 우측 하단의 [다음 →] 버튼을 눌러 이동하세요.</p>
+                            </div>
+                            
+                            <!-- 실습 1 - 1단계 BUILD -->
+                            <div class="step-guide-item p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition" id="guide-item-build">
+                                <h4 class="font-bold text-brand-charcoal text-sm mb-1">🛠️ BUILD 단계</h4>
+                                <p class="text-brand-brownSoft leading-normal">AI OKR(Goal, Context, Sample, Role)을 입력합니다. 막막하다면 우측 상단의 <b>"시나리오" 칩</b>을 클릭해 예시를 먼저 로딩해보고 Gemini에 테스트해보세요.</p>
+                            </div>
+
+                            <!-- 실습 1 - 2단계 DECLARE -->
+                            <div class="step-guide-item p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition" id="guide-item-declare">
+                                <h4 class="font-bold text-brand-charcoal text-sm mb-1">🎯 DECLARE 단계</h4>
+                                <p class="text-brand-brownSoft leading-normal">우리 팀이 5일간 만들 상품의 출발점을 적습니다. 카테고리, 타겟, 문제를 정의하고 AI 브레인스토밍 프롬프트를 복사해 결과를 받아보세요.</p>
+                            </div>
+
+                            <!-- 실습 1 - 3단계 LAUNCH -->
+                            <div class="step-guide-item p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition" id="guide-item-launch">
+                                <h4 class="font-bold text-brand-charcoal text-sm mb-1">🚀 LAUNCH 단계</h4>
+                                <p class="text-brand-brownSoft leading-normal">Day 1 최종 결과물인 <b>"미션 키트"</b>가 완성되었습니다. [전체 복사하기]를 눌러 팀 미션 로그(구글독스)에 붙여넣어 보관하세요.</p>
+                            </div>
+                        </div>
+
+                        <!-- 실습 2 가이드 뷰 (기본적으로 숨겨짐) -->
+                        <div id="guide-step-tool2" class="space-y-4 text-xs text-brand-charcoal hidden">
+                            <div class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm transition" id="guide-item2-intro">
+                                <h4 class="font-bold text-brand-charcoal text-sm mb-1">✨ 발표 마스터 소개</h4>
+                                <p class="text-brand-brownSoft leading-normal">단순히 AI에게 대본을 써달라고 냅다 질문하면 지루한 글이 나옵니다. 3단계 워크플로우를 거쳐 완벽한 발표 대본용 구조화 프롬프트를 설계해보세요.</p>
+                            </div>
+                            <div class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition" id="guide-item2-step1">
+                                <h4 class="font-bold text-brand-charcoal text-sm mb-1">🔑 1단계: 도메인 지식 줍줍</h4>
+                                <p class="text-brand-brownSoft leading-normal">원하는 주제를 적고 1차 질문을 AI에 던진 뒤, 알아낸 핵심 발표 기법 및 용어 3가지를 오른쪽 마인드맵에 수집해보세요.</p>
+                            </div>
+                            <div class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition" id="guide-item2-step2">
+                                <h4 class="font-bold text-brand-charcoal text-sm mb-1">🔍 2단계: 분석 피드백 (Reverse Engineering)</h4>
+                                <p class="text-brand-brownSoft leading-normal">잘 쓴 대본이나 TED 영상 분석을 요청하여 차별화된 적용 노하우와 스토리텔링 공식(Core Principle)을 정리해봅니다.</p>
+                            </div>
+                            <div class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition" id="guide-item2-step3">
+                                <h4 class="font-bold text-brand-charcoal text-sm mb-1">🎉 3단계: 구조화 프롬프트 완성</h4>
+                                <p class="text-brand-brownSoft leading-normal">모든 정보가 하나로 조립된 최종 프롬프트가 탄생합니다. 이를 통째로 복사해 AI에 입력하면 환상적인 대본과 슬라이드 기획이 표로 출력됩니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 꿀팁 & 제출 체크리스트 -->
+                    <div class="border-t border-brand-borderWarm pt-4 space-y-3">
+                        <h4 class="font-bold text-brand-charcoal text-xs"><i class="fa-solid fa-lightbulb text-amber-500 mr-1.5"></i> 오늘 제출 체크리스트</h4>
+                        <ul class="text-xs text-brand-charcoal space-y-1.5">
+                            <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 accent-brand-orange"> <span class="text-brand-charcoal">실시간 퀴즈 3문제에 참여했다.</span></li>
+                            <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 accent-brand-orange"> <span class="text-brand-charcoal">AI OKR 프롬프트를 Gemini에 테스트했다.</span></li>
+                            <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 accent-brand-orange"> <span class="text-brand-charcoal">팀명/타겟/문제/컨셉 시드를 모두 적었다.</span></li>
+                            <li class="flex items-start gap-2"><input type="checkbox" class="mt-0.5 accent-brand-orange"> <span class="text-brand-charcoal">최종 미션 키트를 복사하여 구글독스에 저장했다.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- [서브탭 2: 용어 사전] -->
+                <div id="guide-content-2" class="space-y-5 hidden">
+                    <div class="border-b border-brand-borderWarm pb-4">
+                        <span class="text-xs font-bold text-brand-orange uppercase tracking-wider"><i class="fa-solid fa-book mr-1"></i> Glossary</span>
+                        <h2 class="text-xl font-bold text-brand-charcoal mt-1">📖 오늘의 용어 미니사전</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div onclick="openConceptModal(0)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-orange/45 hover:shadow-md transition duration-200">
+                            <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 text-[10px] font-mono rounded bg-brand-orange/10 text-brand-orange">개념 1</span> AI OKR
+                            </h3>
+                            <p class="text-xs text-brand-brownSoft leading-normal">
+                                AI에게 부탁할 때 <b>Goal(목표) · Context(상황) · Sample(원하는 형태) · Role(AI 역할)</b> 4칸으로 구조화하여 말 거는 프롬프팅 방법론. 구글과 인텔의 목표 달성 관리 방식(OKR)에서 착안하였습니다.
+                            </p>
+                            <!-- 웹툰 토글 버튼 및 이미지 영역 -->
+                            <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
+                                <button onclick="event.stopPropagation(); toggleWebtoon('wt-okr')" class="text-[10px] font-bold text-brand-orange hover:text-brand-orangeDeep flex items-center gap-1 transition focus:outline-none cursor-pointer">
+                                    <i class="fa-regular fa-image"></i> <span id="wt-okr-btn-text">💡 4컷 웹툰 가이드 보기</span>
+                                </button>
+                                <div id="wt-okr" class="hidden mt-3 rounded-lg overflow-hidden border border-brand-borderWarm shadow-sm">
+                                    <img src="../assets/webtoon_ai_okr.jpg" alt="AI OKR 웹툰 설명" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="openConceptModal(1)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-orange/45 hover:shadow-md transition duration-200">
+                            <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 text-[10px] font-mono rounded bg-violet-500/10 text-violet-600">개념 2</span> 페르소나 프롬프팅
+                            </h3>
+                            <p class="text-xs text-brand-brownSoft leading-normal">
+                                AI에게 "당신은 10년 차 IT 서비스 기획자입니다"처럼 특정 역할이나 성격을 부여하는 방법. 역할을 구체적이고 과하지 않게 지정할수록 가짜 정보(환각)를 줄이고 정확한 답을 도출합니다.
+                            </p>
+                            <!-- 웹툰 토글 버튼 및 이미지 영역 -->
+                            <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
+                                <button onclick="event.stopPropagation(); toggleWebtoon('wt-persona')" class="text-[10px] font-bold text-brand-orange hover:text-brand-orangeDeep flex items-center gap-1 transition focus:outline-none cursor-pointer">
+                                    <i class="fa-regular fa-image"></i> <span id="wt-persona-btn-text">💡 4컷 웹툰 가이드 보기</span>
+                                </button>
+                                <div id="wt-persona" class="hidden mt-3 rounded-lg overflow-hidden border border-brand-borderWarm shadow-sm">
+                                    <img src="../assets/webtoon_persona_prompting.jpg" alt="페르소나 프롬프팅 웹툰 설명" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div onclick="openConceptModal(2)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-orange/45 hover:shadow-md transition duration-200">
+                            <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 text-[10px] font-mono rounded bg-emerald-500/10 text-emerald-600">개념 3</span> Slide Economy (슬라이드 절약 법칙)
+                            </h3>
+                            <p class="text-xs text-brand-brownSoft leading-normal">
+                                파워포인트 슬라이드 자체에는 글자를 최소화하고 시각화 요소 위주로 채워 넣되, 발표자의 입으로 설명하는 대본을 정밀하게 구조화하는 실전 PPT 작성 원칙입니다.
+                            </p>
+                            <!-- 웹툰 토글 버튼 및 이미지 영역 -->
+                            <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
+                                <button onclick="event.stopPropagation(); toggleWebtoon('wt-slide')" class="text-[10px] font-bold text-brand-orange hover:text-brand-orangeDeep flex items-center gap-1 transition focus:outline-none cursor-pointer">
+                                    <i class="fa-regular fa-image"></i> <span id="wt-slide-btn-text">💡 4컷 웹툰 가이드 보기</span>
+                                </button>
+                                <div id="wt-slide" class="hidden mt-3 rounded-lg overflow-hidden border border-brand-borderWarm shadow-sm">
+                                    <img src="../assets/webtoon_slide_economy.jpg" alt="Slide Economy 웹툰 설명" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- [서브탭 3: AI 도구 정보] -->
+                <div id="guide-content-3" class="space-y-5 hidden">
+                    <div class="border-b border-brand-borderWarm pb-4">
+                        <span class="text-xs font-bold text-brand-orange uppercase tracking-wider"><i class="fa-solid fa-microchip mr-1"></i> AI Tools</span>
+                        <h2 class="text-xl font-bold text-brand-charcoal mt-1">🛠️ Google AI 도구 훑어보기</h2>
+                    </div>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="grid grid-cols-1 gap-2.5">
+                            <div class="p-3 rounded-xl bg-brand-bgWarm border border-brand-borderWarm flex gap-3">
+                                <i class="fa-solid fa-comments text-brand-orange text-base mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-bold text-brand-charcoal">Gemini (제미나이)</h4>
+                                    <p class="text-brand-brownSoft mt-1 leading-relaxed">구글의 초거대 AI 기반 대화형 챗봇입니다. 질문을 어떻게 구성하느냐에 따라 창의성과 실용성이 완전히 달라집니다.</p>
+                                </div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-brand-bgWarm border border-brand-borderWarm flex gap-3">
+                                <i class="fa-solid fa-folder-open text-violet-500 text-base mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-bold text-brand-charcoal">NotebookLM</h4>
+                                    <p class="text-brand-brownSoft mt-1 leading-relaxed">학습 자료(PDF, 구글 문서, 링크)를 넣으면 AI가 해당 지식을 바탕으로 요약 및 질의응답을 지원하는 똑똑한 개인 메모장입니다. (Day 2부터 사용)</p>
+                                </div>
+                            </div>
+                            <div class="p-3 rounded-xl bg-brand-bgWarm border border-brand-borderWarm flex gap-3">
+                                <i class="fa-solid fa-file-powerpoint text-emerald-600 text-base mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-bold text-brand-charcoal">Gemini Canvas</h4>
+                                    <p class="text-brand-brownSoft mt-1 leading-relaxed">글로 쓴 기획안을 슬라이드나 비주얼 인포그래픽 형태로 순식간에 구조화해주는 구글의 워크스페이스 특화 시각화 기능입니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== [우측 패널: 실습 워크스페이스] ==================== -->
+        <section id="workspace-panel" class="lg:col-span-7 flex flex-col gap-4">
+
+            <!-- ==================== [실습 1: AI OKR & 미션 빌더] ==================== -->
+            <div id="main-tool-1" class="space-y-6">
+                <!-- 4단계 진행 인디케이터 (상단 Rail) -->
+                <div class="glass-panel rounded-2xl p-5 border border-brand-borderWarm shadow-sm">
+                    <h3 class="text-xs font-bold text-brand-brownSoft tracking-wider mb-4 uppercase flex items-center gap-1.5"><i class="fa-solid fa-route text-brand-orange"></i> MISSION COUNTDOWN</h3>
+                    <!-- 트랙 핀 디자인 -->
+                    <div class="flex items-center justify-between relative px-2">
+                        <div class="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-[2px] bg-brand-borderWarm z-0">
+                            <div id="rail-progress-bar" class="h-full bg-brand-orange transition-all duration-300" style="width: 0%;"></div>
+                        </div>
+                        <div class="flex justify-between w-full relative z-10">
+                            <div class="flex flex-col items-center gap-1.5">
+                                <button onclick="goToOkrStep(0)" id="okr-node-0" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs bg-brand-orange text-white border-2 border-brand-orange shadow-md shadow-brand-orange/30">1</button>
+                                <span class="text-[10px] font-bold text-brand-charcoal" id="okr-text-0">BRIEFING</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1.5">
+                                <button onclick="goToOkrStep(1)" id="okr-node-1" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs bg-white text-brand-brownSoft border-2 border-brand-borderWarm">2</button>
+                                <span class="text-[10px] font-bold text-brand-brownSoft" id="okr-text-1">BUILD</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1.5">
+                                <button onclick="goToOkrStep(2)" id="okr-node-2" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs bg-white text-brand-brownSoft border-2 border-brand-borderWarm">3</button>
+                                <span class="text-[10px] font-bold text-brand-brownSoft" id="okr-text-2">DECLARE</span>
+                            </div>
+                            <div class="flex flex-col items-center gap-1.5">
+                                <button onclick="goToOkrStep(3)" id="okr-node-3" class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs bg-white text-brand-brownSoft border-2 border-brand-borderWarm">4</button>
+                                <span class="text-[10px] font-bold text-brand-brownSoft" id="okr-text-3">LAUNCH</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 단계별 실무 워크스페이스 컨테이너 -->
+                <div class="glass-panel rounded-2xl p-6 md:p-8 border border-brand-borderWarm min-h-[460px] flex flex-col justify-between">
+                    
+                    <!-- [1-1. Briefing 뷰] -->
+                    <div id="okr-view-0" class="space-y-6">
+                        <div>
+                            <span class="text-xs font-bold text-brand-orange px-2.5 py-1 rounded bg-brand-orangeDim text-brand-orange border border-brand-orange/20 uppercase tracking-wide">BRIEFING</span>
+                            <h2 class="text-2xl font-bold text-brand-charcoal mt-3">오늘의 미션: AI와 제대로 소통하기</h2>
+                            <p class="text-brand-brownSoft text-sm mt-2 leading-relaxed">
+                                5일간 우리 팀은 하나의 가상 제품 아이디어를 기획하여 실제로 "출시"하는 기획 프로세스를 학습합니다.<br>
+                                첫 번째 단계로 평소에 AI에 막연하게 물어보던 습관을 극복하고, <b>AI OKR</b> 기반의 체계적인 질문(프롬프트) 설계를 연습해보겠습니다.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-brand-orangeDim/45 border border-brand-orange/20 rounded-xl p-4 space-y-3">
+                            <h4 class="font-bold text-brand-charcoal text-xs flex items-center gap-1.5"><i class="fa-solid fa-circle-question text-brand-orange"></i> 생각하고 넘어가야 할 실습 사전 과제</h4>
+                            <p class="text-xs text-brand-brownSoft leading-normal">
+                                1. 평소에 AI에 질문을 던질 때, 한 문장으로 간단히 던지진 않았나요?<br>
+                                2. AI가 구체적인 기획안을 주기 위해 알아야 할 우리의 '상황 정보(Context)'는 무엇일까요?
+                            </p>
+                        </div>
+                        
+                        <p class="text-xs text-brand-brownSoft italic mt-4"><i class="fa-solid fa-arrow-right text-brand-orange mr-1"></i> 준비되셨다면 하단의 [다음 →] 버튼을 눌러 AI OKR을 직접 빌드해보세요.</p>
+                    </div>
+
+                    <!-- [1-2. Build 뷰] -->
+                    <div id="okr-view-1" class="hidden space-y-6">
+                        <div>
+                            <span class="text-xs font-bold text-brand-orange px-2.5 py-1 rounded bg-brand-orangeDim text-brand-orange border border-brand-orange/20 uppercase tracking-wide">BUILD</span>
+                            <h2 class="text-2xl font-bold text-brand-charcoal mt-3">AI OKR 프롬프트 빌더</h2>
+                            <p class="text-xs text-brand-brownSoft mt-1">4개의 칸을 채우면 복사해서 바로 쓸 수 있는 프롬프트가 실시간으로 조립됩니다.</p>
+                        </div>
+
+                        <!-- 시나리오 칩 선택 -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-brand-brownSoft">💡 막막하다면 시나리오 클릭하여 자동 세팅</label>
+                            <div class="flex flex-wrap gap-2" id="scenario-chip-container"></div>
+                        </div>
+
+                        <!-- 4개 인풋 필드 -->
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">[Goal] 지금 AI에게 시킬 일의 핵심 목표</label>
+                                <textarea id="in-okr-goal" oninput="syncOkrInputs()" placeholder="예) 대학가 무인 간식 자판기 신상품 라인업을 기획하려고 해." class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition min-h-[60px] resize-y"></textarea>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-bold text-brand-charcoal">[Context] 우리 팀의 상황 & 제약 사항</label>
+                                    <textarea id="in-okr-context" oninput="syncOkrInputs()" placeholder="예) 4인 대학생 팀이고 예산은 0원이야. 타겟은 야식이 필요한 자취 학생이야." class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition min-h-[60px] resize-y"></textarea>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-bold text-brand-charcoal">[Sample] AI에게 원하는 최종 답변의 형태</label>
+                                    <textarea id="in-okr-sample" oninput="syncOkrInputs()" placeholder="예) 경쟁 제품 3개와 우리만의 차별점을 비교 분석하는 표로 정리해줘." class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition min-h-[60px] resize-y"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">[Role] 이번 질문에서 AI가 담당해야 할 역할 범위</label>
+                                <textarea id="in-okr-role" oninput="syncOkrInputs()" placeholder="예) 지금은 전체 기획이 아니라 기초 시장 조사만 해줘. 내가 결과를 보고 다음 단계를 지시할게." class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition min-h-[60px] resize-y"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 실시간 프롬프트 조립 미리보기 -->
+                        <div class="space-y-2 bg-brand-bgWarm border border-brand-borderWarm rounded-xl p-4 shadow-inner">
+                            <span class="text-[10px] font-bold text-brand-orange uppercase tracking-wider flex items-center gap-1.5"><i class="fa-regular fa-paper-plane"></i> 실시간 완성 프롬프트</span>
+                            <div id="okr-preview-area" class="font-mono text-xs text-brand-charcoal leading-relaxed whitespace-pre-wrap"></div>
+                            <div class="flex items-center gap-2 pt-2 border-t border-brand-borderWarm">
+                                <button onclick="copyToClipboard('okr-preview-area', 'btn-copy-okr')" id="btn-copy-okr" class="bg-white hover:bg-brand-orangeDim/50 border border-brand-borderWarm text-xs px-3 py-1.5 rounded-lg text-brand-charcoal transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-regular fa-copy"></i> 프롬프트 복사하기
+                                </button>
+                                <span id="toast-okr" class="text-xs text-brand-good font-semibold opacity-0 transition-opacity">복사 완료! Gemini에 붙여넣어 보세요.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- [1-3. Declare 뷰] -->
+                    <div id="okr-view-2" class="hidden space-y-6">
+                        <div>
+                            <span class="text-xs font-bold text-brand-orange px-2.5 py-1 rounded bg-brand-orangeDim text-brand-orange border border-brand-orange/20 uppercase tracking-wide">DECLARE</span>
+                            <h2 class="text-2xl font-bold text-brand-charcoal mt-3">팀 미션 선언문 설계</h2>
+                            <p class="text-xs text-brand-brownSoft mt-1">우리 팀의 이름과 앞으로 5일 동안 완성할 가상 아이디어의 뼈대를 선언합니다.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">팀 이름</label>
+                                <input type="text" id="in-team-name" oninput="syncDeclareInputs()" placeholder="예) 야식 구출 연구소" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">팀원 목록 (쉼표 구분)</label>
+                                <input type="text" id="in-team-members" oninput="syncDeclareInputs()" placeholder="예) 김우송, 이아크, 박랩스" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition">
+                            </div>
+                        </div>
+
+                        <!-- 카테고리 칩 목록 -->
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-brand-brownSoft">상품 카테고리 선택</label>
+                            <div class="flex flex-wrap gap-2" id="category-chip-container"></div>
+                        </div>
+
+                        <!-- 핵심 3개 선언 빈칸 -->
+                        <div class="grid grid-cols-1 gap-4 border-t border-brand-borderWarm pt-4">
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">타겟 고객 (누가 우리 제품을 사용하나요?)</label>
+                                <input type="text" id="in-team-target" oninput="syncDeclareInputs()" placeholder="예) 시험기간에 간식 챙겨 먹기 힘든 대학교 기숙사생들" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">해결하고자 하는 불편/문제점</label>
+                                <input type="text" id="in-team-problem" oninput="syncDeclareInputs()" placeholder="예) 밤 12시 이후에는 기숙사 매점이 닫아서 야식을 구하기 어렵다" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">상품 컨셉 시드 (우리 제품을 한 문장으로 정의)</label>
+                                <input type="text" id="in-team-seed" oninput="syncDeclareInputs()" placeholder="예) 기숙사 전용 24시간 스마트 자판기 샐러드 및 야식 보관함" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition">
+                            </div>
+                        </div>
+
+                        <!-- 브레인스토밍 프롬프트 생성 미리보기 -->
+                        <div class="space-y-2 bg-brand-bgWarm border border-brand-borderWarm rounded-xl p-4 shadow-inner">
+                            <span class="text-[10px] font-bold text-brand-orange uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-brain"></i> AI 아이디어 브레인스토밍 프롬프트</span>
+                            <div id="declare-preview-area" class="font-mono text-xs text-brand-charcoal leading-relaxed whitespace-pre-wrap"></div>
+                            <div class="flex items-center gap-2 pt-2 border-t border-brand-borderWarm">
+                                <button onclick="copyToClipboard('declare-preview-area', 'btn-copy-declare')" id="btn-copy-declare" class="bg-white hover:bg-brand-orangeDim/50 border border-brand-borderWarm text-xs px-3 py-1.5 rounded-lg text-brand-charcoal transition flex items-center gap-1.5 shadow-sm">
+                                    <i class="fa-regular fa-copy"></i> 프롬프트 복사하기
+                                </button>
+                                <span id="toast-declare" class="text-xs text-brand-good font-semibold opacity-0 transition-opacity">복사 완료! Gemini에서 아이디어를 확장해 보세요.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- [1-4. Launch 뷰] -->
+                    <div id="okr-view-3" class="hidden space-y-6">
+                        <div class="text-center space-y-2 py-4">
+                            <div class="w-16 h-16 rounded-full bg-brand-orangeDim text-brand-orange border border-brand-orange/30 flex items-center justify-center text-3xl mx-auto animate-bounce">
+                                🚀
+                            </div>
+                            <h2 class="text-2xl font-bold text-brand-charcoal">MISSION KIT READY!</h2>
+                            <p class="text-xs text-brand-brownSoft">오늘의 학습 및 미션 결과를 하나로 묶은 최종 키트입니다.</p>
+                        </div>
+                        
+                        <!-- 티켓 스타일 디스플레이 박스 -->
+                        <div class="relative bg-gradient-to-br from-white to-brand-orangeDim/30 border border-brand-orange/20 rounded-2xl overflow-hidden p-6 space-y-4 shadow-md">
+                            <!-- 티켓 양 끝 홈 디자인 효과 -->
+                            <div class="absolute left-[-8px] top-1/2 -translate-y-1/2 w-4 h-8 rounded-full bg-brand-bgWarm border-r border-brand-orange/20"></div>
+                            <div class="absolute right-[-8px] top-1/2 -translate-y-1/2 w-4 h-8 rounded-full bg-brand-bgWarm border-l border-brand-orange/20"></div>
+                            
+                            <div class="border-b border-dashed border-brand-borderWarm pb-4">
+                                <span class="text-[10px] font-mono text-brand-orange font-bold uppercase tracking-widest">Day 1 Mission Accomplished</span>
+                                <h3 class="text-base font-bold text-brand-charcoal mt-1" id="final-kit-title">팀명: 미입력</h3>
+                            </div>
+                            
+                            <pre id="final-kit-area" class="font-mono text-xs text-brand-charcoal whitespace-pre-wrap leading-relaxed max-h-[220px] overflow-y-auto"></pre>
+                        </div>
+
+                        <div class="flex items-center gap-3 justify-center pt-2">
+                            <button onclick="copyToClipboard('final-kit-area', 'btn-copy-all')" id="btn-copy-all" class="bg-brand-orange hover:bg-brand-orangeDeep text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-brand-orange/20 transition flex items-center gap-2">
+                                <i class="fa-regular fa-copy"></i> 전체 복사하기
+                            </button>
+                            <button onclick="downloadAsText()" class="bg-white hover:bg-brand-orangeDim/50 border border-brand-borderWarm text-brand-charcoal text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-file-arrow-down"></i> 텍스트 파일 저장
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 하단 내비게이션 버튼 바 -->
+                    <div class="flex items-center justify-between border-t border-brand-borderWarm pt-6 mt-6">
+                        <button id="prevOkrBtn" onclick="prevOkrStep()" class="px-5 py-2.5 rounded-xl font-bold text-sm bg-white border border-brand-borderWarm text-brand-brownSoft hover:text-brand-charcoal transition disabled:opacity-40 disabled:cursor-not-allowed shadow-sm">
+                            ← 이전
+                        </button>
+                        <span id="okr-step-indicator" class="text-xs font-bold text-brand-brownSoft font-mono">STEP 1 / 4</span>
+                        <button id="nextOkrBtn" onclick="nextOkrStep()" class="px-5 py-2.5 rounded-xl font-bold text-sm bg-brand-orange hover:bg-brand-orangeDeep text-white shadow-lg shadow-brand-orange/10 transition">
+                            다음 →
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ==================== [실습 2: 발표 마스터 워크북] ==================== -->
+            <div id="main-tool-2" class="hidden space-y-6">
+                <!-- 3단계 헤더 인디케이터 -->
+                <div class="glass-panel rounded-2xl p-4 border border-brand-borderWarm shadow-sm">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <span class="text-xs font-bold text-brand-brownSoft uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-list-ol text-brand-orange"></i> 발표 대본 빌드 플로우</span>
+                        <div class="flex items-center gap-1.5 text-xs font-semibold">
+                            <span id="p-badge-0" onclick="goToPresStep(0)" class="cursor-pointer px-2.5 py-1.5 rounded-full bg-brand-orange/10 text-brand-orange border border-brand-orange/20 font-bold">소개</span>
+                            <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                            <span id="p-badge-1" onclick="goToPresStep(1)" class="cursor-pointer px-2.5 py-1.5 rounded-full text-brand-brownSoft hover:text-brand-orange transition">1. 지식 수집</span>
+                            <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                            <span id="p-badge-2" onclick="goToPresStep(2)" class="cursor-pointer px-2.5 py-1.5 rounded-full text-brand-brownSoft hover:text-brand-orange transition">2. 분석 피드백</span>
+                            <i class="fa-solid fa-chevron-right text-[8px] text-brand-borderWarm"></i>
+                            <span id="p-badge-3" onclick="goToPresStep(3)" class="cursor-pointer px-2.5 py-1.5 rounded-full text-brand-brownSoft hover:text-brand-orange transition">3. 프롬프트 완성</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 단계별 뷰 컨테이너 -->
+                <div class="glass-panel rounded-2xl p-6 md:p-8 border border-brand-borderWarm min-h-[460px] flex flex-col justify-between">
+                    
+                    <!-- [2-0. 소개 화면] -->
+                    <div id="pres-view-0" class="space-y-6">
+                        <div class="text-center space-y-4">
+                            <span class="inline-block bg-brand-orange/10 text-brand-orange text-xs font-bold px-3 py-1 rounded-full uppercase border border-brand-orange/20">Presentation Master</span>
+                            <h2 class="text-2xl md:text-3xl font-extrabold text-brand-charcoal leading-tight">
+                                발표 대본 쓰다 밤새는 대학생을 위한<br>
+                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-violet-500">진짜 AI 발표 대본 가이드북</span>
+                            </h2>
+                            <p class="text-brand-brownSoft text-sm leading-relaxed max-w-xl mx-auto">
+                                AI에게 냅다 "발표 대본 짜줘"라고 부탁하면 뻔하고 지루한 답변만 받게 됩니다. 아크랩스 강연 분석 프레임워크를 기반으로 3단계를 따라 완벽한 기획서를 조립해보세요!
+                            </p>
+                        </div>
+                        
+                        <!-- 3단계 설명 카드 그리드 (Bento Grid 스타일) -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                            <div class="bg-brand-bgWarm border border-brand-borderWarm p-4 rounded-xl space-y-2 hover:border-brand-orange/30 hover:bg-brand-orangeDim/20 transition">
+                                <h3 class="text-brand-orange font-bold text-sm flex items-center gap-1.5">
+                                    <span class="w-5 h-5 rounded-full bg-brand-orange/10 text-brand-orange text-xs flex items-center justify-center font-bold">1</span>
+                                    도메인 지식 줍줍
+                                </h3>
+                                <p class="text-[11px] text-brand-brownSoft leading-normal">원하는 주제를 입력하고 전문가 인터뷰를 통해 3대 핵심 키워드 마인드맵을 구성합니다.</p>
+                            </div>
+                            <div class="bg-brand-bgWarm border border-brand-borderWarm p-4 rounded-xl space-y-2 hover:border-violet-500/30 hover:bg-violet-500/5 transition">
+                                <h3 class="text-violet-600 font-bold text-sm flex items-center gap-1.5">
+                                    <span class="w-5 h-5 rounded-full bg-violet-500/10 text-violet-600 text-xs flex items-center justify-center font-bold">2</span>
+                                    강연 분석하기
+                                </h3>
+                                <p class="text-[11px] text-brand-brownSoft leading-normal">명강연(TED 등)의 검증된 노하우와 스토리텔링 구조를 AI에게 요청해 분석 피드백을 축적합니다.</p>
+                            </div>
+                            <div class="bg-brand-bgWarm border border-brand-borderWarm p-4 rounded-xl space-y-2 hover:border-emerald-500/30 hover:bg-emerald-500/5 transition">
+                                <h3 class="text-emerald-600 font-bold text-sm flex items-center gap-1.5">
+                                    <span class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-600 text-xs flex items-center justify-center font-bold">3</span>
+                                    구조 프롬프트 추출
+                                </h3>
+                                <p class="text-[11px] text-brand-brownSoft leading-normal">정리된 도메인 지식과 노하우를 녹여 대본과 슬라이드 기획안이 표로 깔끔하게 쏟아질 최종 프롬프트를 추출합니다.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center pt-6">
+                            <button onclick="goToPresStep(1)" class="bg-brand-orange hover:bg-brand-orangeDeep text-white text-sm font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-brand-orange/15">
+                                워크북 실습 시작하기 <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- [2-1. 지식 수집 뷰] -->
+                    <div id="pres-view-1" class="hidden space-y-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            <!-- 인풋 폼 (왼쪽) -->
+                            <div class="lg:col-span-7 space-y-5">
+                                <div>
+                                    <span class="text-xs font-bold text-brand-orange px-2 py-0.5 rounded bg-brand-orangeDim border border-brand-orange/20">STEP 1</span>
+                                    <h3 class="text-lg font-bold text-brand-charcoal mt-2">주제 선정 & 1차 인터뷰 질문 생성</h3>
+                                    <p class="text-xs text-brand-brownSoft">발표하려는 주제를 입력하고 AI 전문가에게 물어볼 첫 단추 질문을 복사해 사용해 보세요.</p>
+                                </div>
+                                
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-bold text-brand-charcoal">발표 주제 입력</label>
+                                    <input type="text" id="pres-topic-input" oninput="syncPresTopic()" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition" placeholder="예) 우주 쓰레기 문제, 탄소 배출 저감 기술 등">
+                                </div>
+
+                                <div class="bg-brand-bgWarm border border-brand-borderWarm rounded-xl p-4 space-y-3 shadow-inner">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[10px] font-bold text-brand-orange uppercase tracking-wider flex items-center gap-1"><i class="fa-regular fa-paper-plane"></i> AI 1차 질문</span>
+                                        <button onclick="copyToClipboard('pres-prompt1-area', 'btn-copy-pres1')" id="btn-copy-pres1" class="text-[10px] bg-white border border-brand-borderWarm px-2.5 py-1 rounded hover:bg-brand-orangeDim/50 transition text-brand-charcoal shadow-sm"><i class="fa-regular fa-copy"></i> 복사</button>
+                                    </div>
+                                    <div id="pres-prompt1-area" class="font-mono text-xs text-brand-charcoal leading-relaxed whitespace-pre-wrap"></div>
+                                </div>
+
+                                <!-- 키워드 빌더 -->
+                                <div class="border-t border-brand-borderWarm pt-4 space-y-3">
+                                    <h4 class="font-bold text-brand-charcoal text-xs">🤖 AI 답변 중 핵심 발표 기법/용어 정리</h4>
+                                    
+                                    <div id="pres-keywords-container" class="space-y-3">
+                                        <!-- 동적으로 입력란 행들이 렌더링됩니다 -->
+                                    </div>
+
+                                    <button type="button" onclick="addKeywordRow()" class="mt-2 w-full py-2 border border-dashed border-brand-orange/30 rounded-xl text-xs text-brand-orange bg-brand-orangeDim/30 hover:bg-brand-orangeDim transition font-bold flex items-center justify-center gap-1 shadow-sm">
+                                        <i class="fa-solid fa-plus text-[10px]"></i> 핵심 발표 기법/용어 추가
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 실시간 마인드맵 (오른쪽) -->
+                            <div class="lg:col-span-5 flex flex-col justify-between bg-brand-bgWarm border border-brand-borderWarm rounded-2xl p-5 shadow-inner">
+                                <div class="space-y-1">
+                                    <span class="text-[9px] font-bold text-brand-orange uppercase tracking-widest flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-brand-orange animate-pulse"></span> 실시간 비주얼 마인드맵
+                                    </span>
+                                    <p class="text-[10px] text-brand-brownSoft">입력한 도메인 지식의 계층적 구조를 도식화합니다.</p>
+                                </div>
+
+                                <!-- 마인드맵 그래픽 구조 -->
+                                <div class="my-8 flex flex-col items-center justify-center">
+                                    <!-- 중앙 주제 루트 -->
+                                    <div id="mm-root-node" class="bg-gradient-to-r from-brand-orange to-violet-600 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-lg text-center max-w-[150px] truncate select-none">
+                                        주제명
+                                    </div>
+                                    <!-- 세로선 -->
+                                    <div class="w-[2px] h-6 bg-brand-borderWarm"></div>
+                                    
+                                    <!-- 동적 가지치기 컨테이너 -->
+                                    <div id="mm-branches-container" class="w-full flex flex-col gap-3">
+                                        <!-- 동적으로 마인드맵 가지 노드들이 렌더링됩니다 -->
+                                    </div>
+                                </div>
+                                
+                                <div class="text-[10px] text-brand-brownSoft text-center italic">
+                                    "주제와 용어를 변경하면 실시간 반영됩니다."
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- [2-2. 분석 피드백 뷰] -->
+                    <div id="pres-view-2" class="hidden space-y-6">
+                        <div>
+                            <span class="text-xs font-bold text-brand-orange px-2.5 py-1 rounded bg-brand-orangeDim border border-brand-orange/20">STEP 2</span>
+                            <h3 class="text-lg font-bold text-brand-charcoal mt-2">성공사례 리버스 엔지니어링</h3>
+                            <p class="text-xs text-brand-brownSoft">다른 사람의 훌륭한 대본/사례를 분석하여 핵심 원리를 추출해보세요.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">1. 분석할 대상 레퍼런스 정보</label>
+                                <input type="text" id="pres-ref-source" oninput="syncPresRef()" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition">
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">2. 분석 대상 강연 대본/핵심 요약</label>
+                                <textarea id="pres-ref-detail" oninput="syncPresRef()" rows="2" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition" placeholder="분석할 성공 사례 내용을 붙여넣으세요."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 2차 프롬프트 복사 영역 -->
+                        <div class="bg-brand-bgWarm border border-brand-borderWarm rounded-xl p-4 space-y-3 shadow-inner">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] font-bold text-brand-orange uppercase tracking-wider flex items-center gap-1"><i class="fa-regular fa-paper-plane"></i> AI 2차 분석 질문</span>
+                                <button onclick="copyToClipboard('pres-prompt2-area', 'btn-copy-pres2')" id="btn-copy-pres2" class="text-[10px] bg-white border border-brand-borderWarm px-2.5 py-1 rounded hover:bg-brand-orangeDim/50 transition text-brand-charcoal shadow-sm"><i class="fa-regular fa-copy"></i> 복사</button>
+                            </div>
+                            <div id="pres-prompt2-area" class="font-mono text-xs text-brand-charcoal leading-relaxed whitespace-pre-wrap"></div>
+                        </div>
+
+                        <!-- 분석 결과 입력 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-brand-borderWarm pt-4">
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">핵심 원리 파악 (Core Principle)</label>
+                                <textarea id="pres-core-principle" oninput="syncPresRef()" rows="2" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition" placeholder="예) 친숙한 경험과 놀라운 팩트를 대조시켜 몰입시키는 방식"></textarea>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block text-xs font-bold text-brand-charcoal">나의 발표에 적용할 구체적 방법</label>
+                                <textarea id="pres-apply-method" oninput="syncPresRef()" rows="2" class="w-full bg-brand-bgWarm border border-brand-borderWarm rounded-xl px-4 py-2.5 text-sm text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orangeDim transition" placeholder="예) 별 관측 소원 빌기와 우주 폐기물을 엮어 오프닝 훅 디자인"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- [2-3. 최종 완성 뷰] -->
+                    <div id="pres-view-3" class="hidden space-y-6">
+                        <div>
+                            <span class="text-xs font-bold text-brand-orange px-2 py-0.5 rounded bg-brand-orangeDim border border-brand-orange/20">STEP 3</span>
+                            <h3 class="text-lg font-bold text-brand-charcoal mt-2">🎉 완성된 발표 구조화 프롬프트</h3>
+                            <p class="text-xs text-brand-brownSoft">입력된 모든 지식과 적용 방법이 집약된 최종 종합 프롬프트입니다.</p>
+                        </div>
+
+                        <!-- 에디터 스타일의 대형 디스플레이 영역 -->
+                        <div class="relative bg-brand-bgWarm border border-brand-borderWarm rounded-2xl p-5 shadow-inner">
+                            <!-- macOS 윈도우 스타일 버튼 데코 -->
+                            <div class="absolute top-4 right-4 flex gap-1.5">
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500/40"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500/40"></span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/40"></span>
+                            </div>
+                            <div id="pres-final-prompt-area" class="font-mono text-xs text-brand-charcoal leading-relaxed whitespace-pre-wrap max-h-[220px] overflow-y-auto pr-4"></div>
+                        </div>
+
+                        <div class="flex items-center gap-3 justify-center">
+                            <button onclick="copyToClipboard('pres-final-prompt-area', 'btn-copy-pres-final')" id="btn-copy-pres-final" class="bg-brand-orange hover:bg-brand-orangeDeep text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-brand-orange/20 transition flex items-center gap-2">
+                                <i class="fa-regular fa-copy"></i> 최종 프롬프트 복사하기
+                            </button>
+                            <button onclick="resetPresWorkbook()" class="bg-white border border-brand-borderWarm text-brand-brownSoft hover:text-rose-600 hover:border-rose-200 text-sm font-semibold px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-arrow-rotate-right"></i> 처음부터 다시 작성
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 하단 네비게이션 (발표 워크북) -->
+                    <div class="flex items-center justify-between border-t border-brand-borderWarm pt-6 mt-6">
+                        <button id="prevPresBtn" onclick="prevPresStep()" class="px-5 py-2.5 rounded-xl font-bold text-sm bg-white border border-brand-borderWarm text-brand-brownSoft hover:text-brand-charcoal transition disabled:opacity-40 disabled:cursor-not-allowed shadow-sm">
+                            ← 이전
+                        </button>
+                        <span id="pres-step-indicator" class="text-xs font-bold text-brand-brownSoft font-mono">STEP 1 / 4</span>
+                        <button id="nextPresBtn" onclick="nextPresStep()" class="px-5 py-2.5 rounded-xl font-bold text-sm bg-brand-orange hover:bg-brand-orangeDeep text-white shadow-lg shadow-brand-orange/10 transition">
+                            다음 →
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- 푸터 및 아크랩스 브랜드 정보 -->
+    <footer class="bg-brand-orangeDim/35 border-t border-brand-borderWarm py-10 mt-16 text-center text-xs text-brand-brownSoft">
+        <div class="max-w-7xl mx-auto px-6 space-y-3">
+            <p>© 2026 AK LABS Mission Control. Created based on Acklabs Framework.</p>
+            <div class="flex justify-center items-center gap-4">
+                <a href="https://litt.ly/aklabs" target="_blank" class="text-brand-orange hover:text-brand-orangeDeep font-semibold transition flex items-center gap-1">
+                    <i class="fa-solid fa-home"></i> 아크랩스 공식 홈페이지 바로가기
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 글로벌 알림 토스트 (Toast) -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-orange/30 shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-brand-orange text-base"></i>
+        <span id="toast-message">클립보드에 복사되었습니다!</span>
+    </div>
+
+    <!-- 글로벌 개념 확대 모달 (Modal) - 텍스트 중심 -->
+    <div id="global-modal" class="fixed inset-0 bg-brand-charcoal/45 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+        <div id="global-modal-content" class="bg-white border border-brand-borderWarm rounded-3xl p-6 max-w-2xl w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300 max-h-[80vh] flex flex-col">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeGlobalModal()" class="absolute top-4 right-4 text-brand-brownSoft hover:text-brand-charcoal transition text-lg h-8 w-8 rounded-full hover:bg-brand-bgWarm flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <!-- 모달 헤더 -->
+            <div class="mb-4">
+                <span id="modal-badge" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded"></span>
+                <h3 id="modal-title" class="text-lg font-extrabold text-brand-charcoal mt-1.5"></h3>
+            </div>
+            
+            <!-- 모달 바디 (스크롤 지원) -->
+            <div class="overflow-y-auto pr-1 space-y-4 flex-grow">
+                <p id="modal-desc" class="text-sm text-brand-charcoal leading-relaxed w-full whitespace-pre-wrap font-sans"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 독립된 이미지 전용 확대 모달 (Modal) -->
+    <div id="image-modal" class="fixed inset-0 bg-brand-charcoal/80 backdrop-blur-md z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+        <div id="image-modal-content" class="relative max-w-4xl w-full mx-4 flex flex-col items-center transform scale-95 transition-all duration-300">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeImageModal()" class="absolute -top-12 right-0 text-white hover:text-brand-orange transition text-2xl h-10 w-10 rounded-full bg-brand-charcoal/45 hover:bg-brand-charcoal flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <!-- 이미지 엘리먼트 -->
+            <img id="image-modal-src" src="" alt="확대 웹툰 이미지" class="rounded-2xl border border-white/10 max-h-[85vh] w-auto object-contain shadow-2xl">
+        </div>
+    </div>
+
+    <!-- 대시보드 인터랙션 스크립트 -->
+    <script>
+        // 전역 상태 통합 관리
+        const state = {
+            activeMainTab: 1, // 1: AI OKR, 2: 발표 마스터
+            activeGuideTab: 1, // 1: 학습 가이드, 2: 용어사전, 3: AI도구
+            
+            // 실습 1: AI OKR 상태
+            okr: {
+                currentStep: 0,
+                goal: '',
+                context: '',
+                sample: '',
+                role: ''
+            },
+            team: {
+                name: '',
+                members: '',
+                category: '',
+                target: '',
+                problem: '',
+                seed: ''
+            },
+            
+            // 실습 2: 발표 마스터 상태
+            presentation: {
+                currentStep: 0,
+                topic: '우주 쓰레기 문제',
+                keywords: [
+                    { key: '도입부 Hook (훅)', desc: '청중의 개인적인 경험이나 충격적인 질문으로 관심을 끄는 기법' },
+                    { key: 'Rule of Three (3의 법칙)', desc: '본론의 핵심 메시지를 가장 기억하기 쉬운 3가지 구조로 한정 짓는 원칙' },
+                    { key: 'Slide Economy (절약 법칙)', desc: 'PPT 슬라이드 텍스트는 최소화하고 비주얼 중심에 대본을 상세화하는 원칙' }
+                ],
+                refSource: '유튜브에서 조회수 500만 회를 기록한 환경 관련 TED 발표의 도입부 대본이야',
+                refDetail: '여러분, 밤하늘에 별을 보며 소원을 빌어본 적 있으시죠? 만약 그 소원을 빌었던 별들이 사실은 인간이 궤도에 마구 내버린 쓰레기 파편들의 잔해라면 어떨까요?',
+                corePrinciple: '청중이 직접 겪는 친숙한 경험(별 관측, 소원 빌기)과 숨은 사실을 직접 대조하여 충격을 주는 개인화 훅 기법',
+                applyMethod: '우주 쓰레기 발표 초반에 그냥 과학적인 통계를 말하기보다 밤하늘 소원 빌기 경험과 엮어 청중 본인의 문제로 다가가기'
+            }
+        };
+
+        // 데이터 백업 상수
+        const SCENARIOS = [
+            {
+                label:'무인 자판기 간식',
+                goal:'대학가 무인 간식 자판기 신상품 라인업을 기획하려고 해.',
+                context:'우리는 4인 팀이고, 예산은 0원에 가까운 가상 창업 미션이야. 타겟은 시험기간 야식이 필요한 대학생이야.',
+                sample:'경쟁 제품 3개와 차별점을 표로, 그리고 한 줄 컨셉 문장으로 정리해줘.',
+                role:'지금은 시장 조사만 해줘. 내가 확인하면 그 다음에 같이 컨셉을 다듬자.'
+            },
+            {
+                label:'친환경 텀블러',
+                goal:'캠퍼스에서 잘 팔릴 친환경 텀블러 신상품 컨셉을 잡고 싶어.',
+                context:'타겟은 환경에 관심 있는 20대 초반, 디자인보다 실용성을 중시하는 학생들이야.',
+                sample:'타겟 페르소나 1명을 이름·나이·하루 루틴으로 구체적으로 묘사해줘.',
+                role:'먼저 타겟 페르소나만 잡아줘. 그 다음 단계는 내가 알려줄게.'
+            },
+            {
+                label:'스터디 매칭 앱',
+                goal:'같은 강의를 듣는 학생들을 매칭해주는 스터디 앱 컨셉을 만들고 싶어.',
+                context:'우리 학교 학생들이 스터디 그룹을 못 찾아서 혼자 공부하다 포기하는 문제를 봤어.',
+                sample:'핵심 기능 3개와 그 이유를 불릿으로 정리해줘.',
+                role:'지금은 핵심 기능만 뽑아줘. UI는 다음 단계에서 같이 보자.'
+            }
+        ];
+
+        const CATEGORIES = ['음료/푸드', '뷰티/생활', '디지털 서비스/앱', '문구/굿즈', '캠퍼스 서비스', '기타'];
+
+        // 브라우저 최초 로딩 시 초기값 설정
+        window.onload = function() {
+            // 실습 1 시나리오 칩 로딩
+            const scContainer = document.getElementById('scenario-chip-container');
+            SCENARIOS.forEach((s, idx) => {
+                const chip = document.createElement('button');
+                chip.className = "px-3 py-1.5 text-xs font-semibold rounded-lg border border-white/10 hover:border-brand-orange bg-slate-900 text-slate-300 transition duration-150 cursor-pointer";
+                chip.textContent = s.label;
+                chip.onclick = () => selectScenario(idx);
+                scContainer.appendChild(chip);
+            });
+
+            // 실습 1 카테고리 칩 로딩
+            const catContainer = document.getElementById('category-chip-container');
+            CATEGORIES.forEach((c) => {
+                const chip = document.createElement('button');
+                chip.id = `cat-chip-${c}`;
+                chip.className = "px-3 py-1.5 text-xs font-semibold rounded-lg border border-white/10 bg-slate-900 text-slate-300 transition duration-150 cursor-pointer";
+                chip.textContent = c;
+                chip.onclick = () => selectCategory(c);
+                catContainer.appendChild(chip);
+            });
+
+            // 실습 2 디폴트 바인딩
+            document.getElementById('pres-topic-input').value = state.presentation.topic;
+            document.getElementById('pres-ref-source').value = state.presentation.refSource;
+            document.getElementById('pres-ref-detail').value = state.presentation.refDetail;
+            document.getElementById('pres-core-principle').value = state.presentation.corePrinciple;
+            document.getElementById('pres-apply-method').value = state.presentation.applyMethod;
+
+            // 디폴트값 주입 및 상태 업데이트
+            selectScenario(0);
+            selectCategory('음료/푸드');
+            goToOkrStep(0);
+            goToPresStep(0);
+            
+            syncOkrInputs();
+            syncDeclareInputs();
+            syncPresTopic();
+            syncPresKeywords();
+            syncPresRef();
+        };
+
+        // ==================== [탭 관리 로직] ====================
+        function switchMainTab(tabIdx) {
+            state.activeMainTab = tabIdx;
+            const t1Btn = document.getElementById('main-tab-1');
+            const t2Btn = document.getElementById('main-tab-2');
+            const t1Area = document.getElementById('main-tool-1');
+            const t2Area = document.getElementById('main-tool-2');
+            const guideT1 = document.getElementById('guide-step-tool1');
+            const guideT2 = document.getElementById('guide-step-tool2');
+
+            if (tabIdx === 1) {
+                t1Btn.className = "px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 flex items-center gap-2 bg-brand-orange text-white shadow-sm";
+                t2Btn.className = "px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-orange transition-all duration-200 flex items-center gap-2";
+                t1Area.classList.remove('hidden');
+                t2Area.classList.add('hidden');
+                guideT1.classList.remove('hidden');
+                guideT2.classList.add('hidden');
+            } else {
+                t2Btn.className = "px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 flex items-center gap-2 bg-brand-orange text-white shadow-sm";
+                t1Btn.className = "px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-orange transition-all duration-200 flex items-center gap-2";
+                t2Area.classList.remove('hidden');
+                t1Area.classList.add('hidden');
+                guideT2.classList.remove('hidden');
+                guideT1.classList.add('hidden');
+            }
+        }
+
+        function switchGuideTab(tabIdx) {
+            state.activeGuideTab = tabIdx;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`guide-subtab-${i}`);
+                const content = document.getElementById(`guide-content-${i}`);
+                if (i === tabIdx) {
+                    btn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-center transition-all bg-white text-brand-orange shadow-sm";
+                    content.classList.remove('hidden');
+                } else {
+                    btn.className = "flex-1 py-2 text-xs font-bold rounded-lg text-center transition-all text-brand-brownSoft hover:text-brand-orange";
+                    content.classList.add('hidden');
+                }
+            }
+        }
+
+        // ==================== [실습 1: AI OKR & 미션 빌더 함수] ====================
+        function selectScenario(scIdx) {
+            const sc = SCENARIOS[scIdx];
+            state.okr.goal = sc.goal;
+            state.okr.context = sc.context;
+            state.okr.sample = sc.sample;
+            state.okr.role = sc.role;
+            
+            document.getElementById('in-okr-goal').value = sc.goal;
+            document.getElementById('in-okr-context').value = sc.context;
+            document.getElementById('in-okr-sample').value = sc.sample;
+            document.getElementById('in-okr-role').value = sc.role;
+            syncOkrInputs();
+        }
+
+        function selectCategory(cat) {
+            state.team.category = cat;
+            CATEGORIES.forEach(c => {
+                const chip = document.getElementById(`cat-chip-${c}`);
+                if (c === cat) {
+                    chip.className = "px-3 py-1.5 text-xs font-semibold rounded-lg border border-brand-orange bg-brand-orangeDim text-brand-orange transition duration-150";
+                } else {
+                    chip.className = "px-3 py-1.5 text-xs font-semibold rounded-lg border border-brand-borderWarm bg-white text-brand-brownSoft hover:border-brand-orange/30 transition duration-150";
+                }
+            });
+            syncDeclareInputs();
+        }
+
+        function syncOkrInputs() {
+            state.okr.goal = document.getElementById('in-okr-goal').value;
+            state.okr.context = document.getElementById('in-okr-context').value;
+            state.okr.sample = document.getElementById('in-okr-sample').value;
+            state.okr.role = document.getElementById('in-okr-role').value;
+
+            const preview = `[Goal] ${state.okr.goal || '목표를 입력하면 여기에 실시간 반영됩니다.'}\n\n[Context] ${state.okr.context || '상황 및 제약 사항 정보입니다.'}\n\n[Sample] ${state.okr.sample || '원하는 답변의 포맷/형태입니다.'}\n\n[Role] ${state.okr.role || '이번 단계에서 요구할 AI의 특정 범위 및 역할입니다.'}`;
+            document.getElementById('okr-preview-area').textContent = preview;
+        }
+
+        function syncDeclareInputs() {
+            state.team.name = document.getElementById('in-team-name').value;
+            state.team.members = document.getElementById('in-team-members').value;
+            state.team.target = document.getElementById('in-team-target').value;
+            state.team.problem = document.getElementById('in-team-problem').value;
+            state.team.seed = document.getElementById('in-team-seed').value;
+
+            const declPreview = `[Goal] ${state.team.seed ? state.team.seed + ' 아이디어를 시장성 검토하고 구체화하고 싶어.' : '상품 시드를 입력하면 자동 생성됩니다.'}\n\n[Context] 우리 팀의 목표 상품 카테고리는 [${state.team.category || '미정'}]이야. 타겟은 [${state.team.target || '미입력'}]이고 그들이 해결하고 싶어 하는 불편은 [${state.team.problem || '미입력'}]이야.\n\n[Sample] 이 컨셉과 경쟁할 만한 국내외 대표 유사 서비스/제품 3가지를 표로 분석해 주고, 우리 제품의 핵심 차별화 가치를 제시해 줘.\n\n[Role] 지금은 단순한 레퍼런스 수집과 초기 아이디어 발산 단계야. 구체적인 설계보다는 사례 연구에 집중해 줘.`;
+            document.getElementById('declare-preview-area').textContent = declPreview;
+            
+            // LAUNCH 티켓 텍스트 사전 빌드
+            buildFinalKit();
+        }
+
+        function buildFinalKit() {
+            const finalTxt = 
+`■ MISSION KIT — DAY 1 최종 결과
+팀명: ${state.team.name || '(미입력)'}
+팀원: ${state.team.members || '(미입력)'}
+카테고리: ${state.team.category || '(미입력)'}
+타겟: ${state.team.target || '(미입력)'}
+문제점: ${state.team.problem || '(미입력)'}
+컨셉 시드: ${state.team.seed || '(미입력)'}
+
+▶ AI OKR 기본 프롬프트
+[Goal] ${state.okr.goal}
+[Context] ${state.okr.context}
+[Sample] ${state.okr.sample}
+[Role] ${state.okr.role}
+
+▶ 아이디어 브레인스토밍 프롬프트
+[Goal] ${state.team.seed ? state.team.seed + ' 아이디어를 시장성 검토하고 구체화하고 싶어.' : ''}
+[Context] 우리 팀의 목표 상품 카테고리는 [${state.team.category || '미정'}]이야. 타겟은 [${state.team.target || '미입력'}]이고 불편은 [${state.team.problem || '미입력'}]이야.
+[Sample] 이 컨셉과 경쟁할 유사 서비스 3가지를 표로 분석해 주고 차별화 가치를 알려줘.
+[Role] 레퍼런스 수집과 초기 아이디어 발산 단계야. 초기 연구에 집중해 줘.
+
+— Day 2에서는 이 키트 정보를 바탕으로 본격적인 시장 조사를 시작합니다.`;
+            
+            document.getElementById('final-kit-title').textContent = `팀명: ${state.team.name || '미입력'}`;
+            document.getElementById('final-kit-area').textContent = finalTxt;
+        }
+
+        // 실습 1 단계 네비게이션
+        function goToOkrStep(stepIdx) {
+            state.okr.currentStep = stepIdx;
+            
+            // 화면 뷰 갱신
+            for(let i = 0; i <= 3; i++) {
+                const view = document.getElementById(`okr-view-${i}`);
+                const node = document.getElementById(`okr-node-${i}`);
+                if (i === stepIdx) {
+                    view.classList.remove('hidden');
+                    node.className = "w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs bg-brand-orange text-white border-2 border-brand-orange shadow-md shadow-brand-orange/30";
+                } else if (i < stepIdx) {
+                    view.classList.add('hidden');
+                    node.className = "w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs bg-brand-orangeDim text-brand-orange border-2 border-brand-orange";
+                } else {
+                    view.classList.add('hidden');
+                    node.className = "w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs bg-white text-brand-brownSoft border-2 border-brand-borderWarm";
+                }
+            }
+
+            // 텍스트 라벨 클래스 동적 제어
+            for(let i = 0; i <= 3; i++) {
+                const txt = document.getElementById(`okr-text-${i}`);
+                if (i === stepIdx) {
+                    txt.className = "text-[10px] font-bold text-brand-charcoal";
+                } else if (i < stepIdx) {
+                    txt.className = "text-[10px] font-bold text-brand-charcoal";
+                } else {
+                    txt.className = "text-[10px] font-bold text-brand-brownSoft";
+                }
+            }
+
+            // 좌측 가이드 하이라이트 싱크
+            const stepsMap = ['briefing', 'build', 'declare', 'launch'];
+            stepsMap.forEach((st, idx) => {
+                const guideItem = document.getElementById(`guide-item-${st}`);
+                if (idx === stepIdx) {
+                    guideItem.className = "step-guide-item p-4 rounded-xl bg-brand-orangeDim/45 border border-brand-orange/20 transition";
+                } else {
+                    guideItem.className = "step-guide-item p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition";
+                }
+            });
+
+            // 내비게이션 상태 컨트롤
+            document.getElementById('prevOkrBtn').disabled = (stepIdx === 0);
+            document.getElementById('nextOkrBtn').textContent = (stepIdx === 3) ? '미션 키트 완성 ✓' : '다음 →';
+            document.getElementById('okr-step-indicator').textContent = `STEP ${stepIdx + 1} / 4`;
+            
+            // 진행선 상태
+            const progressPercent = stepIdx * 33.3;
+            document.getElementById('rail-progress-bar').style.width = `${progressPercent}%`;
+
+            // 최종 티켓 빌드
+            if (stepIdx === 3) {
+                buildFinalKit();
+            }
+        }
+
+        function prevOkrStep() {
+            if (state.okr.currentStep > 0) {
+                goToOkrStep(state.okr.currentStep - 1);
+            }
+        }
+
+        function nextOkrStep() {
+            if (state.okr.currentStep < 3) {
+                goToOkrStep(state.okr.currentStep + 1);
+            } else {
+                showToast("🎉 미션 키트 준비 완료! 전체 복사 후 제출해 주세요.");
+            }
+        }
+
+        // ==================== [실습 2: 발표 마스터 워크북 함수] ====================
+        function syncPresTopic() {
+            const topic = document.getElementById('pres-topic-input').value.trim() || '지정되지 않은 주제';
+            state.presentation.topic = topic;
+            
+            // 1차 질문 자동 빌드
+            const prompt1 = `다음 주에 교양 수업에서 '${topic}'을 주제로 5분 발표를 해야 해. 지루하지 않고 청중의 이목을 집중시키려면 보통 발표 전문가들은 어떤 구조나 기법을 써? 코딩이나 기술 지식 없이도 발표 구조를 탄탄하게 짤 수 있는 핵심 비결들을 알려줘!`;
+            document.getElementById('pres-prompt1-area').textContent = prompt1;
+            
+            // 마인드맵 헤드
+            document.getElementById('mm-root-node').textContent = topic;
+            
+            syncPresRef();
+            buildFinalPrompt();
+        }
+
+        function syncPresKeywords() {
+            renderKeywords();
+            renderMindmap();
+            buildFinalPrompt();
+        }
+
+        function renderKeywords() {
+            const container = document.getElementById('pres-keywords-container');
+            container.innerHTML = '';
+            
+            state.presentation.keywords.forEach((item, idx) => {
+                const row = document.createElement('div');
+                row.className = "bg-brand-bgWarm/60 p-3 rounded-xl border border-brand-borderWarm grid grid-cols-1 md:grid-cols-12 gap-2 items-center relative";
+                
+                const kInput = document.createElement('input');
+                kInput.type = "text";
+                kInput.value = item.key;
+                kInput.placeholder = `용어 ${idx + 1}`;
+                kInput.className = "md:col-span-4 bg-white border border-brand-borderWarm rounded-lg px-2.5 py-1.5 text-xs text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange";
+                kInput.oninput = (e) => {
+                    state.presentation.keywords[idx].key = e.target.value;
+                    renderMindmap();
+                    buildFinalPrompt();
+                };
+                
+                const dInput = document.createElement('input');
+                dInput.type = "text";
+                dInput.value = item.desc;
+                dInput.placeholder = `설명 ${idx + 1}`;
+                dInput.className = "md:col-span-7 bg-white border border-brand-borderWarm rounded-lg px-2.5 py-1.5 text-xs text-brand-charcoal placeholder-slate-400 focus:outline-none focus:border-brand-orange";
+                dInput.oninput = (e) => {
+                    state.presentation.keywords[idx].desc = e.target.value;
+                    renderMindmap();
+                    buildFinalPrompt();
+                };
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = "button";
+                deleteBtn.className = "md:col-span-1 flex items-center justify-center text-brand-brownSoft hover:text-rose-600 transition h-8 w-8 rounded-lg hover:bg-rose-50 border border-transparent hover:border-rose-100 cursor-pointer";
+                deleteBtn.innerHTML = '<i class="fa-solid fa-trash-can text-xs"></i>';
+                deleteBtn.onclick = () => {
+                    if (state.presentation.keywords.length <= 1) {
+                        showToast("최소 1개 이상의 발표 기법/용어가 정리되어야 합니다.");
+                        return;
+                    }
+                    removeKeywordRow(idx);
+                };
+                
+                row.appendChild(kInput);
+                row.appendChild(dInput);
+                row.appendChild(deleteBtn);
+                container.appendChild(row);
+            });
+        }
+
+        function renderMindmap() {
+            const container = document.getElementById('mm-branches-container');
+            container.innerHTML = '';
+            
+            state.presentation.keywords.forEach((item, idx) => {
+                const branch = document.createElement('div');
+                branch.className = "bg-white border border-brand-borderWarm rounded-xl p-2.5 flex justify-between items-center gap-2 shadow-sm";
+                
+                const label = document.createElement('span');
+                label.className = "text-[10px] font-mono text-brand-orange font-bold uppercase shrink-0";
+                label.textContent = `핵심 ${idx + 1}`;
+                
+                const textWrapper = document.createElement('div');
+                textWrapper.className = "text-right truncate max-w-[70%]";
+                
+                const keyDiv = document.createElement('div');
+                keyDiv.className = "text-xs font-bold text-brand-charcoal truncate";
+                keyDiv.textContent = item.key || `용어 ${idx + 1}`;
+                
+                const descDiv = document.createElement('div');
+                descDiv.className = "text-[9px] text-brand-brownSoft truncate";
+                descDiv.textContent = item.desc || `설명 ${idx + 1}`;
+                
+                textWrapper.appendChild(keyDiv);
+                textWrapper.appendChild(descDiv);
+                
+                branch.appendChild(label);
+                branch.appendChild(textWrapper);
+                container.appendChild(branch);
+            });
+        }
+
+        function addKeywordRow() {
+            state.presentation.keywords.push({ key: '', desc: '' });
+            renderKeywords();
+            renderMindmap();
+            buildFinalPrompt();
+        }
+
+        function removeKeywordRow(idx) {
+            state.presentation.keywords.splice(idx, 1);
+            renderKeywords();
+            renderMindmap();
+            buildFinalPrompt();
+        }
+
+        function syncPresRef() {
+            state.presentation.refSource = document.getElementById('pres-ref-source').value || '성공 사례 출처';
+            state.presentation.refDetail = document.getElementById('pres-ref-detail').value || '대본 일부 내용';
+            state.presentation.corePrinciple = document.getElementById('pres-core-principle').value || '추출 원리';
+            state.presentation.applyMethod = document.getElementById('pres-apply-method').value || '나의 대본 적용안';
+
+            const prompt2 = `이건 ${state.presentation.refSource}. 이 발표자가 청중의 몰입도를 높이기 위해 구체적으로 어떤 스토리텔링 기법과 단어 선택을 썼는지 분석해 줄래? 그리고 이걸 내 '${state.presentation.topic}' 발표 도입부에 어떻게 재활용할 수 있을지 핵심만 짚어줘!\n\n[참고 대본 및 자료]:\n"${state.presentation.refDetail}"`;
+            document.getElementById('pres-prompt2-area').textContent = prompt2;
+
+            buildFinalPrompt();
+        }
+
+        function buildFinalPrompt() {
+            let keywordLines = '';
+            state.presentation.keywords.forEach((item) => {
+                if (item.key.trim() || item.desc.trim()) {
+                    keywordLines += `  - ${item.key || '(미입력)'}: ${item.desc || '(미입력)'}\n`;
+                }
+            });
+            if (!keywordLines) {
+                keywordLines = '  - (등록된 키워드 없음)\n';
+            }
+
+            const finalPrompt = 
+`[Role]
+너는 지루한 학술 발표도 흥미진진한 테드(TED) 강연처럼 바꾸는 10년 차 발표 기획자이자 카피라이터야.
+
+[Context]
+* 나는 대학생 청중과 교수님 앞에서 발표할 5분 분량의 '${state.presentation.topic}' 발표안을 기획 중이야.
+* 내 발표의 핵심 기획 가치와 키워드는 다음과 같아:
+${keywordLines}* 분석된 성공사례 스토리텔링 기법 중 '${state.presentation.corePrinciple}'을 핵심 도메인 지식으로 적용할 거야.
+* 구체적인 접근 전략으로 다음 방법을 설계해뒀어: "${state.presentation.applyMethod}"
+* 슬라이드는 글자로 빽빽하게 채우지 않고, 시각적 효과를 극대화하는 'Slide Economy' 원칙을 적용하고 싶어.
+
+[Task]
+위 조건에 맞는 5분 발표용 슬라이드 기획안(스토리보드)과 전체 발표 대본을 작성해 줘.
+
+[Constraints]
+1. 도입부는 청중이 흥미를 가질 수 있도록 나의 접근 전략에 명시된 방식을 100% 충실히 구현한 도입 문구로 오프닝을 열어줘.
+2. 본론은 위에서 정의한 핵심 키워드들을 자연스러운 흐름에 맞춰 알맞게 배치해줘.
+3. 말하기 구어체 톤으로 작성하여 대학생 수준에 맞게 격식 있으면서도 유머러스함이 깃들어지게 해주고, 각 슬라이드마다 화면에 띄울 키워드와 발표자가 말할 실제 대본을 명확히 분리해 줘.
+
+[Output Format]
+* 아래 양식을 채운 표(Table) 형태로 출력해 줘.
+| 슬라이드 번호 | 화면 시각 자료 기획 (비주얼) | 화면에 들어갈 핵심 텍스트 | 발표자 대본 (말하는 행동 지침 및 시간 배분) |`;
+
+            document.getElementById('pres-final-prompt-area').textContent = finalPrompt;
+        }
+
+        function resetPresWorkbook() {
+            state.presentation.topic = '우주 쓰레기 문제';
+            state.presentation.keywords = [
+                { key: '도입부 Hook (훅)', desc: '청중의 개인적인 경험이나 충격적인 질문으로 관심을 끄는 기법' },
+                { key: 'Rule of Three (3의 법칙)', desc: '본론의 핵심 메시지를 가장 기억하기 쉬운 3가지 구조로 한정 짓는 원칙' },
+                { key: 'Slide Economy (절약 법칙)', desc: 'PPT 슬라이드 텍스트는 최소화하고 비주얼 중심에 대본을 상세화하는 원칙' }
+            ];
+            state.presentation.refSource = '유튜브에서 조회수 500만 회를 기록한 환경 관련 TED 발표의 도입부 대본이야';
+            state.presentation.refDetail = '여러분, 밤하늘에 별을 보며 소원을 빌어본 적 있으시죠? 만약 그 소원을 빌었던 별들이 사실은 인간이 궤도에 마구 내버린 쓰레기 파편들의 잔해라면 어떨까요?';
+            state.presentation.corePrinciple = '청중이 직접 겪는 친숙한 경험(별 관측, 소원 빌기)과 숨은 사실을 직접 대조하여 충격을 주는 개인화 훅 기법';
+            state.presentation.applyMethod = '우주 쓰레기 발표 초반에 그냥 과학적인 통계를 말하기보다 밤하늘 소원 빌기 경험과 엮어 청중 본인의 문제로 다가가기';
+
+            document.getElementById('pres-topic-input').value = state.presentation.topic;
+            document.getElementById('pres-ref-source').value = state.presentation.refSource;
+            document.getElementById('pres-ref-detail').value = state.presentation.refDetail;
+            document.getElementById('pres-core-principle').value = state.presentation.corePrinciple;
+            document.getElementById('pres-apply-method').value = state.presentation.applyMethod;
+
+            goToPresStep(0);
+            syncPresTopic();
+            syncPresKeywords();
+            showToast("실습 2 워크북이 초기화되었습니다.");
+        }
+
+        function goToPresStep(stepIdx) {
+            state.presentation.currentStep = stepIdx;
+
+            for(let i = 0; i <= 3; i++) {
+                const view = document.getElementById(`pres-view-${i}`);
+                const badge = document.getElementById(`p-badge-${i}`);
+                if (i === stepIdx) {
+                    view.classList.remove('hidden');
+                    badge.className = "cursor-pointer px-2.5 py-1.5 rounded-full bg-brand-orangeDim text-brand-orange border border-brand-orange/20 font-bold text-xs";
+                } else if (i < stepIdx) {
+                    view.classList.add('hidden');
+                    badge.className = "cursor-pointer px-2.5 py-1.5 rounded-full bg-brand-goodDim text-brand-good border border-brand-good/20 font-semibold text-xs";
+                } else {
+                    view.classList.add('hidden');
+                    badge.className = "cursor-pointer px-2.5 py-1.5 rounded-full text-brand-brownSoft text-xs";
+                }
+            }
+
+            // 좌측 가이드 하이라이트 싱크 (실습 2용)
+            for (let i = 0; i <= 3; i++) {
+                const guideItem = document.getElementById(`guide-item2-${i === 0 ? 'intro' : 'step' + i}`);
+                if (i === stepIdx) {
+                    guideItem.className = "p-4 rounded-xl bg-brand-orangeDim/45 border border-brand-orange/20 transition";
+                } else {
+                    guideItem.className = "p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition";
+                }
+            }
+
+            document.getElementById('prevPresBtn').disabled = (stepIdx === 0);
+            document.getElementById('nextPresBtn').textContent = (stepIdx === 3) ? '프롬프트 완성 ✓' : '다음 →';
+            document.getElementById('pres-step-indicator').textContent = `STEP ${stepIdx + 1} / 4`;
+        }
+
+        function prevPresStep() {
+            if (state.presentation.currentStep > 0) {
+                goToPresStep(state.presentation.currentStep - 1);
+            }
+        }
+
+        function nextPresStep() {
+            if (state.presentation.currentStep < 3) {
+                goToPresStep(state.presentation.currentStep + 1);
+            } else {
+                showToast("🎉 발표 구조화 프롬프트 준비 완료! 복사하여 사용해 보세요.");
+            }
+        }
+
+        function toggleWebtoon(id) {
+            const el = document.getElementById(id);
+            const btnText = document.getElementById(`${id}-btn-text`);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                btnText.textContent = "💡 웹툰 가이드 숨기기";
+            } else {
+                el.classList.add('hidden');
+                btnText.textContent = "💡 4컷 웹툰 가이드 보기";
+            }
+        }
+
+        // ==================== [글로벌 유틸리티 기능] ====================
+        function copyToClipboard(elementId, btnId) {
+            const txt = document.getElementById(elementId).innerText || document.getElementById(elementId).textContent;
+            
+            // 안정적인 복사를 위한 가상 엘리먼트 활용
+            const el = document.createElement('textarea');
+            el.value = txt;
+            document.body.appendChild(el);
+            el.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast("클립보드에 성공적으로 복사되었습니다!");
+            } catch (err) {
+                showToast("복사에 실패했습니다. 브라우저 설정을 확인하세요.");
+            }
+            document.body.removeChild(el);
+        }
+
+        function downloadAsText() {
+            const txt = document.getElementById('final-kit-area').textContent;
+            const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${state.team.name || 'mission'}_day1_kit.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("텍스트 파일이 성공적으로 다운로드되었습니다.");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.className = "fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-orange/30 shadow-xl flex items-center gap-2 transform translate-y-0 opacity-100 transition duration-300 z-50";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-orange/30 shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50";
+            }, 3000);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar-panel');
+            const workspace = document.getElementById('workspace-panel');
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                workspace.className = "lg:col-span-7 flex flex-col gap-4";
+                toggleBtn.innerHTML = '<i class="fa-solid fa-columns text-xs"></i> 가이드 접기';
+                toggleBtn.className = "px-4 py-2 text-sm font-bold rounded-lg text-brand-brownSoft hover:text-brand-orange border border-brand-borderWarm bg-white hover:bg-brand-orangeDim/30 transition-all duration-200 flex items-center gap-2 shadow-sm";
+            } else {
+                sidebar.classList.add('hidden');
+                workspace.className = "lg:col-span-12 flex flex-col gap-4 transition-all duration-300";
+                toggleBtn.innerHTML = '<i class="fa-solid fa-columns text-xs"></i> 가이드 펼치기';
+                toggleBtn.className = "px-4 py-2 text-sm font-bold rounded-lg text-brand-orange border border-brand-orange/20 bg-brand-orangeDim hover:bg-brand-orange hover:text-white transition-all duration-200 flex items-center gap-2 shadow-sm";
+            }
+        }
+
+        // ==================== [글로벌 모달 제어 함수] ====================
+        function openGlobalModal(badgeText, badgeBgClass, title, desc) {
+            const modal = document.getElementById('global-modal');
+            const content = document.getElementById('global-modal-content');
+            const badge = document.getElementById('modal-badge');
+            const mTitle = document.getElementById('modal-title');
+            const mDesc = document.getElementById('modal-desc');
+            
+            badge.textContent = badgeText;
+            badge.className = `text-[10px] font-mono font-bold px-2 py-0.5 rounded ${badgeBgClass}`;
+            mTitle.textContent = title;
+            mDesc.textContent = desc;
+            
+            modal.classList.remove('hidden');
+            modal.offsetHeight; 
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeGlobalModal() {
+            const modal = document.getElementById('global-modal');
+            const content = document.getElementById('global-modal-content');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function openConceptModal(idx) {
+            const concepts = [
+                {
+                    badgeText: "개념 1",
+                    badgeBgClass: "bg-brand-orange/10 text-brand-orange",
+                    title: "AI OKR",
+                    desc: "AI에게 지시할 때 Goal(목표) · Context(상황) · Sample(원하는 형태) · Role(AI 역할)의 4개 필수 요소를 채워 구조화하여 지시하는 프롬프팅 방법론입니다.\n\n[세부 설명]\n- Goal (목표): 무엇을 해결할 것인가? (예: 타겟 분석, 피치 대본 작성)\n- Context (상황): 해결이 필요한 자세한 맥락 (예: 20대 타겟, 발표 시간 5분)\n- Sample (예시): AI 답변의 형태 (예: 표 형식, 슬라이드 템플릿)\n- Role (역할): AI 전문가 페르소나 (예: TED 전문 스피치 코치)\n\n이 4요소를 구조화해 질문하면 환각(가짜 정보)이 사라지고 고품질 산출물을 빠르게 얻을 수 있습니다."
+                },
+                {
+                    badgeText: "개념 2",
+                    badgeBgClass: "bg-violet-500/10 text-violet-600",
+                    title: "페르소나 프롬프팅",
+                    desc: "AI에게 구체적인 배역과 역할을 부여하여 전문 지식 영역에 맞춤화된 조언을 얻어내는 기술입니다.\n\n단순히 '대본을 써줘'라고 말하기보다 '당신은 10년 차 IT 서비스 현업 기획자입니다', 'TED 기획 스피치 코치입니다'처럼 역할을 좁힐 때, AI는 일반적인 범용 답변 대신 현업 가치가 높은 수준급의 해결책을 제시합니다.\n\n구체적이고 현실적인 역할 부여일수록 가독성이 높은 전문가 답변을 유도합니다."
+                },
+                {
+                    badgeText: "개념 3",
+                    badgeBgClass: "bg-emerald-500/10 text-emerald-600",
+                    title: "Slide Economy (슬라이드 절약 법칙)",
+                    desc: "PPT 슬라이드는 시각화 정보 중심(글자 밀도 15% 미만)으로 채우고, 대본(발표자의 대화)은 고도로 설계하여 청중의 이목을 끄는 디자인/발표 법칙입니다.\n\n[핵심 원리]\n- 슬라이드: 긴 글 대신 강력한 1장의 비주얼과 단 한 개의 핵심 키워드 배치.\n- 발표 대본: 청중의 눈이 아닌 귀와 마음을 사로잡을 정밀한 스토리라인 전개.\n\n청중의 인지 부하를 없애고 발표자가 중심이 되는 최고의 PPT 작성 법칙입니다."
+                }
+            ];
+            const data = concepts[idx];
+            openGlobalModal(data.badgeText, data.badgeBgClass, data.title, data.desc);
+        }
+
+        // 독립형 이미지 모달 제어 함수
+        function openImageModal(imgSrc) {
+            const modal = document.getElementById('image-modal');
+            const content = document.getElementById('image-modal-content');
+            const modalImg = document.getElementById('image-modal-src');
+            
+            modalImg.src = imgSrc;
+            
+            modal.classList.remove('hidden');
+            modal.offsetHeight;
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            const content = document.getElementById('image-modal-content');
+            
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // 바깥 Dimmed 영역 클릭 시 모달 닫기
+        window.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('global-modal');
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeGlobalModal();
+                }
+            });
+
+            const imgModal = document.getElementById('image-modal');
+            imgModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeImageModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

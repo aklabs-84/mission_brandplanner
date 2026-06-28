@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAY 4 STITCH BUILDER</title>
+    <style>
+:root {
+            --bg: #EEF2F6;
+            --paper: #FFFFFF;
+            --ink: #16243F;
+            --ink-soft: #4A5A78;
+            --line: #CBD5E3;
+            --line-soft: #E2E8F1;
+            --accent: #FF5A1F;
+            --accent-dim: #FFE3D4;
+            --accent-deep: #C8410E;
+            --teal: #0F8B8D;
+            --teal-dim: #DCF1F1;
+            --good: #1C8C5A;
+            --good-dim: #DEF3E8;
+            --radius: 14px;
+        }
+
+        body {
+            background-image: 
+                linear-gradient(var(--line-soft) 1px, transparent 1px),
+                linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+            background-size: 28px 28px;
+            background-color: var(--bg);
+            color: var(--ink);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .font-space { font-family: 'Space Grotesk', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ink-soft); }
+
+        .glow-button:hover {
+            box-shadow: 0 0 15px rgba(255, 90, 31, 0.4);
+        }
+
+        /* Drag/Click layout simulation transitions */
+        .layout-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+
+<header class="sticky top-0 z-50 bg-[#eef2f6ea] backdrop-blur-md border-b border-[var(--line)] py-3 px-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-[var(--ink)] flex items-center justify-center text-[var(--accent)] font-space font-bold text-sm transform -rotate-3">
+                    AK
+                </div>
+                <div>
+                    <span class="font-space font-bold text-sm tracking-tight text-[var(--ink)]">DAY 4 STITCH BUILDER</span>
+                    <span class="hidden sm:inline-block ml-2 text-xs px-2.5 py-0.5 bg-[var(--accent-dim)] text-[var(--accent-deep)] font-semibold rounded-full">노코드 웹 빌딩</span>
+                </div>
+            </div>
+            
+            <!-- Team Info Container -->
+            <div class="flex items-center gap-2">
+                <label for="teamName" class="hidden md:inline-block text-xs font-mono text-[var(--ink-soft)]">TEAM:</label>
+                <input type="text" id="teamName" placeholder="팀명을 입력해 주세요" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--line)] bg-white text-[var(--ink)] focus:outline-none focus:border-[var(--accent)] transition-all max-w-[130px] sm:max-w-[160px]" onchange="saveTeamName(this.value)">
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 py-8">
+        <!-- Interactive Step Rail -->
+        <div class="mb-8 overflow-x-auto pb-2">
+            <div class="flex items-center justify-between min-w-[560px] px-2">
+                <button onclick="goToStep(1)" id="rail-btn-1" class="flex flex-col items-center gap-2 cursor-pointer transition-all group focus:outline-none">
+                    <div id="rail-circle-1" class="w-10 h-10 rounded-full bg-[var(--ink)] text-[var(--accent)] flex items-center justify-center font-space font-bold text-sm border-2 border-[var(--ink)] transition-all">1</div>
+                    <span class="font-mono text-[10px] text-[var(--ink)] font-semibold">1. 실시간 퀴즈</span>
+                </button>
+                <div class="flex-grow h-[2px] bg-[var(--line)] mx-2 mb-6"></div>
+
+                <button onclick="goToStep(2)" id="rail-btn-2" class="flex flex-col items-center gap-2 cursor-pointer transition-all group focus:outline-none">
+                    <div id="rail-circle-2" class="w-10 h-10 rounded-full bg-white text-[var(--ink-soft)] flex items-center justify-center font-space font-bold text-sm border-2 border-[var(--line)] transition-all">2</div>
+                    <span class="font-mono text-[10px] text-[var(--ink-soft)]">2. 프롬프트 빌더</span>
+                </button>
+                <div class="flex-grow h-[2px] bg-[var(--line)] mx-2 mb-6"></div>
+
+                <button onclick="goToStep(3)" id="rail-btn-3" class="flex flex-col items-center gap-2 cursor-pointer transition-all group focus:outline-none">
+                    <div id="rail-circle-3" class="w-10 h-10 rounded-full bg-white text-[var(--ink-soft)] flex items-center justify-center font-space font-bold text-sm border-2 border-[var(--line)] transition-all">3</div>
+                    <span class="font-mono text-[10px] text-[var(--ink-soft)]">3. 스티치 시뮬레이터</span>
+                </button>
+                <div class="flex-grow h-[2px] bg-[var(--line)] mx-2 mb-6"></div>
+
+                <button onclick="goToStep(4)" id="rail-btn-4" class="flex flex-col items-center gap-2 cursor-pointer transition-all group focus:outline-none">
+                    <div id="rail-circle-4" class="w-10 h-10 rounded-full bg-white text-[var(--ink-soft)] flex items-center justify-center font-space font-bold text-sm border-2 border-[var(--line)] transition-all">4</div>
+                    <span class="font-mono text-[10px] text-[var(--ink-soft)]">4. 런칭 &amp; 배포</span>
+                </button>
+                <div class="flex-grow h-[2px] bg-[var(--line)] mx-2 mb-6"></div>
+
+                <button onclick="goToStep(5)" id="rail-btn-5" class="flex flex-col items-center gap-2 cursor-pointer transition-all group focus:outline-none">
+                    <div id="rail-circle-5" class="w-10 h-10 rounded-full bg-white text-[var(--ink-soft)] flex items-center justify-center font-space font-bold text-sm border-2 border-[var(--line)] transition-all">5</div>
+                    <span class="font-mono text-[10px] text-[var(--ink-soft)]">5. 오늘 결과 저장</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Toast Notification Area -->
+        <div id="toast" class="hidden fixed bottom-6 right-6 z-50 bg-[var(--ink)] text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-3 border border-[var(--accent)] font-semibold text-xs animate-bounce">
+            <span id="toast-text">복사되었습니다!</span>
+        </div>
+
+        <!-- STEP 1 CONTAINER: Landing Page Layout Quiz -->
+        <div id="step-panel-1" class="bg-white border border-[var(--line)] rounded-[var(--radius)] p-6 md:p-8 shadow-sm">
+            <div class="border-b border-[var(--line-soft)] pb-4 mb-6">
+                <span class="font-space text-xs uppercase tracking-wider font-bold text-[var(--accent)]">STEP 1. REAL-TIME QUIZ</span>
+                <h2 class="text-xl md:text-2xl font-bold tracking-tight mt-1 text-[var(--ink)]">랜딩 페이지 레이아웃 정렬하기</h2>
+                <p class="text-xs text-[var(--ink-soft)] mt-1.5 leading-relaxed">
+                    고객의 이탈을 막고 구매 유도(CTA)를 극대화하는 **표준 랜딩 페이지 설계 순서**에 맞게 카드를 위아래로 조정해 보세요!
+                </p>
+            </div>
+
+            <!-- Quiz Play Area -->
+            <div class="space-y-3" id="quiz-list">
+                <!-- Items will be generated dynamically -->
+            </div>
+
+            <!-- Quiz Action Feedback -->
+            <div id="quiz-feedback" class="mt-6 p-4 rounded-xl border hidden transition-all">
+                <div class="flex items-center gap-3">
+                    <div id="quiz-feedback-icon" class="w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm"></div>
+                    <p id="quiz-feedback-text" class="text-xs font-semibold leading-relaxed"></p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="checkQuizResult()" class="px-5 py-2.5 bg-[var(--ink)] text-white font-semibold rounded-lg text-xs hover:bg-[var(--accent)] transition-all hover:scale-[1.02]">
+                    순서 검증하기
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2 CONTAINER: Prompt Builder with Integrated Gemini Image Generator -->
+        <div id="step-panel-2" class="hidden bg-white border border-[var(--line)] rounded-[var(--radius)] p-6 md:p-8 shadow-sm">
+            <div class="border-b border-[var(--line-soft)] pb-4 mb-6">
+                <span class="font-space text-xs uppercase tracking-wider font-bold text-[var(--accent)]">STEP 2. PROMPT BUILDER</span>
+                <h2 class="text-xl md:text-2xl font-bold tracking-tight mt-1 text-[var(--ink)]">구글 스티치 &amp; 제미나이 에셋 생성기</h2>
+                <p class="text-xs text-[var(--ink-soft)] mt-1.5 leading-relaxed">
+                    우리 브랜드의 정보를 입력하면 **[1. 스티치 사이트 프롬프트]**와 **[2. 제미나이 초고화질 광고컷 이미지 프롬프트]**가 실시간으로 자동 조립됩니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+                <div>
+                    <label class="block text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mb-1.5">브랜드 이름</label>
+                    <input type="text" id="inp-brand-name" placeholder="예: 달밤" oninput="assemblePrompt()" class="w-full px-3.5 py-2.5 text-xs rounded-lg border border-[var(--line)] bg-white focus:outline-none focus:border-[var(--accent)]">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mb-1.5">대표 슬로건 (헤드라인)</label>
+                    <input type="text" id="inp-slogan" placeholder="예: 하루의 끝, 밤의 평온을 켠다" oninput="assemblePrompt()" class="w-full px-3.5 py-2.5 text-xs rounded-lg border border-[var(--line)] bg-white focus:outline-none focus:border-[var(--accent)]">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mb-1.5">대표 핵심 색상 (Color)</label>
+                    <input type="text" id="inp-color" placeholder="예: 미드나잇 블루 (#0a192f) 와 따뜻한 무드 옐로우" oninput="assemblePrompt()" class="w-full px-3.5 py-2.5 text-xs rounded-lg border border-[var(--line)] bg-white focus:outline-none focus:border-[var(--accent)]">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mb-1.5">타겟 고객군</label>
+                    <input type="text" id="inp-target" placeholder="예: 온전한 밤의 힐링이 필요한 직장인" oninput="assemblePrompt()" class="w-full px-3.5 py-2.5 text-xs rounded-lg border border-[var(--line)] bg-white focus:outline-none focus:border-[var(--accent)]">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mb-1.5">제안하는 가치 &amp; 해결책 (Solution &amp; Benefit)</label>
+                    <textarea id="inp-benefit" rows="2" placeholder="예: 천연 소이 왁스와 라벤더 아로마가 가미되어 깊고 평온한 수면 유도를 돕는 감성 테라피 캔들" oninput="assemblePrompt()" class="w-full px-3.5 py-2.5 text-xs rounded-lg border border-[var(--line)] bg-white focus:outline-none focus:border-[var(--accent)] resize-none"></textarea>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mb-1.5">행동 유도 버튼 문구 (CTA)</label>
+                    <input type="text" id="inp-cta" placeholder="예: 오늘 밤을 위한 향기 처방받기 ➔" oninput="assemblePrompt()" class="w-full px-3.5 py-2.5 text-xs rounded-lg border border-[var(--line)] bg-white focus:outline-none focus:border-[var(--accent)]">
+                </div>
+            </div>
+
+            <!-- Double Output Tabs (Stitch Web vs Gemini Image) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- 1. Stitch Web Layout Prompt Output -->
+                <div class="bg-[var(--ink)] text-[#EAF0FF] rounded-xl p-5 border border-dashed border-[var(--accent)] relative flex flex-col justify-between">
+                    <div>
+                        <span class="absolute top-3.5 right-4 font-mono text-[9px] text-[var(--accent)] bg-[var(--accent-dim)] px-2 py-0.5 rounded-full font-bold">STITCH PROMPT</span>
+                        <label class="block font-mono text-[10px] text-[var(--accent)] uppercase tracking-wider mb-3 font-bold">1. 스티치 웹사이트 빌더 프롬프트</label>
+                        <pre id="stitch-prompt-preview" class="font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-[180px] overflow-y-auto pr-2">입력을 완료하시면 자동으로 스티치 전용 기획 설계용 프롬프트가 구성됩니다...</pre>
+                    </div>
+                    <div class="mt-4 flex justify-end border-t border-[#233554] pt-3">
+                        <button onclick="copyPromptToClipboard('stitch-prompt-preview', '스티치 웹빌더 프롬프트')" class="glow-button px-3.5 py-1.5 bg-[var(--accent)] text-white text-[11px] font-bold rounded-lg transition-all flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                            스티치 프롬프트 복사
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Gemini Image Generator Prompt Output -->
+                <div class="bg-slate-900 text-slate-100 rounded-xl p-5 border border-dashed border-sky-400 relative flex flex-col justify-between">
+                    <div>
+                        <span class="absolute top-3.5 right-4 font-mono text-[9px] text-sky-400 bg-sky-950 px-2 py-0.5 rounded-full font-bold">GEMINI IMAGE PROMPT SAMPLE</span>
+                        <label class="block font-mono text-[10px] text-sky-400 uppercase tracking-wider mb-3 font-bold">2. 제미나이 제품/무드컷 이미지 생성 프롬프트</label>
+                        <pre id="image-prompt-preview" class="font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-[180px] overflow-y-auto pr-2 text-slate-300">입력을 완료하시면 자동으로 제미나이 광고 컷 생성용 영문 최적화 프롬프트가 구성됩니다...</pre>
+                    </div>
+                    <div class="mt-4 flex justify-end border-t border-slate-800 pt-3">
+                        <button onclick="copyPromptToClipboard('image-prompt-preview', '제미나이 이미지 생성 프롬프트')" class="px-3.5 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-[11px] font-bold rounded-lg transition-all flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            이미지 프롬프트 복사 (Gemini용)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3 CONTAINER: Stitch Edit Simulator -->
+        <div id="step-panel-3" class="hidden bg-white border border-[var(--line)] rounded-[var(--radius)] p-6 md:p-8 shadow-sm">
+            <div class="border-b border-[var(--line-soft)] pb-4 mb-6">
+                <span class="font-space text-xs uppercase tracking-wider font-bold text-[var(--accent)]">STEP 3. STITCH SIMULATOR</span>
+                <h2 class="text-xl md:text-2xl font-bold tracking-tight mt-1 text-[var(--ink)]">구글 스티치 실습 환경 미리보기</h2>
+                <p class="text-xs text-[var(--ink-soft)] mt-1.5 leading-relaxed">
+                    구글 스티치의 대화형 편집과 이미지 연동을 체감해 보세요! 제미나이에서 생성해 낸 고유 브랜드 이미지를 아래에 시뮬레이션 적용해 보고, AI 피드백을 활용해 커스텀할 수 있습니다.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left: Web Preview Mockup -->
+                <div id="sim-webframe" class="lg:col-span-7 bg-[#F8FAFC] border border-[var(--line)] rounded-xl overflow-hidden shadow-inner flex flex-col justify-between min-h-[420px] transition-all duration-500">
+                    <!-- Web Header -->
+                    <div class="bg-white border-b border-[var(--line-soft)] px-4 py-3 flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#EF4444]"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-[#10B981]"></span>
+                            <span id="sim-logo" class="ml-2 font-space text-[11px] font-bold tracking-tight text-[var(--ink)]">BRAND LOGO</span>
+                        </div>
+                        <div class="flex gap-3 text-[10px] font-bold text-[var(--ink-soft)]">
+                            <span>소개</span>
+                            <span>혜택</span>
+                            <span>제품</span>
+                        </div>
+                    </div>
+
+                    <!-- Web Content Area -->
+                    <div id="sim-body-area" class="p-6 flex-grow flex flex-col justify-center items-center text-center space-y-4">
+                        <span id="sim-badge" class="px-2.5 py-0.5 bg-[var(--accent-dim)] text-[var(--accent-deep)] text-[9px] font-bold rounded-full">RECOMMEND</span>
+                        <h3 id="sim-headline" class="text-lg md:text-xl font-bold tracking-tight text-[var(--ink)] transition-all">새벽 2시, 당신을 안아줄 따스한 야식</h3>
+                        <p id="sim-benefit" class="text-xs text-[var(--ink-soft)] max-w-sm transition-all">건강에 부담 없는 원료로 온전히 채워진 하루 마무리 힐링 키트</p>
+                        
+                        <!-- Media Container (Supports local upload simulator) -->
+                        <div class="w-full max-w-[240px] h-[130px] bg-white border border-dashed border-[var(--line)] rounded-lg flex flex-col items-center justify-center p-2 relative group overflow-hidden">
+                            <img id="sim-image" src="https://placehold.co/400x200/F1F5F9/16243F?text=Product+Image" alt="Product Mock" class="max-h-full max-w-full rounded object-contain transition-transform duration-300 group-hover:scale-105">
+                            <label class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                <span class="text-white text-[10px] font-semibold bg-gray-900 px-2 py-1 rounded">제미나이 이미지 가상 업로드</span>
+                                <input type="file" accept="image/*" class="hidden" onchange="simulateImageUpload(this)">
+                            </label>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <button id="sim-cta" class="px-4 py-2 bg-[var(--ink)] text-white text-xs font-bold rounded-lg tracking-wide hover:opacity-90">
+                            지금 바로 시작하기 ➔
+                        </button>
+                    </div>
+
+                    <!-- Web Footer -->
+                    <div class="bg-white border-t border-[var(--line-soft)] px-4 py-2 text-center text-[9px] text-[var(--ink-soft)] font-mono">
+                        © <span id="sim-year">2026</span> <span id="sim-footer-brand">Brand</span>. Created via Stitch.
+                    </div>
+                </div>
+
+                <!-- Right: Simulated Chat Assistant -->
+                <div class="lg:col-span-5 flex flex-col justify-between border border-[var(--line)] rounded-xl bg-white p-4">
+                    <div>
+                        <div class="flex items-center gap-2 border-b border-[var(--line-soft)] pb-3 mb-3">
+                            <div class="w-5 h-5 rounded-full bg-[var(--accent)] flex items-center justify-center text-white text-[10px] font-bold">✨</div>
+                            <span class="text-xs font-bold text-[var(--ink)]">스티치 AI 어시스턴트</span>
+                        </div>
+                        <div class="bg-[var(--bg)] rounded-lg p-3 text-[11px] leading-relaxed text-[var(--ink-soft)] min-h-[190px] overflow-y-auto space-y-2" id="sim-chat-log">
+                            <div class="text-[var(--ink)] font-bold">🤖 Stitch AI:</div>
+                            <div>"안녕하세요! 사이트 빌더 에디터입니다. 어떤 수정을 도와드릴까요?"</div>
+                            <div class="italic text-gray-400">💡 팁: '다크 모드', '색상 오렌지', '성공 리뷰 추가', '이미지 밤 분위기' 등을 입력해 보세요. 직접 제미나이 이미지를 드래그하거나 업로드 버튼을 눌러 넣을 수도 있습니다!</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="flex gap-2">
+                            <input type="text" id="sim-user-input" placeholder="원하는 변경 조건을 적어보세요..." class="flex-grow px-3 py-2 text-xs border border-[var(--line)] rounded-lg focus:outline-none focus:border-[var(--accent)]" onkeypress="handleSimKeyPress(event)">
+                            <button onclick="executeSimCommand()" class="px-3.5 py-2 bg-[var(--ink)] text-white text-xs font-bold rounded-lg hover:bg-[var(--accent)] transition-all">
+                                실행
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4 CONTAINER: Launch & Deploy -->
+        <div id="step-panel-4" class="hidden bg-white border border-[var(--line)] rounded-[var(--radius)] p-6 md:p-8 shadow-sm">
+            <div class="border-b border-[var(--line-soft)] pb-4 mb-6">
+                <span class="font-space text-xs uppercase tracking-wider font-bold text-[var(--accent)]">STEP 4. LAUNCH &amp; DEPLOY</span>
+                <h2 class="text-xl md:text-2xl font-bold tracking-tight mt-1 text-[var(--ink)]">전 세계로의 실시간 배포</h2>
+                <p class="text-xs text-[var(--ink-soft)] mt-1.5 leading-relaxed">
+                    구글 스티치 수정이 모두 끝났다면, 우측 상단 **Export(내보내기)** 버튼에서 **Netlify**를 연동해 원클릭으로 배포하세요. 배포 후 발급받은 실제 도메인을 아래에 검증하여 입력합니다.
+                </p>
+            </div>
+
+            <div class="bg-[var(--good-dim)] text-[var(--good)] border border-[var(--line-soft)] p-4 rounded-xl text-xs mb-6 leading-relaxed">
+                <p class="font-bold mb-1">💡 네트리파이(Netlify) 배포 꿀팁</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>별도의 회원가입이나 코딩 과정 없이, 스티치가 생성한 사이트 코드를 그대로 호스팅해 줍니다.</li>
+                    <li>배포 완료 후 제공되는 <code class="font-mono bg-white px-1 py-0.5 rounded border">*.netlify.app</code> 주소를 공유하면 누구나 모바일, 태블릿, PC에서 접속할 수 있는 실제 웹사이트가 됩니다.</li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold text-[var(--ink-soft)] uppercase tracking-wider mb-2">발급받은 실시간 라이브 URL 입력</label>
+                    <div class="flex gap-3">
+                        <input type="text" id="inp-netlify-url" placeholder="https://your-brand-name.netlify.app" class="flex-grow px-4 py-2.5 text-xs rounded-lg border border-[var(--line)] bg-white focus:outline-none focus:border-[var(--accent)]">
+                        <button onclick="verifyNetlifyUrl()" class="px-4 py-2.5 bg-[var(--ink)] text-white text-xs font-bold rounded-lg hover:bg-[var(--accent)] transition-all">
+                            링크 확인하기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Deploy Success Alert -->
+                <div id="deploy-feedback" class="p-4 rounded-xl border hidden transition-all">
+                    <div class="flex items-center gap-3">
+                        <div id="deploy-feedback-icon" class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"></div>
+                        <p id="deploy-feedback-text" class="text-xs font-semibold leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5 CONTAINER: Save & Export -->
+        <div id="step-panel-5" class="hidden bg-white border border-[var(--line)] rounded-[var(--radius)] p-6 md:p-8 shadow-sm">
+            <div class="border-b border-[var(--line-soft)] pb-4 mb-6">
+                <span class="font-space text-xs uppercase tracking-wider font-bold text-[var(--accent)]">STEP 5. SAVE &amp; EXPORT</span>
+                <h2 class="text-xl md:text-2xl font-bold tracking-tight mt-1 text-[var(--ink)]">오늘의 실습 결과물 저장</h2>
+                <p class="text-xs text-[var(--ink-soft)] mt-1.5 leading-relaxed">
+                    오늘 활동한 모든 기록이 하나의 통합 데이터 블록으로 변환되었습니다. 아래 블록을 통째로 복사하여 **'팀 미션 로그 문서' Day 4 영역**에 붙여넣으세요.
+                </p>
+            </div>
+
+            <!-- Compiled Results Preview -->
+            <div class="space-y-4">
+                <div class="bg-[var(--bg)] rounded-xl p-5 border border-[var(--line)] relative">
+                    <span class="absolute top-3 right-4 font-mono text-[9px] text-[var(--ink-soft)] bg-white px-2 py-0.5 rounded-full border">MARKDOWN READY</span>
+                    <label class="block font-mono text-[10px] text-[var(--ink-soft)] uppercase tracking-wider mb-3 font-bold">팀 로그 자동 기입용 데이터</label>
+                    
+                    <textarea id="compiled-data-box" readonly="" rows="8" class="w-full p-3 font-mono text-xs bg-white border border-[var(--line)] rounded-lg text-[var(--ink)] resize-none focus:outline-none focus:ring-0"></textarea>
+                </div>
+
+                <div class="flex justify-center pt-2">
+                    <button onclick="copyCompletedKit()" class="glow-button px-6 py-3 bg-[var(--accent)] text-white font-bold text-xs rounded-xl transition-all hover:scale-[1.03] flex items-center gap-2 shadow-lg">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                        오늘 미션 결과물 전체 복사하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Navigation Footer Bar -->
+    <footer class="bg-white border-t border-[var(--line)] py-4 px-6 shadow-md">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <button id="btn-prev" onclick="moveStep(-1)" class="px-4 py-2 bg-gray-100 text-[var(--ink-soft)] font-bold text-xs rounded-lg hover:bg-gray-200 transition-all focus:outline-none">
+                ← 이전 단계
+            </button>
+            <span class="font-mono text-xs text-[var(--ink-soft)] font-bold">
+                STEP <span id="current-step-text" class="text-[var(--accent)] font-bold">1</span> / 5
+            </span>
+            <button id="btn-next" onclick="moveStep(1)" class="px-4 py-2 bg-[var(--ink)] text-white font-bold text-xs rounded-lg hover:bg-[var(--accent)] transition-all focus:outline-none">
+                다음 단계 →
+            </button>
+        </div>
+    </footer>
+    <script>
+// Global State Variables
+        let currentStep = 1;
+        let isQuizCleared = false;
+        let isDeployCleared = false;
+
+        // Quiz items - initial unsorted layout structure
+        let quizItems = [
+            { id: "cta", title: "5. Call to Action (CTA)", desc: "마지막 설득과 예약/도입 문의 등 핵심 행동 촉구 유도", order: 5 },
+            { id: "hero", title: "1. Hero Section", desc: "첫인상을 결정하는 핵심 헤드라인 & 시각적 대표 이미지", order: 1 },
+            { id: "problem", title: "2. Problem Definition", desc: "사용자가 가진 고통과 직면한 불편한 상황(Pain Point) 공감하기", order: 2 },
+            { id: "solution", title: "3. Solution Showcase", desc: "우리 상품이 어떻게 그 고통을 완벽하게 해소하고 해결해 주는지 제안", order: 3 },
+            { id: "social", title: "4. Social Proof & Reviews", desc: "실제 리뷰, 수치, 신뢰 데이터를 기반으로 안심하고 쓰도록 검증", order: 4 },
+            { id: "footer", title: "6. Footer & Info", desc: "사업자 정보, 저작권, 관련 규정 및 추가 참고 링크 배치", order: 6 }
+        ];
+
+        // On window load
+        window.onload = function() {
+            // Load Team Name from localStorage if exists
+            const savedTeam = localStorage.getItem('day4_team_name');
+            if (savedTeam) {
+                document.getElementById('teamName').value = savedTeam;
+            }
+            
+            // Randomize and initialize quiz list
+            shuffleQuizItems();
+            renderQuiz();
+            assemblePrompt();
+            updateStepView();
+        };
+
+        function saveTeamName(val) {
+            localStorage.setItem('day4_team_name', val);
+            assemblePrompt();
+            compileFinalData();
+        }
+
+        // Shuffle function helper
+        function shuffleQuizItems() {
+            quizItems.sort(() => Math.random() - 0.5);
+        }
+
+        // Render Quiz with Up / Down Controls to be completely reliable and friendly across all viewport dimensions
+        function renderQuiz() {
+            const container = document.getElementById('quiz-list');
+            container.innerHTML = '';
+
+            quizItems.forEach((item, index) => {
+                const isFirst = index === 0;
+                const isLast = index === quizItems.length - 1;
+
+                container.innerHTML += `
+                    <div class="layout-item flex items-center justify-between border border-[var(--line)] rounded-xl p-4 bg-[#F8FAFC] hover:border-[var(--accent)] transition-all">
+                        <div class="pr-4">
+                            <span class="font-space text-[10px] font-bold text-[var(--accent-deep)] bg-[var(--accent-dim)] px-2 py-0.5 rounded-full mr-2">BLOCK</span>
+                            <span class="font-mono text-xs font-bold text-[var(--ink)]">${item.title}</span>
+                            <p class="text-[11px] text-[var(--ink-soft)] mt-1">${item.desc}</p>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <button onclick="moveQuizItem(${index}, -1)" ${isFirst ? 'disabled class="opacity-30 cursor-not-allowed"' : 'class="p-1 hover:bg-gray-200 rounded transition-all"'} title="위로 이동">
+                                <svg class="w-4 h-4 text-[var(--ink-soft)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                            </button>
+                            <button onclick="moveQuizItem(${index}, 1)" ${isLast ? 'disabled class="opacity-30 cursor-not-allowed"' : 'class="p-1 hover:bg-gray-200 rounded transition-all"'} title="아래로 이동">
+                                <svg class="w-4 h-4 text-[var(--ink-soft)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function moveQuizItem(index, direction) {
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= quizItems.length) return;
+
+            // Swap positions
+            const temp = quizItems[index];
+            quizItems[index] = quizItems[targetIndex];
+            quizItems[targetIndex] = temp;
+
+            renderQuiz();
+            compileFinalData();
+        }
+
+        // Validate Sorting Result
+        function checkQuizResult() {
+            const feedback = document.getElementById('quiz-feedback');
+            const feedbackText = document.getElementById('quiz-feedback-text');
+            const feedbackIcon = document.getElementById('quiz-feedback-icon');
+
+            let correct = true;
+            for (let i = 0; i < quizItems.length; i++) {
+                if (quizItems[i].order !== i + 1) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            feedback.classList.remove('hidden');
+            if (correct) {
+                isQuizCleared = true;
+                feedback.className = "mt-6 p-4 rounded-xl border border-[var(--good)] bg-[var(--good-dim)] text-[var(--good)]";
+                feedbackIcon.innerHTML = "✓";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-[var(--good)] text-white flex items-center justify-center font-bold text-sm";
+                feedbackText.innerText = "완벽합니다! 이탈을 최소화하고 전환율을 극대화시키는 정석적인 랜딩 페이지 구조입니다. 다음 단계로 넘어가 주세요.";
+            } else {
+                isQuizCleared = false;
+                feedback.className = "mt-6 p-4 rounded-xl border border-red-300 bg-red-50 text-red-700";
+                feedbackIcon.innerHTML = "✕";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-sm";
+                feedbackText.innerText = "일부 세그먼트 배치가 잘못되었습니다. 고객이 방문했을 때, 우선 헤드라인으로 문제를 제시하고 해답을 던지는 '빌드업' 순서가 중요합니다. 다시 조정해 보세요!";
+            }
+            compileFinalData();
+        }
+
+        // Assemble Prompt dynamically based on user inputs (Supports both Stitch Layout & Gemini Image Prompts)
+        function assemblePrompt() {
+            const team = document.getElementById('teamName').value || "[미입력 팀]";
+            const brand = document.getElementById('inp-brand-name').value || "달밤";
+            const slogan = document.getElementById('inp-slogan').value || "하루의 끝, 밤의 평온을 켠다";
+            const color = document.getElementById('inp-color').value || "차분한 톤온톤 무드 및 밤의 아늑함을 살린 난색 계열 색조";
+            const target = document.getElementById('inp-target').value || "깊고 아늑한 치유가 필요한 현대인";
+            const benefit = document.getElementById('inp-benefit').value || "자연에서 추출한 소이 왁스와 향기로 편안함을 전하는 라이프스타일 캔들";
+            const cta = document.getElementById('inp-cta').value || "나에게 완벽한 향기 조합 찾기 ➔";
+
+            // 1. Web Layout Prompt for Stitch
+            const preview = document.getElementById('stitch-prompt-preview');
+            const promptText = `구글 스티치(Stitch)에서 작동할 고효율 랜딩 페이지 구조 생성을 요청합니다:
+
+[브랜드명]: ${brand}
+[서비스/제품 정의]: ${slogan}
+[설계 분위기 및 지배 색상]: ${color}
+[공략 대상 고객 (Target)]: ${target}
+[핵심 가치 제안 (Solution)]: ${benefit}
+[메인 목표 행동 유도 (CTA 버튼)]: ${cta}
+
+[필수 구조 구성 지시]:
+1. Hero Section: "${brand}" 브랜드 로고와 대담하고 시각적인 슬로건 "${slogan}"이 강조되게 해주세요.
+2. Problem: "${target}" 고객이 일상에서 가장 느끼는 주요 문제와 스트레스 공감대를 다뤄주세요.
+3. Solution: "${benefit}"를 해결책으로 자연스럽게 소개하며, 3단 레이아웃을 통해 세부 이점을 시각적으로 분할해 주세요.
+4. Social Proof: 신뢰성을 보장하는 만족도 높은 3가지 인용구 리뷰를 삽입해주세요.
+5. CTA: 눈에 띄는 색상의 보더라인/버튼 형태로 "${cta}" 앵커를 추가하고 클릭 시 원활히 링크 타겟팅 되도록 배포 환경을 고려해 조립해 주세요.`;
+
+            preview.innerText = promptText;
+
+            // 2. Gemini High-Quality Product Image Generation Prompt (New feature!)
+            const imgPreview = document.getElementById('image-prompt-preview');
+            const imgPromptText = `A professional, hyper-realistic commercial product photograph of "${brand}" food container. 
+A warm, steaming food cup or packaging kit with delicious details visible. The label on the container clearly reads "${brand}" in elegant modern typography.
+Set against a cozy dark background featuring tones of ${color}. Soft steam rising elegantly from the warm food container.
+Placed on a wooden desk next to open books, notes, and a warm glowing lamp in a quiet university library study room at late night, capturing a comforting, cozy, and highly emotional atmosphere.
+Hyper-detailed food photography, professional food styling, warm color grading, cinematic lighting, 8k resolution, depth of field.`;
+
+            imgPreview.innerText = imgPromptText;
+            
+            // Sync values to simulator visual text
+            document.getElementById('sim-logo').innerText = brand.toUpperCase() + " LOGO";
+            document.getElementById('sim-headline').innerText = slogan;
+            document.getElementById('sim-benefit').innerText = benefit;
+            document.getElementById('sim-cta').innerText = cta;
+            document.getElementById('sim-footer-brand').innerText = brand;
+            
+            compileFinalData();
+        }
+
+        // Clipboard operations conforming to execution requirements
+        function copyPromptToClipboard(elementId, labelName) {
+            const copyText = document.getElementById(elementId).innerText;
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = copyText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            showToast(`${labelName}가 클립보드에 완벽히 복사되었습니다!`);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2500);
+        }
+
+        // Simulate Image Upload from Gemini
+        function simulateImageUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('sim-image').src = e.target.result;
+                    
+                    const chatLog = document.getElementById('sim-chat-log');
+                    chatLog.innerHTML += `
+                        <div class="text-[var(--good)] font-bold mt-2">✨ 이미지 업로드 완료:</div>
+                        <div>제미나이에서 생성된 고유 제품 이미지가 스티치 시뮬레이터에 성공적으로 장착되었습니다!</div>
+                    `;
+                    chatLog.scrollTop = chatLog.scrollHeight;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Simulation Chatbot & Mock Actions
+        function executeSimCommand() {
+            const input = document.getElementById('sim-user-input');
+            const command = input.value.trim();
+            if (!command) return;
+
+            const chatLog = document.getElementById('sim-chat-log');
+            const webFrame = document.getElementById('sim-webframe');
+
+            // append user message
+            chatLog.innerHTML += `<div class="text-[var(--accent-deep)] font-bold mt-2">👤 나:</div><div>"${command}"</div>`;
+            input.value = '';
+
+            // Loading state
+            chatLog.innerHTML += `<div class="text-[var(--ink)] font-bold mt-1">🤖 Stitch AI (변경 조율 중...):</div><div id="sim-typing" class="italic text-gray-400">명령을 처리하고 있습니다. 잠시만 기다려주세요...</div>`;
+            chatLog.scrollTop = chatLog.scrollHeight;
+
+            setTimeout(() => {
+                // Remove typing placeholder
+                const typing = document.getElementById('sim-typing');
+                if (typing) typing.remove();
+
+                let aiResponse = "";
+                
+                // Parser for interactive visual feedback based on user simulated command
+                if (command.includes("다크") || command.includes("dark") || command.includes("어둡게")) {
+                    webFrame.className = "lg:col-span-7 bg-[#1E293B] border border-gray-700 rounded-xl overflow-hidden shadow-inner flex flex-col justify-between min-h-[420px] transition-all duration-500 text-white";
+                    document.getElementById('sim-headline').className = "text-lg md:text-xl font-bold tracking-tight text-white transition-all";
+                    document.getElementById('sim-benefit').className = "text-xs text-gray-300 max-w-sm transition-all";
+                    document.getElementById('sim-cta').className = "px-4 py-2 bg-[var(--accent)] text-white text-xs font-bold rounded-lg tracking-wide hover:opacity-90";
+                    aiResponse = "네! 요청대로 전반적인 분위기를 세련되고 포근한 다크 모드(#1E293B)로 전면 조정했습니다.";
+                } else if (command.includes("주황") || command.includes("orange") || command.includes("색상") || command.includes("오렌지")) {
+                    document.getElementById('sim-badge').className = "px-2.5 py-0.5 bg-[#FFF7ED] text-[var(--accent-deep)] text-[9px] font-bold rounded-full border border-[var(--accent)]";
+                    document.getElementById('sim-cta').className = "px-4 py-2 bg-[var(--accent)] text-white text-xs font-bold rounded-lg tracking-wide hover:opacity-90";
+                    aiResponse = "주조색 가이드를 브랜드 테마에 어울리는 오렌지 포인트(#FF5A1F) 컬러셋으로 교체 완료했습니다.";
+                } else if (command.includes("리뷰") || command.includes("후기") || command.includes("성공")) {
+                    document.getElementById('sim-benefit').innerHTML = "⭐⭐⭐⭐⭐<br>\"시험기간 매일 편의점만 가다 야식 자판기로 든든하게 한 끼 하니 집중이 너무 잘 돼요! 새벽 필수템!\"";
+                    aiResponse = "신뢰 요소 확보를 위해 실제 대학생의 만족도 5점 리뷰와 실전 후기를 메인 영역에 성공적으로 보충했습니다.";
+                } else if (command.includes("이미지") || command.includes("밤") || command.includes("사진")) {
+                    document.getElementById('sim-image').src = "https://placehold.co/400x200/1e293b/FFFFFF?text=Warm+Steaming+Meal+Kit";
+                    aiResponse = "제품 이미지를 모락모락 김이 피어오르는 차분한 야식 컵밥 무드 카드로 가상 동기화시켰습니다.";
+                } else {
+                    aiResponse = "이해했습니다! 입력해주신 피드백 사항을 바탕으로, 해당 섹션 레이아웃 컴포넌트를 보기 편하고 매끄럽게 다듬었습니다.";
+                }
+
+                chatLog.innerHTML += `<div>"${aiResponse}"</div>`;
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }, 1200);
+        }
+
+        function handleSimKeyPress(event) {
+            if (event.key === 'Enter') {
+                executeSimCommand();
+            }
+        }
+
+        // Netlify URL verification
+        function verifyNetlifyUrl() {
+            const urlInput = document.getElementById('inp-netlify-url').value.trim();
+            const feedback = document.getElementById('deploy-feedback');
+            const feedbackText = document.getElementById('deploy-feedback-text');
+            const feedbackIcon = document.getElementById('deploy-feedback-icon');
+
+            if (!urlInput) {
+                feedback.classList.remove('hidden');
+                feedback.className = "p-4 rounded-xl border border-red-300 bg-red-50 text-red-700 text-xs";
+                feedbackIcon.innerHTML = "✕";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-sm";
+                feedbackText.innerText = "배포된 Netlify 주소를 올바르게 채워주세요.";
+                isDeployCleared = false;
+                return;
+            }
+
+            // Basic regex or substring check for valid link format
+            const isUrl = urlInput.startsWith("http://") || urlInput.startsWith("https://");
+            const isNetlify = urlInput.includes("netlify.app") || urlInput.includes("stitch.google");
+
+            feedback.classList.remove('hidden');
+            if (isUrl && isNetlify) {
+                isDeployCleared = true;
+                feedback.className = "p-4 rounded-xl border border-[var(--good)] bg-[var(--good-dim)] text-[var(--good)] text-xs";
+                feedbackIcon.innerHTML = "✓";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-[var(--good)] text-white flex items-center justify-center font-bold text-sm";
+                feedbackText.innerText = "멋집니다! 실시간 라이브 주소 형식이 올바르게 승인되었습니다. 이제 전 세계에 여러분의 브랜드 채널이 열렸습니다.";
+            } else if (isUrl) {
+                isDeployCleared = true; // Let custom domains pass with a subtle warn
+                feedback.className = "p-4 rounded-xl border border-yellow-300 bg-yellow-50 text-yellow-800 text-xs";
+                feedbackIcon.innerHTML = "⚠";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-yellow-500 text-white flex items-center justify-center font-bold text-sm";
+                feedbackText.innerText = "실시간 도메인 형식이 확인되었습니다. Netlify 고유 도메인 혹은 개별 도메인이 맞는지 정상 작동 여부를 브라우저 탭에서 한 번 더 체크해주세요.";
+            } else {
+                isDeployCleared = false;
+                feedback.className = "p-4 rounded-xl border border-red-300 bg-red-50 text-red-700 text-xs";
+                feedbackIcon.innerHTML = "✕";
+                feedbackIcon.className = "w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-sm";
+                feedbackText.innerText = "올바른 URL 형식(https://...)으로 작성해 주세요. 네트리파이에서 발급된 원본 주소를 복사-붙여넣기 하시는 것을 강력 추천합니다.";
+            }
+            compileFinalData();
+        }
+
+        // Step Management Navigation logic
+        function moveStep(direction) {
+            let nextStep = currentStep + direction;
+            if (nextStep >= 1 && nextStep <= 5) {
+                goToStep(nextStep);
+            }
+        }
+
+        function goToStep(stepNum) {
+            // Hide all panels
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`step-panel-${i}`).classList.add('hidden');
+                
+                // reset rail state indicator styling
+                const circle = document.getElementById(`rail-circle-${i}`);
+                if (i < stepNum) {
+                    // completed steps
+                    circle.className = "w-10 h-10 rounded-full bg-[var(--teal)] text-white flex items-center justify-center font-space font-bold text-sm border-2 border-[var(--teal)] transition-all";
+                    circle.innerText = "✓";
+                } else if (i === stepNum) {
+                    // current step
+                    circle.className = "w-10 h-10 rounded-full bg-[var(--ink)] text-[var(--accent)] flex items-center justify-center font-space font-bold text-sm border-2 border-[var(--ink)] transition-all";
+                    circle.innerText = i;
+                } else {
+                    // future steps
+                    circle.className = "w-10 h-10 rounded-full bg-white text-[var(--ink-soft)] flex items-center justify-center font-space font-bold text-sm border-2 border-[var(--line)] transition-all";
+                    circle.innerText = i;
+                }
+            }
+
+            // Show active panel
+            document.getElementById(`step-panel-${stepNum}`).classList.remove('hidden');
+            currentStep = stepNum;
+
+            // Update footer controls text
+            document.getElementById('current-step-text').innerText = currentStep;
+            
+            // Disable buttons if at boundaries
+            document.getElementById('btn-prev').disabled = (currentStep === 1);
+            document.getElementById('btn-prev').style.opacity = (currentStep === 1) ? "0.4" : "1";
+            document.getElementById('btn-next').innerText = (currentStep === 5) ? "실습 완료 🎉" : "다음 단계 →";
+
+            if (currentStep === 5) {
+                compileFinalData();
+            }
+        }
+
+        function updateStepView() {
+            goToStep(1);
+        }
+
+        // Final Output Markdown Assembler
+        function compileFinalData() {
+            const team = document.getElementById('teamName').value || "[미입력 팀]";
+            const brand = document.getElementById('inp-brand-name').value || "[미입력]";
+            const slogan = document.getElementById('inp-slogan').value || "[미입력]";
+            const target = document.getElementById('inp-target').value || "[미입력]";
+            const color = document.getElementById('inp-color').value || "[미입력]";
+            const benefit = document.getElementById('inp-benefit').value || "[미입력]";
+            const cta = document.getElementById('inp-cta').value || "[미입력]";
+            const netlifyUrl = document.getElementById('inp-netlify-url').value || "[미등록 배포 주소]";
+
+            // Format layout string based on current user alignment in quiz
+            const layoutOrderStr = quizItems.map((item, idx) => `${idx + 1}. ${item.title}`).join('\n');
+            const layoutStatus = isQuizCleared ? "통과 (정석 설계 매칭 완료)" : "확인 필요 (사용자 커스텀 배치 구조)";
+
+            const outputData = `### 🌐 DAY 4 미션 결과 리포트 (팀: ${team})
+
+#### 1. 랜딩 페이지 레이아웃 매칭 검증
+- **레이아웃 매칭 상태**: ${layoutStatus}
+- **우리가 수립한 설계 순서**:
+${layoutOrderStr}
+
+#### 2. 브랜드 핵심 프롬프트 빌딩 에셋 (Stitch & Gemini Image)
+- **대상 브랜드**: ${brand} (${slogan})
+- **주요 타겟 고객층**: ${target}
+- **조율된 테마 색상**: ${color}
+- **핵심 고객 제공 혜택**: ${benefit}
+- **설정된 액션 촉구(CTA) 버튼**: [ ${cta} ]
+
+- **제미나이 이미지 생성 전용 프롬프트**:
+\`\`\`text
+A professional, hyper-realistic commercial product photograph of "${brand}" food container. Warm, steaming food cup with delicious details visible. The label on the container clearly reads "${brand}" in elegant modern Korean typography. Set against a cozy dark background featuring tones of ${color}. Soft steam rising elegantly from the warm food container. Placed on a wooden desk next to open books, notes, and a warm glowing lamp in a quiet university library study room at late night, capturing a comforting, cozy, and highly emotional atmosphere. Hyper-detailed food photography, professional food styling, warm color grading, cinematic lighting, 8k resolution, depth of field.
+\`\`\`
+
+#### 3. 실시간 글로벌 웹 배포 정보 (Netlify)
+- **실시간 도메인 연결 주소**: ${netlifyUrl}
+- **웹 빌더 플랫폼 가이드**: Google Stitch를 사용해 구조 설계 및 컴포넌트 디테일 편집을 성공적으로 완수하고 Netlify 호스팅 인프라와 양방향 커넥션을 승인 완료함.`;
+
+            document.getElementById('compiled-data-box').value = outputData;
+        }
+
+        function copyCompletedKit() {
+            const copyBox = document.getElementById('compiled-data-box');
+            copyBox.select();
+            document.execCommand('copy');
+            showToast("팀 로그 연동용 마크다운 데이터가 완벽하게 복사되었습니다!");
+        }
+    </script>
+</body>
+</html>

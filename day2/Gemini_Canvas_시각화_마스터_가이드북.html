@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Canvas 시각화 마스터 가이드북</title>
+    <style>
+/* Custom scrollbar styling for better presentation */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .tab-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Noto+Sans+KR:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- TOP HEADER -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-tr from-primary-600 to-teal-500 text-white p-2.5 rounded-xl shadow-md">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-primary-600 tracking-wider uppercase block leading-none">AI Collaboration Guide</span>
+                        <h1 class="text-lg font-black text-slate-900 tracking-tight mt-0.5">Gemini Canvas 시각화 마스터 가이드북</h1>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-primary-50 text-primary-700 border border-primary-100">
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span> 대학생 실무 실습용
+                    </span>
+                    <a href="https://litt.ly/aklabs" target="_blank" class="text-sm font-semibold text-slate-500 hover:text-slate-950 transition-colors">AKLABS</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="w-full lg:w-80 flex-shrink-0">
+            <div class="sticky top-24 space-y-6">
+                <!-- Sidebar card header -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-premium">
+                    <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">실습 시나리오 목록</h2>
+                    <nav class="space-y-2" id="sidebar-nav">
+                        <!-- Navigation Item 1 -->
+                        <button onclick="switchTab(1)" id="nav-btn-1" class="w-full text-left px-4 py-3.5 rounded-xl font-medium text-sm flex items-start gap-3 transition-all border tab-transition bg-primary-50 border-primary-100 text-primary-800 shadow-sm">
+                            <span class="bg-primary-600 text-white w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                            <div class="leading-tight">
+                                <span class="font-bold block text-xs text-primary-600 mb-0.5">UX/UI 와이어프레임</span>
+                                친환경 배달 앱 에코이츠
+                            </div>
+                        </button>
+
+                        <!-- Navigation Item 2 -->
+                        <button onclick="switchTab(2)" id="nav-btn-2" class="w-full text-left px-4 py-3.5 rounded-xl font-medium text-sm flex items-start gap-3 transition-all border tab-transition bg-white border-slate-100 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                            <span class="bg-slate-200 text-slate-600 w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                            <div class="leading-tight">
+                                <span class="font-bold block text-xs text-slate-400 mb-0.5">시스템 아키텍처</span>
+                                스마트 홈 AI 작동 구조
+                            </div>
+                        </button>
+
+                        <!-- Navigation Item 3 -->
+                        <button onclick="switchTab(3)" id="nav-btn-3" class="w-full text-left px-4 py-3.5 rounded-xl font-medium text-sm flex items-start gap-3 transition-all border tab-transition bg-white border-slate-100 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                            <span class="bg-slate-200 text-slate-600 w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                            <div class="leading-tight">
+                                <span class="font-bold block text-xs text-slate-400 mb-0.5">데이터 분석 / 3D</span>
+                                글로벌 VR/AR 시장 규모
+                            </div>
+                        </button>
+
+                        <!-- Navigation Item 4 -->
+                        <button onclick="switchTab(4)" id="nav-btn-4" class="w-full text-left px-4 py-3.5 rounded-xl font-medium text-sm flex items-start gap-3 transition-all border tab-transition bg-white border-slate-100 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                            <span class="bg-slate-200 text-slate-600 w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0">4</span>
+                            <div class="leading-tight">
+                                <span class="font-bold block text-xs text-slate-400 mb-0.5">공간 분석 / 인포그래픽</span>
+                                지역별 청년 고립 비율 지도
+                            </div>
+                        </button>
+
+                        <!-- Navigation Item 5 -->
+                        <button onclick="switchTab(5)" id="nav-btn-5" class="w-full text-left px-4 py-3.5 rounded-xl font-medium text-sm flex items-start gap-3 transition-all border tab-transition bg-white border-slate-100 text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                            <span class="bg-slate-200 text-slate-600 w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0">5</span>
+                            <div class="leading-tight">
+                                <span class="font-bold block text-xs text-slate-400 mb-0.5">포트폴리오 브랜딩</span>
+                                커리어 역량 레이더 차트
+                            </div>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Fast Rules Information Board -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-5 shadow-premium border border-slate-700/50">
+                    <div class="flex items-center gap-2 mb-3">
+                        <i class="fa-solid fa-graduation-cap text-teal-400 text-lg"></i>
+                        <h3 class="font-bold text-sm tracking-wide">프롬프트 작성의 4대 법칙</h3>
+                    </div>
+                    <ul class="text-xs space-y-2.5 text-slate-300">
+                        <li class="flex items-start gap-2">
+                            <span class="text-teal-400 font-semibold shrink-0">Role</span>
+                            <span>구체적인 역할과 전문성을 부여합니다.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-teal-400 font-semibold shrink-0">Data</span>
+                            <span>가공되지 않은 원재료를 명확히 정의합니다.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-teal-400 font-semibold shrink-0">Rule</span>
+                            <span>제약 조건과 지킬 세부 사항을 지시합니다.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-teal-400 font-semibold shrink-0">Format</span>
+                            <span>HTML, Mermaid 등 최종 출력 형식을 지정합니다.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CONTENT AREA CONTAINER -->
+        <div class="flex-1 min-w-0">
+            
+            <!-- TAB CONTENT 1: EcoEats Wireframe -->
+            <div id="tab-content-1" class="tab-content block space-y-8">
+                <!-- Overview Header Block -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary-50/50 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+                        <div class="flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                            </span>
+                            <div>
+                                <span class="text-xs font-bold text-primary-600 tracking-wider block uppercase mb-1">실습 시나리오 01</span>
+                                <h3 class="text-2xl font-black text-slate-900 tracking-tight">친환경 배달 앱 "에코이츠" 와이어프레임 설계</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-slate-600 text-sm md:text-base leading-relaxed border-t border-slate-100 pt-4">
+                        사용자가 친환경 용기를 선택하여 탄소 배출 포인트를 획득하기까지의 사용자 여정(User Journey)을 바탕으로, 실제 모바일 화면 컴포넌트들을 설계합니다. 캔버스의 실시간 HTML 미리보기 기능을 결합해 아이디어가 즉시 인터랙티브 구조로 구현되는 쾌감을 줍니다.
+                    </p>
+                </div>
+
+                <!-- Step 1: Domain Knowledge Card -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">1단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">가이드 학습: 필수 도메인 지식</h4>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-5">
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">와이어프레임(Wireframe)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">화면에 실제 이미지나 정밀 색을 칠하기 전, 정보의 논리 구조와 레이아웃 위치를 선(Wire)과 사각형(Frame) 단위로 뼈대를 가시화하는 설계도입니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">핵심 UI 컴포넌트</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">배달 앱 필수 구조인 헤더/네비게이션바, 아이템 카드(Card UI), 최종 사용자 전환을 강력히 유도하는 CTA(Call To Action) 클릭 버튼의 배치가 핵심입니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">친환경 브랜딩 컬러 대비</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">친환경을 연상시키는 자연색 Deep Green(#2E7D32) 컬러를 강조 컬러로 사용하고, 배경은 화이트, 비활성 영역은 Light Gray를 주어 명확한 시각적 대비를 줍니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Prompting Secrets -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">2단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">프롬프트 엔지니어링 전략</h4>
+                    </div>
+                    <div class="space-y-3.5">
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>역할(Role) 부여:</strong> 일반 AI가 아닌, 친환경 모바일 서비스를 수십 회 론칭한 <strong>'10년 차 수석 UI/UX 디자이너'</strong>의 역할을 부여해 디테일을 확보합니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>구조의 정량화:</strong> 단순 앱 구현이 아니라 메인홈, 메뉴상세, 장바구니, 탄소 완료 페이지 등 <strong>'4개 핵심 화면과 구성 요소'</strong>를 정확히 리스팅하여 지정합니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>형식 제약:</strong> 웹 브라우저가 직접 그려주는 캔버스 미리보기 특성을 고려하여 <strong>'HTML과 CSS가 통합된 단일 코드'</strong>로 출력을 가이드합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Actionable Prompt Copy Card -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center justify-between gap-4 mb-4 border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold bg-primary-500 text-white px-2 py-0.5 rounded">3단계</span>
+                            <h4 class="font-extrabold text-lg text-slate-900">최종 지침 프롬프트 복사</h4>
+                        </div>
+                        <button onclick="copyToClipboard('prompt-text-1', this)" class="bg-slate-900 text-white hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fa-regular fa-copy"></i> 프롬프트 복사
+                        </button>
+                    </div>
+                    <!-- Hidden Textarea for copying -->
+                    <div class="relative bg-slate-950 rounded-xl p-5 border border-slate-800">
+                        <pre id="prompt-text-1" class="text-slate-300 text-xs md:text-sm whitespace-pre-wrap font-mono leading-relaxed max-h-96 overflow-y-auto">너는 친환경 서비스를 전문으로 설계하는 10년 차 UI/UX 디자이너이자 서비스 기획자야. 
+아래 제공된 [기획 아이디어 자료]를 바탕으로, 모바일 앱의 정보 구조(IA)와 사용자의 시각적 흐름을 고려하여 화면의 구조를 설계하는 '와이어프레임(Wireframe)'을 제작해 줘.
+
+[기획 아이디어 자료]
+- 서비스명: 에코이츠 (EcoEats)
+- 핵심 컨셉: 친환경 다회용기 사용 배달, 탄소 배출 저감 포인트 매칭
+- 타겟: 환경 보호에 관심이 많고 모바일 결제에 익숙한 2030 1인 가구
+
+[시각화 지침 및 디자인 시스템 제약 조건]
+1. 출력 형태: 캔버스 웹 미리보기 화면에서 실제 UI 구조를 확인할 수 있도록 'HTML과 CSS가 포함된 단일 코드'로 작성해 줘.
+2. 화면 구성: 모바일 뷰 크기(375px)의 프레임 안에 [메인 홈 -&gt; 상세 메뉴 -&gt; 장바구니/주문 -&gt; 탄소 저감 완료 페이지]의 4개 핵심 화면 레이아웃이 세로로 스크롤 되며 보이게 구성해 줘.
+3. 컴포넌트 필수 요소:
+   - 메인 홈: 헤더(주소 설정, 검색창), 친환경 카테고리 탭, 가게 리스트 카드 UI(가게명, 별점, 다회용기 사용 여부 뱃지 포함)
+   - 상세 메뉴: 상단 대표 이미지 영역, 메뉴 선택 카드, 하단의 고정된 녹색 CTA(Call To Action) '장바구니 담기' 버튼
+   - 완료 페이지: 사용자가 이번 주문으로 아낀 탄소 배출량을 직관적으로 보여주는 그래픽 요소 박스
+4. 스타일 가이드: 친환경 브랜딩을 위해 메인 컬러는 신뢰감을 주는 Deep Green(#2E7D32)을 사용하고, 텍스트 가독성을 위해 배경은 White, 서브 요소는 Light Gray(#F5F5F5)로 깔끔하게 대비를 주어 선과 상자 중심의 와이어프레임 형태로 표현해 줘.
+
+위 지침을 모두 반영하여 캔버스에서 바로 확인 가능한 반응형 UI 코드를 출력해 줘.</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 2: AI Smart Home Architecture -->
+            <div id="tab-content-2" class="tab-content hidden space-y-8">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary-50/50 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+                        <div class="flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-diagram-project"></i>
+                            </span>
+                            <div>
+                                <span class="text-xs font-bold text-primary-600 tracking-wider block uppercase mb-1">실습 시나리오 02</span>
+                                <h3 class="text-2xl font-black text-slate-900 tracking-tight">스마트 홈 AI 작동 구조 아키텍처 다이어그램</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-slate-600 text-sm md:text-base leading-relaxed border-t border-slate-100 pt-4">
+                        사용자가 인공지능 스피커에 "에어컨 틀어줘"라고 말한 후 거실의 에어컨이 켜지기까지의 전체 클라이언트-서버 시스템 구조와 흐름을 시각화합니다. 텍스트로 적어둔 시스템 로직을 캔버스가 인식해 완벽한 '시스템 관계도' 그래픽 코드로 그려내는 과정을 배웁니다.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">1단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">가이드 학습: 필수 도메인 지식</h4>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-5">
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">시스템 아키텍처(Architecture)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">하드웨어, 서버 네트워크, AI 모듈 등 다양한 구성 요소들이 어떻게 유기적으로 맞물려 일하는지 데이터 이동 경로를 통해 명세한 전체 지도입니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">스마트홈 흐름 3단계</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">인공지능 스피커를 통한 사용자 입력(Input), 클라우드 서버 및 생성형 AI 두뇌의 연산 처리(Process), 실제 가전을 가동하는 출력(Output) 흐름을 타야 합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">Mermaid flowchart 기초</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">텍스트 문법으로 관계형 다이어그램을 그려주는 코딩 언어입니다. 'graph TD'는 탑다운 하향식 레이아웃을 뜻하며, '--&gt;'를 기호로 노드와 노드 사이를 연결합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">2단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">프롬프트 엔지니어링 전략</h4>
+                    </div>
+                    <div class="space-y-3.5">
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>도표 전용 출력 가이드:</strong> AI에게 <strong>'Mermaid flowchart'</strong>라는 정확한 문법 규칙 형식을 지정하여 가독성 높은 다이어그램을 깨짐 없이 유도합니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>노드 형상(Shape)의 제약:</strong> 데이터베이스, 하드웨어 장치, 사용자 인터랙션 노드를 단순 사각형이 아닌 각기 알맞은 기호 모양으로 변환시켜 완성도를 극대화합니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>관계성 텍스트 라벨링:</strong> 화살표 선 위에 어떤 패킷 데이터나 제어 신호가 날아다니는지 세밀하게 텍스트를 적어 가시화 수준을 올립니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center justify-between gap-4 mb-4 border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold bg-primary-500 text-white px-2 py-0.5 rounded">3단계</span>
+                            <h4 class="font-extrabold text-lg text-slate-900">최종 지침 프롬프트 복사</h4>
+                        </div>
+                        <button onclick="copyToClipboard('prompt-text-2', this)" class="bg-slate-900 text-white hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fa-regular fa-copy"></i> 프롬프트 복사
+                        </button>
+                    </div>
+                    <div class="relative bg-slate-950 rounded-xl p-5 border border-slate-800">
+                        <pre id="prompt-text-2" class="text-slate-300 text-xs md:text-sm whitespace-pre-wrap font-mono leading-relaxed max-h-96 overflow-y-auto">너는 복잡한 하드웨어와 소프트웨어의 상호작용을 명쾌하게 시각화하는 수석 시스템 아키텍트(System Architect)야.
+아래 제공된 [스마트홈 작동 시나리오]의 데이터의 흐름과 관계를 분석하여, 시스템의 구조를 한눈에 파악할 수 있는 논리적 아키텍처 다이어그램을 생성해 줘.
+
+[스마트홈 작동 시나리오]
+사용자가 "지니야, 거실 에어컨 24도로 켜줘"라고 음성 명령을 내린다. 스마트 스피커의 마이크가 이를 수집해 클라우드 서버로 오디오 데이터를 전송한다. 클라우드 서버는 연동된 '생성형 AI 추론 모델'에 텍스트 분석을 요청하고, AI 모델은 의도(Intent)를 파악해 "에어컨 제어: 온도 24도"라는 결과값을 반환한다. 서버는 이 명령을 홈 IoT 게이트웨이를 거쳐 거실의 실제 에어컨 하드웨어로 전송하고, 에어컨이 켜지며 사용자에게 "에어컨을 24도로 가동합니다"라는 안내음이 출력된다.
+
+[시각화 및 Mermaid 지침 조건]
+1. 출력 형태: 캔버스에서 다이어그램 그래프로 즉시 렌더링될 수 있도록 'Mermaid flowchart 코드'로만 출력해 줘.
+2. 구조 설계: 데이터가 위에서 아래로 직관적으로 흐르도록 탑다운 방식(`graph TD`)을 사용해 줘.
+3. 데이터 관계 정의: 흐름은 [사용자 음성 입력] ➔ [스마트 스피커] ➔ [클라우드 서버] ➔ [AI 추론 모델] ➔ [홈 IoT 게이트웨이] ➔ [거실 에어컨 하드웨어 작동] 순으로 유기적인 화살표(`--&gt;`)로 연결되어야 해.
+4. 컴포넌트 역할 구분 (기호 활용):
+   - 사용자의 입력과 최종 출력 하드웨어는 원형이나 둥근 사각형 기호`((텍스트))`를 사용해 줘.
+   - 중앙 처리 장치인 클라우드 서버와 AI 모델은 데이터베이스나 강조된 사각형 기호`[(데이터베이스)]`를 사용해 역할 차이를 명확히 시각화해 줘.
+   - 화살표 사이사이에 `|데이터 종류|`를 적어 어떤 데이터(예: 음성 파일, 텍스트 명령, 제어 신호)가 이동하는지 라벨링해 줘.</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 3: Global VR/AR 3D Chart -->
+            <div id="tab-content-3" class="tab-content hidden space-y-8">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary-50/50 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+                        <div class="flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-cube"></i>
+                            </span>
+                            <div>
+                                <span class="text-xs font-bold text-primary-600 tracking-wider block uppercase mb-1">실습 시나리오 03</span>
+                                <h3 class="text-2xl font-black text-slate-900 tracking-tight">글로벌 VR/AR 시장 규모 3D 인터랙티브 차트</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-slate-600 text-sm md:text-base leading-relaxed border-t border-slate-100 pt-4">
+                        단순 텍스트나 고정된 2D 표로 정리된 글로벌 테크 시장 규모 성장 지표를 입체적이고 역동적인 3D 차트 형태로 변형합니다. 마우스 휠을 통해 줌인하고 회전시키며, 연도별 상세 수치를 호버 인터랙션으로 확인하는 몰입감 넘치는 투자자 설득 보고서 장표를 만듭니다.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">1단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">가이드 학습: 필수 도메인 지식</h4>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-5">
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">시각 변수(Visual Variables)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">숫자가 지닌 크기와 중요도를 뇌가 빠르게 이해하도록 막대의 높이, 면적의 너비, 색상의 깊이(명도, 채도) 등으로 다채롭게 치환하는 데이터 디자인 기법입니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">3D 데이터 가상 공간 축</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">평면 X(시간), Y(성장 수치) 외에 깊이를 뜻하는 Z축을 가진 3차원 공간에서 투시 효과와 그라데이션 광원을 통해 강력한 극적 성장의 흐름을 연출할 수 있습니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">인터랙티브 호버 피드백</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">마우스를 그래픽에 올릴 때만(Hover) 디테일한 툴팁 수치를 노출하고, 3D 카메라 궤도 제어(Orbit Controls)를 가능하게 해 사용자의 몰입적 탐색을 유도합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">2단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">프롬프트 엔지니어링 전략</h4>
+                    </div>
+                    <div class="space-y-3.5">
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>3D 렌더링 라이브러리 지정:</strong> 브라우저 내에서 완벽한 GPU 3D 가속 렌더링을 지원하는 <strong>'Three.js'</strong>나 순수 3D HTML Canvas를 활용하도록 라이브러리 의존성을 제어합니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>시각적 가중치 연출:</strong> 성장이 폭발적으로 진행되는 주요 연도를 AI가 판단하게 하고, 해당 시점부터 <strong>'더 밝고 선명한 네온 컬러 그라데이션'</strong>으로 렌더링해 장표 집중도를 높입니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>동적 툴팁 구조 지시:</strong> 정보 은닉(Information Hiding) 기법을 반영하여 마우스 올렸을 때만 말풍선이 나오는 정확한 DOM 마크업 제어를 프롬프트에 담습니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center justify-between gap-4 mb-4 border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold bg-primary-500 text-white px-2 py-0.5 rounded">3단계</span>
+                            <h4 class="font-extrabold text-lg text-slate-900">최종 지침 프롬프트 복사</h4>
+                        </div>
+                        <button onclick="copyToClipboard('prompt-text-3', this)" class="bg-slate-900 text-white hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fa-regular fa-copy"></i> 프롬프트 복사
+                        </button>
+                    </div>
+                    <div class="relative bg-slate-950 rounded-xl p-5 border border-slate-800">
+                        <pre id="prompt-text-3" class="text-slate-300 text-xs md:text-sm whitespace-pre-wrap font-mono leading-relaxed max-h-96 overflow-y-auto">너는 글로벌 빅테크 트렌드를 분석하고 투자자들을 설득하기 위한 보고서를 작성하는 데이터 분석가(Data Analyst)야.
+아래 제공된 [연도별 VR/AR 시장 규모 데이터]의 수치적 특징과 변화율을 직관적으로 보여줄 수 있도록 입체적인 시각화 자료를 만들어 줘.
+
+[연도별 VR/AR 시장 규모 데이터]
+- 2024년: 450억 달러
+- 2025년: 620억 달러
+- 2026년: 890억 달러 (생성형 AI 결합으로 폭발적 성장기)
+- 2027년: 1,200억 달러
+- 2028년: 1,650억 달러 (예상치)
+
+[시각화 리터러시 및 3D 렌더링 제약 조건]
+1. 출력 형태: 사용자가 마우스로 각도를 돌려보고 상호작용할 수 있도록 캔버스 지원용 'Three.js 또는 HTML5 Canvas 기반의 인터랙티브 3D 막대 그래프(Bar Chart) 코드'를 작성해 줘.
+2. 데이터 시각화 속성:
+   - X축은 시간(2024년~2028년), Y축은 시장 규모(억 달러)로 설정해 줘.
+   - 연도가 지날수록 시장이 '폭발적으로 급성장'한다는 시각적 인상을 극대화하기 위해, 막대의 높이를 수치에 비례하여 명확하게 차이 나도록 설계해 줘.
+   - 색상의 채도 대비를 활용하여, 성장이 가장 가파른 2026년 이후의 막대는 점점 더 짙고 선명한 네온 블루 그라데이션 컬러로 채워 시각적 강조 효과를 줘.
+3. UX 인터랙션 제어: 사용자가 특정 연도의 3D 막대 위에 마우스를 올리면(Hover), 해당 연도의 정확한 숫자 데이터("000억 달러")와 전년 대비 성장률(%)이 말풍선 모양의 툴팁(Tooltip)으로 깔끔하게 표시되는 기능을 포함해 줘. 화면이 난잡하지 않게 평소에는 숨겨두어야 해.</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 4: Geospatial Korea Heatmap -->
+            <div id="tab-content-4" class="tab-content hidden space-y-8">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary-50/50 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+                        <div class="flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </span>
+                            <div>
+                                <span class="text-xs font-bold text-primary-600 tracking-wider block uppercase mb-1">실습 시나리오 04</span>
+                                <h3 class="text-2xl font-black text-slate-900 tracking-tight">지역별 청년 고립 비율 대한민국 지도 히트맵</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-slate-600 text-sm md:text-base leading-relaxed border-t border-slate-100 pt-4">
+                        단순 텍스트 배열이나 차트로는 와닿지 않는 지리 공간적 인구 소외 통계를 한반도 지도 레이어 위에 온도 편차처럼 히트맵으로 뿌립니다. 데이터 시각화의 명도/채도 대비를 사용해 청년들의 밀집된 아픔이 있는 거점을 직관적으로 보도자료처럼 시각화합니다.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">1단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">가이드 학습: 필수 도메인 지식</h4>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-5">
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">공간 데이터(Geospatial Data)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">위치 값(도시명, 행정구역, 위경도 좌표)이 표의 행과 결합하여, 지역에 연계된 데이터 특징과 분포 양상을 지도 위에 고스란히 맵핑해 분석하는 지식 영역입니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">히트맵(Heatmap) 색온도</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">데이터의 수치가 집중되고 높은 영역은 위험/주의를 뜻하는 짙은 레드 계열(Warm), 수치가 미미하고 안전한 영역은 노란/살구색 계열(Cool)로 칠해 명시성을 높입니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">도시 거점 라벨링 규칙</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">너무 촘촘하고 세밀한 행정구역 이름은 텍스트 오버랩 현상으로 가독성을 해칩니다. 전체 지도를 대표할 수 있는 거점 도시(Anchor)를 골라 주요 폰트 라벨을 달아 정돈해야 합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">2단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">프롬프트 엔지니어링 전략</h4>
+                    </div>
+                    <div class="space-y-3.5">
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>지도 아웃라인 리소스 가이드:</strong> AI에게 빈 지도가 깨지는 일을 방지하고자 브라우저에서 바로 동적 스타일링 제어가 가능한 <strong>'SVG(Scalable Vector Graphics) 지도 아웃라인'</strong>을 사용하도록 한계를 지정합니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>엄격한 헥스코드(Hex) 매핑:</strong> 붉은색, 살구색 등 주관적인 단어 표현 대신 정확한 헥사 계열의 색상 코드(예: 버건디 #B71C1C 등)를 명세하여 고유 톤앤매너를 확보합니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>텍스트 가시성 세밀화:</strong> 지도 백그라운드 색상 위에서도 겹쳐진 라벨링이 또렷하게 보이게 하기 위해 <strong>'text-shadow(그림자)'</strong> 속성 구현을 강제로 요구합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center justify-between gap-4 mb-4 border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold bg-primary-500 text-white px-2 py-0.5 rounded">3단계</span>
+                            <h4 class="font-extrabold text-lg text-slate-900">최종 지침 프롬프트 복사</h4>
+                        </div>
+                        <button onclick="copyToClipboard('prompt-text-4', this)" class="bg-slate-900 text-white hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fa-regular fa-copy"></i> 프롬프트 복사
+                        </button>
+                    </div>
+                    <div class="relative bg-slate-950 rounded-xl p-5 border border-slate-800">
+                        <pre id="prompt-text-4" class="text-slate-300 text-xs md:text-sm whitespace-pre-wrap font-mono leading-relaxed max-h-96 overflow-y-auto">너는 사회 변화와 인구 통계를 시각화하여 대중에게 직관적인 메시지를 전달하는 인포그래픽 전문가(Infographic Designer)야.
+아래의 [대한민국 주요 도시별 청년 고립 및 은둔 비율 통계 리스트]를 바탕으로, 지역별 편차와 문제의 심각성을 지리적 공간 위에서 파악할 수 있는 시각화 자료를 제작해 줘.
+
+[대한민국 주요 도시별 청년 고립 및 은둔 비율 통계 리스트]
+- 서울/수도권: 6.8% (청년 인구 밀집으로 인한 절대적 고립자 수 최고)
+- 부산/경남: 4.2%
+- 대구/경북: 5.1% (일자리 감소로 인한 심리적 고립 가속화)
+- 광주/전남: 3.8%
+- 대전/충청: 4.5%
+- 강원/제주: 3.2%
+
+[공간 데이터 매핑 및 히트맵 디자인 제약 조건]
+1. 출력 형태: 웹 브라우저에서 바로 랜더링되어 화면에 표시되는 'HTML/CSS 및 SVG 기반의 지도 히트맵(Heatmap) 시각화 코드'를 짜줘.
+2. 지도 아웃라인 및 배치: 대한민국 전도 모양을 단순화한 SVG 아웃라인 지도를 화면 중앙에 배치하고, 각 행정구역 레이어를 분리해 줘.
+3. 색상 농도(채도) 대비 법칙 적용: 히트맵 원리에 따라 비율이 가장 높아 심각성이 큰 '수도권(서울)'과 '대구/경북' 지역은 경각심을 주는 짙은 버건디/붉은색(#B71C1C) 계열로 채우고, 비율이 낮아 상대적으로 안전한 지역은 연한 노란색이나 살구색 계열로 매핑하여 시각적 온도 차이(Contrast)를 극대화해 줘.
+4. 가독성 및 라벨링 규칙: 지도가 텍스트로 인해 복잡해지지 않도록 모든 자잘한 시군구 명칭은 제외하고, 주요 거점 도시(서울, 부산, 대구, 광주, 대전) 5곳의 위치에만 깔끔하고 가독성 높은 폰트로 도시 이름과 비율(%) 라벨을 얹어줘. 글자가 지도 색상과 겹쳐 안 보이지 않도록 글자 뒤에 흰색 미세한 그림자(Text-shadow)를 처리해 줘.</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 5: Portfolio Competency Radar Chart -->
+            <div id="tab-content-5" class="tab-content hidden space-y-8">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-primary-50/50 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 justify-between">
+                        <div class="flex items-center gap-4">
+                            <span class="w-12 h-12 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </span>
+                            <div>
+                                <span class="text-xs font-bold text-primary-600 tracking-wider block uppercase mb-1">실습 시나리오 05</span>
+                                <h3 class="text-2xl font-black text-slate-900 tracking-tight">나의 커리어 핵심 역량 인포그래픽 프로필</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-slate-600 text-sm md:text-base leading-relaxed border-t border-slate-100 pt-4">
+                        흩어져 있는 자기소개서 경험 요약을 분석해, 스스로 정량 점수(1~5점)를 산정하고 다각형 거미줄 모양 역량 그래프로 렌더링합니다. 인사담당자의 고속 스캐닝 습성을 고려해 개인 브랜딩을 최적화할 수 있는 강력한 포트폴리오용 역량 컴포넌트를 설계합니다.
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">1단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">가이드 학습: 필수 도메인 지식</h4>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-5">
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">역량 모델링(Competency)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">자소서 속 줄글 형태의 단순 이력 기술에서 벗어나 채용 담당자가 요구하는 표준 직무 전문성, 협업/소통, 도전정신 등 핵심 평가 차원으로 세분화하여 구조화하는 과정입니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">레이더 차트(Radar Chart)</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">중심부에서 바깥 다방면의 축으로 뻗어 나가는 다각형 면적 그래프입니다. 지원자의 강점 영역 비대칭 상태와 전반적인 성장의 '육각형 인재 밸런스'를 보기 가장 우수합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/50">
+                            <span class="font-bold text-primary-600 text-sm block mb-1">신뢰의 퍼스널 브랜딩 블루</span>
+                            <p class="text-xs text-slate-600 leading-relaxed">색채 심리학적으로 신뢰감, 지적인 전문성, 논리력을 상징해 IT 테크 포트폴리오나 입사 원서의 메인 역량에 가장 어울리는 컬러인 Classic Blue(#0D47A1)를 차트 투명면과 연결합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+                        <span class="text-sm font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded">2단계</span>
+                        <h4 class="font-extrabold text-lg text-slate-900">프롬프트 엔지니어링 전략</h4>
+                    </div>
+                    <div class="space-y-3.5">
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>정성 데이터의 정량 점수화 지시:</strong> "자기소개서를 바탕으로 역량 지표를 1~5점 척도로 정밀 가중치를 직접 산정하라"고 지시하여 AI가 스스로 의미 있는 그래프 수치를 파싱하도록 만듭니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>차트용 오픈소스 라이브러리 탑재:</strong> 브라우저 위에서 미려한 선과 애니메이션을 그리는 차트 전용 라이브러리(예: <strong>Chart.js CDN 로딩</strong> 또는 Pure SVG) 구조를 조건으로 명세합니다.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-primary-600 mt-2 shrink-0"></div>
+                            <p class="text-sm text-slate-700"><strong>인사 한 줄 평 공간 확보:</strong> 단순 도표만 보여주면 해석이 어렵습니다. 차트 아래에 인사담당자 관점에서 <strong>'이 평가 점수를 내린 정당한 근거 요약 글'</strong>을 함께 엮도록 레이아웃 형식을 통제합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-premium">
+                    <div class="flex items-center justify-between gap-4 mb-4 border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold bg-primary-500 text-white px-2 py-0.5 rounded">3단계</span>
+                            <h4 class="font-extrabold text-lg text-slate-900">최종 지침 프롬프트 복사</h4>
+                        </div>
+                        <button onclick="copyToClipboard('prompt-text-5', this)" class="bg-slate-900 text-white hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fa-regular fa-copy"></i> 프롬프트 복사
+                        </button>
+                    </div>
+                    <div class="relative bg-slate-950 rounded-xl p-5 border border-slate-800">
+                        <pre id="prompt-text-5" class="text-slate-300 text-xs md:text-sm whitespace-pre-wrap font-mono leading-relaxed max-h-96 overflow-y-auto">너는 수많은 지원자 중 탁월한 인재를 찾아내는 대기업 인사담당자(HR Manager)이자, 개인의 브랜딩을 돕는 커리어 코치야.
+제공된 나의 [자기소개서 경험 요약 자료]를 정량적으로 분석하여, 나의 역량 밸런스를 입체적으로 증명할 수 있는 포트폴리오용 시각화 장표를 만들어 줘.
+
+[자기소개서 경험 요약 자료]
+- 전공 및 기술: 컴퓨터공학 전공, 파이썬 기반 데이터 분석 프로젝트 2회 수행, 데이터 정제 숙련도 높음.
+- 대외 활동: IT 연합동아리에서 기획자/개발자 간 소통을 조율하는 팀장 역할 수행, 갈등 해결 경험 있음.
+- 도전 및 문제해결: 공모전 도중 데이터 유실 위기를 크롤링 스크립트를 새로 짜서 밤샘 작업으로 해결, 최우수상 수상.
+- 글로벌 역량: 토익 850점 보유, 교내 외국인 유학생 멘토링 프로그램 6개월 참여.
+
+[다면 평가 모델링 및 레이더 차트 디자인 제약 조건]
+1. 출력 형태: 포트폴리오 웹사이트에 컴포넌트로 바로 삽입할 수 있는 'HTML과 JavaScript(Chart.js 라이브러리 활용 혹은 순수 SVG) 기반의 다각형 레이더 차트(Radar Chart) 코드'를 작성해 줘.
+2. 데이터 정량화(Quantification): 내가 준 경험 요약 자료를 기반으로 인사담당자 관점에서 [직무 전문성, 협업 및 소통, 문제 해결력, 글로벌 역량, 도전 정신]의 5가지 축을 도출하고, 각각 1점부터 5점 만점 중 몇 점에 해당하는지 타당한 점수를 산정하여 차트 데이터 데이터셋(Dataset)에 입력해 줘. (예: 문제해결력 5점, 글로벌 3.5점 등)
+3. 퍼스널 브랜딩 스타일 가이드: 대학생의 스마트함과 신뢰감, 전문성을 상징하는 'Classic Blue(#0D47A1)'를 메인 테마 컬러로 설정해 줘. 레이더 차트의 중심선과 가이드 그물망은 은은한 Light Gray로 처리하고, 내 역량이 채워지는 다각형 면적은 투명도 30%가 적용된 블루 컬러로 채워 영역의 크기(육각형 인재의 형태)가 한눈에 들어오게 디자인해 줘.
+4. 요약 문서 결합: 시각화 차트 바로 아래 혹은 옆 공간에, 왜 이 점수를 부여했는지 인사담당자의 시선으로 분석한 한 줄 평 요약 텍스트를 개조식으로 함께 깔끔하게 배치해 줘.</pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-8 text-center text-slate-400 text-xs mt-auto">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p class="font-semibold text-slate-300">© 2026 Acelabs. All rights reserved.</p>
+            <p>본 가이드북은 대학생 대상 Gemini Canvas 2시간 초고속 실무 시각화 강의용 무료 교재 자료입니다.</p>
+        </div>
+    </footer>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast" class="fixed bottom-8 right-8 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-800">
+        <span class="bg-primary-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">
+            <i class="fa-solid fa-check"></i>
+        </span>
+        <div>
+            <p class="font-bold text-sm text-white">프롬프트 복사 완료!</p>
+            <p class="text-xs text-slate-400 mt-0.5">Gemini Canvas 입력창에 붙여넣어 보세요.</p>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE CONTROL SCRIPT -->
+    <script>
+tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                        },
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    boxShadow: {
+                        'premium': '0 10px 30px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02)',
+                        'hover': '0 20px 40px -15px rgba(15, 118, 110, 0.12), 0 1px 10px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    
+
+        // Tab switching logic
+        function switchTab(tabIndex) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Show current tab content
+            const activeContent = document.getElementById(`tab-content-${tabIndex}`);
+            if (activeContent) {
+                activeContent.classList.remove('hidden');
+            }
+
+            // Update navigation button styles
+            const navButtons = document.querySelectorAll('#sidebar-nav button');
+            navButtons.forEach((btn, idx) => {
+                const currentIdx = idx + 1;
+                const circleSpan = btn.querySelector('span');
+                const titleSpan = btn.querySelector('div span');
+
+                if (currentIdx === tabIndex) {
+                    // Active state style classes
+                    btn.className = "w-full text-left px-4 py-3.5 rounded-xl font-medium text-sm flex items-start gap-3 transition-all border tab-transition bg-primary-50 border-primary-100 text-primary-800 shadow-sm";
+                    circleSpan.className = "bg-primary-600 text-white w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0";
+                    if (titleSpan) titleSpan.className = "font-bold block text-xs text-primary-600 mb-0.5";
+                } else {
+                    // Inactive state style classes
+                    btn.className = "w-full text-left px-4 py-3.5 rounded-xl font-medium text-sm flex items-start gap-3 transition-all border tab-transition bg-white border-slate-100 text-slate-600 hover:bg-slate-50 hover:text-slate-900";
+                    circleSpan.className = "bg-slate-200 text-slate-600 w-6 h-6 rounded-lg text-xs font-bold flex items-center justify-center shrink-0";
+                    if (titleSpan) titleSpan.className = "font-bold block text-xs text-slate-400 mb-0.5";
+                }
+            });
+
+            // Scroll to top of main content on tab switch for better UX
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Safe Clipboard copy-paste helper with sandbox fallback (document.execCommand)
+        function copyToClipboard(elementId, button) {
+            const preElement = document.getElementById(elementId);
+            if (!preElement) return;
+
+            const textToCopy = preElement.textContent;
+
+            // Create a temporary textarea to hold the string
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = textToCopy;
+            tempTextarea.style.position = 'fixed'; // Avoid scrolling
+            tempTextarea.style.opacity = '0';
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+
+            try {
+                // Compatibility for restricted iframe sandbox containers
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast();
+                } else {
+                    console.error('Copying failed through document.execCommand');
+                }
+            } catch (err) {
+                console.error('Fallback copy utility crashed: ', err);
+            }
+
+            document.body.removeChild(tempTextarea);
+        }
+
+        // Custom premium Toast Alert trigger
+        function showToast() {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

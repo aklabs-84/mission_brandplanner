@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>missions intro</title>
+    <style>
+body {
+      font-family: 'Pretendard', sans-serif;
+      background: #FAF6EE;
+      color: #3E3327;
+    }
+    .space-font {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .code-font {
+      font-family: 'Fira Code', monospace;
+    }
+    
+    /* 따뜻한 미색 기획 노트 에디터 모눈종이 백그라운드 */
+    .editor-grid {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, rgba(139, 92, 26, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(139, 92, 26, 0.04) 1px, transparent 1px);
+    }
+
+    /* 따스한 드래프트 페이퍼 보드 스타일 */
+    .draft-panel {
+      background-color: #FCFAF5;
+      border: 2px solid #E8E2D5;
+      box-shadow: 0 12px 24px -10px rgba(120, 95, 65, 0.15);
+      position: relative;
+    }
+
+    /* 마스킹 테이프 데코 (크라프트 오렌지 앰버 톤) */
+    .masking-tape {
+      background: rgba(234, 133, 44, 0.9);
+      color: #FFFDF9;
+      transform: rotate(-1.5deg);
+      box-shadow: 0 2px 4px rgba(139, 92, 26, 0.15);
+    }
+    
+    /* 3D 카드 뒤집기 스타일 (도톰한 코티드 페이퍼 질감) */
+    .card-container {
+      perspective: 1000px;
+      height: 96px;
+      cursor: pointer;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .card-container.is-flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .card-front {
+      background-color: #FFFDF9;
+      border: 1.5px solid #E6DEC9;
+      color: #614D3C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(139, 92, 26, 0.05);
+      transition: border-color 0.3s, background-color 0.3s;
+    }
+    .card-back {
+      background-color: #FEF9EB;
+      border: 1.5px solid #F59E0B;
+      color: #5C4318;
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-weight: 600;
+      transition: border-color 0.3s, background-color 0.3s;
+    }
+    
+    /* 선택 및 매칭 상태 데코레이션 */
+    .card-container.selected-card .card-front {
+      border-color: #EA580C;
+      background-color: rgba(234, 88, 12, 0.06);
+    }
+    .card-container.selected-card .card-back {
+      border-color: #EA580C;
+      background-color: rgba(234, 88, 12, 0.08);
+      color: #2D1A04;
+    }
+
+    /* 카드 뒤집기/흔들기 애니메이션 */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px) rotate(-1deg); }
+      75% { transform: translateX(6px) rotate(1deg); }
+    }
+    .shake {
+      animation: shake 0.2s ease-in-out 2;
+    }
+    @keyframes pop {
+      0% { transform: scale(0.96); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* 로딩 깜빡임 애니메이션 (따스한 황금색 도트) */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+    .dot-1 { animation: pulse-dot 1s infinite 0.1s; }
+    .dot-2 { animation: pulse-dot 1s infinite 0.3s; }
+    .dot-3 { animation: pulse-dot 1s infinite 0.5s; }
+    </style>
+</head>
+<body>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&amp;family=Pretendard:wght@400;600;700;800&amp;family=Fira+Code:wght@500;700&amp;display=swap" rel="stylesheet">
+
+  <!-- 상단 헤더 (따뜻한 레트로 에디터 메타바 스타일) -->
+  <header class="border-b border-stone-200 bg-white/95 backdrop-blur px-4 py-3 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-4xl mx-auto flex flex-wrap justify-between items-center gap-3">
+      <!-- 디지털 바인더 컨셉 로고 -->
+      <div class="flex items-center gap-3">
+        <div class="bg-gradient-to-br from-amber-600 to-orange-600 text-white font-black px-2.5 py-1 rounded space-font tracking-tight text-xs transform -rotate-1">
+          DRAFT EDITOR
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xs font-bold text-stone-700 tracking-wider code-font flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+            📂 DRAFT_DAY3_PITCH_FINAL.pdf
+          </span>
+          <span class="text-[9px] text-stone-500 font-bold tracking-widest">[EMERGENCY RECOVERY MODE]</span>
+        </div>
+      </div>
+
+      <!-- 타임어택 시계 및 보스 인내심 상태 -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- 실시간 타이머 -->
+        <div id="timer-box" class="hidden flex items-center gap-1.5 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded">
+          <span class="text-[9px] text-orange-600 font-bold code-font">LIMIT:</span>
+          <span id="game-timer" class="text-xs font-black text-orange-700 code-font">05:00</span>
+        </div>
+
+        <!-- 팀장님 인내심 게이지 -->
+        <div id="patience-box" class="hidden flex items-center gap-2 bg-[#FFFDF9] border border-stone-200 px-3 py-1 rounded">
+          <span class="text-[10px] text-stone-600 font-bold">인내심:</span>
+          <div class="w-16 sm:w-20 bg-stone-100 rounded-full h-1.5 overflow-hidden">
+            <div id="patience-bar" class="bg-amber-500 h-full transition-all duration-300" style="width: 100%;"></div>
+          </div>
+          <span id="patience-text" class="text-[10px] font-bold text-amber-600 code-font">100%</span>
+        </div>
+
+        <!-- 실시간 학점 표시기 -->
+        <div class="flex items-center gap-2 bg-[#FFFDF9] border border-stone-200 px-3 py-1 rounded">
+          <span class="text-[10px] text-stone-500 font-bold">등급:</span>
+          <span id="liveGrade" class="text-orange-600 font-black text-xs tracking-wide">F 💀</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 게임 영역 -->
+  <main class="flex-grow max-w-3xl w-full mx-auto p-4 flex flex-col justify-center relative">
+
+    <!-- 스프링 바인더 구멍 데코레이션 (클래식 황동 브래스 금속 링) -->
+    <div class="w-full flex justify-around px-8 -mb-3 z-10 select-none">
+      <div class="w-4 h-6 bg-gradient-to-b from-amber-700 via-amber-500 to-amber-700 rounded-full border border-amber-800 shadow-md"></div>
+      <div class="w-4 h-6 bg-gradient-to-b from-amber-700 via-amber-500 to-amber-700 rounded-full border border-amber-800 shadow-md"></div>
+      <div class="w-4 h-6 bg-gradient-to-b from-amber-700 via-amber-500 to-amber-700 rounded-full border border-amber-800 shadow-md"></div>
+      <div class="w-4 h-6 bg-gradient-to-b from-amber-700 via-amber-500 to-amber-700 rounded-full border border-amber-800 shadow-md"></div>
+      <div class="w-4 h-6 bg-gradient-to-b from-amber-700 via-amber-500 to-amber-700 rounded-full border border-amber-800 shadow-md"></div>
+    </div>
+
+    <!-- [INTRO SCREEN] -->
+    <div id="screen-intro" class="draft-panel rounded-xl p-6 sm:p-8 animate-pop">
+      <!-- 마스킹 테이프 장식 -->
+      <div class="absolute -top-3 left-6 px-4 py-1 masking-tape font-black text-xs uppercase tracking-wider">
+        EMERGENCY ACTIVE
+      </div>
+      
+      <div class="flex justify-between items-start mb-6 mt-2">
+        <span class="bg-red-50 text-red-600 border border-red-200 text-xs px-2 py-0.5 rounded font-bold code-font animate-pulse">CRITICAL ERROR</span>
+        <span class="text-stone-500 text-xs code-font">FILE: PITCH_RECOVERY.MD</span>
+      </div>
+      
+      <h1 class="text-2xl sm:text-3xl font-extrabold mb-4 text-amber-800 space-font tracking-tight leading-snug">
+        🚨 대기업 인턴십 발표 5분 전,<br class="hidden sm:inline"> 밤샘 기획서가 날아갔다!
+      </h1>
+      
+      <p class="text-stone-700 text-sm sm:text-base leading-relaxed mb-6 font-sans">
+        내일 오전 9시 발표인 8장짜리 야식 브랜드 기획서가 노트북 포맷과 함께 공중분해 되었어... 😭<br>
+        팀장님께 발표하기 전, 머릿속 기억 조각을 더듬어서 <span class="text-orange-600 font-bold">기획서 척추(8장 구조)</span>를 맞추고, 핵심 <span class="text-amber-700 font-bold">3줄 골격(ISI)</span>을 복구해야 해. <br>
+        <span class="text-red-600 font-bold">인내심이 바닥나거나 5분이 지나면 기획 전면 파기야!</span> 서둘러 에디터를 복구하자!
+      </p>
+
+      <div class="bg-[#F6F1E5] border border-stone-200 rounded-lg p-4 mb-6">
+        <div class="text-xs font-bold text-stone-500 uppercase tracking-widest mb-2.5 code-font">복구 프로세스 시퀀스</div>
+        <ul class="space-y-2 text-xs sm:text-sm text-stone-700">
+          <li class="flex items-center gap-2">🕹️ <span class="font-bold text-amber-700">Stage 1:</span> 8장 구조 척추 수술 (슬라이드 순서 기획)</li>
+          <li class="flex items-center gap-2">🎯 <span class="font-bold text-orange-600">Stage 2:</span> 기획서 3줄 요약 완성 (ISI 구조 정합성 검사)</li>
+          <li class="flex items-center gap-2">✍️ <span class="font-bold text-amber-800">Stage 3:</span> 킹받는 문장 지우기 (Few-Shot 문맥 보정 튜닝)</li>
+        </ul>
+      </div>
+
+      <button onclick="startGame()" class="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-extrabold py-4 rounded-xl transition duration-150 transform active:scale-98 shadow-md text-center text-base">
+        기획서 긴급 심폐소생 시작 🔥 (5분 타임어택)
+      </button>
+    </div>
+
+    <!-- [STAGE 1: 8장 척추 세우기] -->
+    <div id="screen-stage1" class="hidden draft-panel rounded-xl p-5 sm:p-6 animate-pop">
+      <div class="absolute -top-3 left-6 px-4 py-1 masking-tape bg-amber-600 text-white font-black text-xs uppercase tracking-wider">
+        PITCH_OUTLINE
+      </div>
+      
+      <div class="flex justify-between items-center mb-4 mt-2">
+        <div>
+          <span class="text-[10px] font-bold text-amber-600 tracking-wider code-font">STAGE_01</span>
+          <h2 class="text-lg font-bold text-stone-850">🧩 8장 기획서 척추 맞추기</h2>
+        </div>
+        <span class="text-xs text-stone-500 code-font">복구 진행률: <span id="s1-percent">0</span>%</span>
+      </div>
+      <p class="text-stone-600 text-xs sm:text-sm mb-5 leading-relaxed">
+        흩어진 기획서 8장의 순서가 엉켰습니다! 아래 <span class="text-stone-800 font-bold">오른쪽 카드</span>를 터치한 뒤, <span class="text-stone-800 font-bold">왼쪽의 슬라이드 번호</span>를 터치해 올바른 구조로 복원하세요.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 왼쪽: 맞춰야 할 슬라이드 구역 (1~8) -->
+        <div class="space-y-2 max-h-[340px] overflow-y-auto pr-1">
+          <div class="text-[10px] font-bold text-stone-400 mb-1 code-font">SLIDE OUTLINE</div>
+          <div id="slide-slots" class="space-y-1.5">
+            <!-- 슬라이드 슬롯들이 동적으로 배치됨 -->
+          </div>
+        </div>
+
+        <!-- 오른쪽: 섞여있는 조각들 -->
+        <div>
+          <div class="text-[10px] font-bold text-stone-400 mb-1 code-font">SCATTERED DATA CARDS</div>
+          <div id="scattered-cards" class="grid grid-cols-2 gap-2">
+            <!-- 꼬인 카드들이 동적으로 배치됨 -->
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-stone-200 flex justify-between items-center">
+        <span class="text-[11px] text-stone-500">카드를 탭한 후 알맞은 슬라이드 위치를 매칭해 주세요.</span>
+        <button id="s1-next" disabled="" onclick="startStage2()" class="bg-stone-200 text-stone-400 px-5 py-2.5 rounded text-xs font-bold transition">
+          Stage 2 진행 불가 🔒
+        </button>
+      </div>
+    </div>
+
+    <!-- [STAGE 2: ISI 3줄 요약] -->
+    <div id="screen-stage2" class="hidden draft-panel rounded-xl p-5 sm:p-6 animate-pop">
+      <div class="absolute -top-3 left-6 px-4 py-1 masking-tape bg-orange-500 text-white font-black text-xs uppercase tracking-wider">
+        ISI_SYNCHRONIZER
+      </div>
+
+      <div class="flex justify-between items-center mb-4 mt-2">
+        <div>
+          <span class="text-[10px] font-bold text-orange-600 tracking-wider code-font">STAGE_02</span>
+          <h2 class="text-lg font-bold text-stone-850">🎯 3줄 요약의 기적 (ISI 완성)</h2>
+        </div>
+        <span class="text-xs text-stone-500 code-font">복구 진행률: <span id="s2-percent">30</span>%</span>
+      </div>
+      <p class="text-stone-600 text-xs sm:text-sm mb-5 leading-relaxed">
+        골격 구조가 정렬되었습니다! 이제 기획서의 핵심 문장인 **ISI(통찰 ➡️ 전략 ➡️ 성과)** 요약을 완성할 단계입니다. 기억 파편을 분석하여 알맞은 분류 영역으로 드롭하세요.
+      </p>
+
+      <!-- 기억 파편 카드 (한 번에 하나씩 등장) -->
+      <div class="bg-[#FFFDF6] border border-stone-200 rounded-lg p-5 text-center mb-6 min-h-[100px] flex flex-col justify-center items-center relative shadow-sm">
+        <div class="absolute top-2 left-3 flex gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-stone-300"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-stone-300"></span>
+        </div>
+        <span class="text-[9px] code-font text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 mb-2">기억 파편 소스 분석 데이터</span>
+        <div id="isi-card" class="text-xs sm:text-sm font-semibold text-stone-700 max-w-md font-sans leading-relaxed">
+          <!-- 카드가 동적으로 채워짐 -->
+        </div>
+      </div>
+
+      <!-- 타겟 영역 3가지 -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button onclick="assignIsi('Insight')" class="bg-white border border-stone-200 hover:border-amber-500/50 p-4 rounded-lg text-center transition group shadow-sm">
+          <div class="text-xs font-bold text-amber-700 code-font mb-1.5 flex items-center justify-center gap-1">
+            <span>🔍</span> INSIGHT
+          </div>
+          <div class="text-[10px] text-stone-500 group-hover:text-stone-700">우리가 발견한 시장 기회/문제점</div>
+          <div id="slot-insight" class="mt-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 p-1.5 rounded hidden border border-emerald-100">완료 ✓</div>
+        </button>
+
+        <button onclick="assignIsi('Strategy')" class="bg-white border border-stone-200 hover:border-amber-500/50 p-4 rounded-lg text-center transition group shadow-sm">
+          <div class="text-xs font-bold text-amber-700 code-font mb-1.5 flex items-center justify-center gap-1">
+            <span>🛠️</span> STRATEGY
+          </div>
+          <div class="text-[10px] text-stone-500 group-hover:text-stone-700">우리 제품이 문제를 푸는 방법</div>
+          <div id="slot-strategy" class="mt-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 p-1.5 rounded hidden border border-emerald-100">완료 ✓</div>
+        </button>
+
+        <button onclick="assignIsi('Impact')" class="bg-white border border-stone-200 hover:border-amber-500/50 p-4 rounded-lg text-center transition group shadow-sm">
+          <div class="text-xs font-bold text-amber-700 code-font mb-1.5 flex items-center justify-center gap-1">
+            <span>📈</span> IMPACT
+          </div>
+          <div class="text-[10px] text-stone-500 group-hover:text-stone-700">숫자로 약속하는 우리의 성과/목표</div>
+          <div id="slot-impact" class="mt-2 text-[10px] font-bold text-emerald-700 bg-emerald-50 p-1.5 rounded hidden border border-emerald-100">완료 ✓</div>
+        </button>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-stone-200 flex justify-between items-center">
+        <span class="text-[11px] text-stone-500">파편을 알맞은 분류 슬롯에 밀어 넣어주세요.</span>
+        <button id="s2-next" disabled="" onclick="startStage3()" class="bg-stone-200 text-stone-400 px-5 py-2.5 rounded text-xs font-bold transition">
+          Stage 3 진행 불가 🔒
+        </button>
+      </div>
+    </div>
+
+    <!-- [STAGE 3: FEW-SHOT 워딩 수정] -->
+    <div id="screen-stage3" class="hidden draft-panel rounded-xl p-5 sm:p-6 animate-pop">
+      <div class="absolute -top-3 left-6 px-4 py-1 masking-tape bg-amber-600 text-white font-black text-xs uppercase tracking-wider">
+        WORD_TUNING_MODULE
+      </div>
+
+      <div class="flex justify-between items-center mb-4 mt-2">
+        <div>
+          <span class="text-[10px] font-bold text-orange-600 tracking-wider code-font">STAGE_03</span>
+          <h2 class="text-lg font-bold text-stone-850">✍️ 킹받는 문장 지우기 (Few-Shot 튜닝)</h2>
+        </div>
+        <span class="text-xs text-stone-500 code-font">복구 진행률: <span id="s3-percent">60</span>%</span>
+      </div>
+      <p class="text-stone-600 text-xs sm:text-sm mb-5 leading-relaxed">
+        초안의 모호하고 지루한 표현을 날카롭고 구체적인 대안 문구로 다듬어 컴파일할 차례입니다. 비즈니스 설득력이 극대화된 표현을 선별하세요.
+      </p>
+
+      <!-- 문제 영역 -->
+      <div class="bg-orange-50/50 border border-orange-100 rounded-lg p-4 mb-5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 bg-red-50 text-red-600 text-[9px] px-2.5 py-1 font-bold code-font">DRAFT_BAD_TEXT</div>
+        <div class="text-[10px] text-red-550 font-bold mb-1 flex items-center gap-1">
+          <span>⚠️</span> 감점 초안 (형용사 중심의 막연함)
+        </div>
+        <div id="stage3-bad-text" class="text-xs sm:text-sm font-semibold text-stone-700">
+          "우리 제품은 정말 좋고 조리하기도 엄청 편합니다."
+        </div>
+      </div>
+
+      <!-- 선택지 영역 -->
+      <div id="stage3-options" class="space-y-2.5">
+        <!-- 3지선다 버튼들이 동적으로 렌더링됨 -->
+      </div>
+
+      <!-- 기획서 튜닝 애니메이션 효과음 대기 박스 -->
+      <div id="stage3-loading" class="hidden bg-[#FDFBF7] border border-stone-200 rounded-xl p-6 flex flex-col items-center justify-center space-y-4 animate-pop shadow-inner">
+        <div class="flex items-center space-x-2">
+          <div class="w-3 h-3 bg-amber-500 rounded-full dot-1"></div>
+          <div class="w-3 h-3 bg-amber-500 rounded-full dot-2"></div>
+          <div class="w-3 h-3 bg-amber-500 rounded-full dot-3"></div>
+        </div>
+        <div class="text-center">
+          <span class="text-xs font-bold text-amber-600 code-font block mb-1">📝 WRITING ENGINE WORKING...</span>
+          <span id="stage3-loading-text" class="text-[11px] text-stone-500 font-medium">선택된 문구 구조를 검토하고 교체하는 중입니다...</span>
+        </div>
+      </div>
+
+      <!-- 미니 피드백 -->
+      <div id="stage3-feedback" class="mt-4 p-4 rounded-lg text-xs leading-relaxed hidden">
+        피드백 텍스트
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-stone-200 flex justify-between items-center">
+        <span class="text-xs text-stone-500" id="stage3-progress">문항 1 / 3</span>
+        <button id="s3-next" disabled="" onclick="finishGame()" class="bg-stone-200 text-stone-400 px-5 py-2.5 rounded text-xs font-bold transition">
+          최종 결과 보기 🔒
+        </button>
+      </div>
+    </div>
+
+    <!-- [GAME OVER SCREEN] -->
+    <div id="screen-gameover" class="hidden draft-panel rounded-xl p-6 sm:p-8 text-center animate-pop">
+      <div class="absolute -top-3 left-6 px-4 py-1 masking-tape bg-red-600 text-white font-black text-xs uppercase tracking-wider">
+        COMPILATION_FAILED
+      </div>
+      
+      <div class="text-5xl mb-4 mt-2">💀</div>
+      <h1 class="text-xl sm:text-2xl font-extrabold text-red-600 tracking-tight leading-tight mb-2">
+        기획서 전면 드랍 (MISSION FAILED)
+      </h1>
+      <p id="gameover-reason" class="text-stone-600 text-xs sm:text-sm mb-6 leading-relaxed">
+        팀장님의 인내심이 완전히 바닥나 결재 보류 통보를 받았습니다.
+      </p>
+      <button onclick="resetGame()" class="bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-extrabold py-3 px-6 rounded-lg text-xs transition shadow-md">
+        문장 다듬고 에디터 다시 기동하기 🔄
+      </button>
+    </div>
+
+    <!-- [OUTRO SCREEN] -->
+    <div id="screen-outro" class="hidden draft-panel rounded-xl p-6 sm:p-8 animate-pop text-center">
+      <div class="absolute -top-3 left-6 px-4 py-1 masking-tape bg-emerald-600 text-white font-black text-xs uppercase tracking-wider">
+        COMPILATION_SUCCESS
+      </div>
+
+      <div class="text-5xl mb-4 mt-2">🏆</div>
+      <h1 class="text-xl sm:text-2xl font-extrabold text-emerald-700 tracking-tight leading-tight mb-2">
+        기획서 완벽 컴파일 성공!
+      </h1>
+      <p class="text-stone-600 text-xs sm:text-sm mb-6">
+        구조화된 골격과 수치 지표화된 완벽한 3줄 피칭 덕분에 팀장님 결재 통과 및 최종 합격 통보를 받았습니다!
+      </p>
+
+      <!-- 최종 리포트 카드 -->
+      <div class="bg-white border border-stone-200 rounded-lg p-5 mb-6 text-left max-w-md mx-auto shadow-sm">
+        <div class="text-[10px] font-bold text-stone-400 uppercase tracking-wider code-font mb-3 text-center">MISSION SCORECARD REPORT</div>
+        
+        <div class="flex justify-between items-center border-b border-stone-100 pb-2 mb-2">
+          <span class="text-xs text-stone-500">최종 회복 등급</span>
+          <span class="text-emerald-600 font-black text-base">A+ (정적 매칭률 100%)</span>
+        </div>
+
+        <div class="flex justify-between items-center border-b border-stone-100 pb-2 mb-2">
+          <span class="text-xs text-stone-500">8장 슬라이드 척추 수술</span>
+          <span class="text-stone-700 text-xs font-semibold">복구 성공 ✓</span>
+        </div>
+
+        <div class="flex justify-between items-center border-b border-stone-100 pb-2 mb-2">
+          <span class="text-xs text-stone-500">ISI 3줄 골격 구조 정합성</span>
+          <span class="text-stone-700 text-xs font-semibold">정확도 100% ✓</span>
+        </div>
+
+        <div class="flex justify-between items-center pb-1">
+          <span class="text-xs text-stone-500">워딩 가공 (Few-Shot)</span>
+          <span class="text-stone-700 text-xs font-semibold">비즈니스화 성공 ✓</span>
+        </div>
+      </div>
+
+      <!-- 실습 연계 아웃풋: 나만의 ISI 빌더 기능 추가 -->
+      <div class="p-5 bg-[#FDFBF7] border border-stone-200 rounded-lg mb-6 max-w-md mx-auto text-left relative shadow-sm">
+        <div class="absolute -top-2 right-4 bg-orange-100 border border-orange-200 text-[9px] font-bold text-orange-700 px-2 py-0.5 rounded">WORKBOOK</div>
+        <div class="text-xs font-bold text-amber-800 mb-2 flex items-center gap-1.5">
+          <span>📐</span> <span>나만의 3줄 기획서 (ISI) 즉석 설계하기</span>
+        </div>
+        <p class="text-stone-500 text-[11px] mb-4 leading-relaxed">
+          방금 검증된 프레임워크를 기반으로, 오늘 워크숍에서 발표할 아크랩스 팀만의 핵심 피치 문장을 요약 설계해 보세요!
+        </p>
+        
+        <div class="space-y-3">
+          <div>
+            <label class="block text-[9px] text-amber-700 font-bold mb-1">[INSIGHT] 타겟이 겪는 뚜렷한 결핍은 무엇인가요?</label>
+            <textarea id="my-insight" rows="2" class="w-full bg-white border border-stone-200 rounded p-2 text-xs text-stone-700 focus:border-amber-500 focus:outline-none placeholder-stone-400 shadow-inner" placeholder="예: 대학생 80%는 시험기간 새벽 2시에 극심한 허기를 느끼지만 편의점 외엔 대안이 없다."></textarea>
+          </div>
+          <div>
+            <label class="block text-[9px] text-amber-700 font-bold mb-1">[STRATEGY] 이를 단번에 풀어내는 핵심 수단은 무엇인가요?</label>
+            <textarea id="my-strategy" rows="2" class="w-full bg-white border border-stone-200 rounded p-2 text-xs text-stone-700 focus:border-amber-500 focus:outline-none placeholder-stone-400 shadow-inner" placeholder="예: 1인분 조리 단 90초, 대학교 건물 자판기에서 즉석 가열 조리되는 초고속 컵 야식 키트 제작"></textarea>
+          </div>
+          <div>
+            <label class="block text-[9px] text-amber-700 font-bold mb-1">[IMPACT] 우리가 도달하고자 하는 정량화된 성과 지표는?</label>
+            <textarea id="my-impact" rows="2" class="w-full bg-white border border-stone-200 rounded p-2 text-xs text-stone-700 focus:border-amber-500 focus:outline-none placeholder-stone-400 shadow-inner" placeholder="예: 런칭 3개월 내 서울 주요 대학 캠퍼스 5곳 입점 완료 및 월 평균 매출 500만 원 달성"></textarea>
+          </div>
+        </div>
+
+        <button onclick="copyMyPitch()" class="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded transition shadow-sm">
+          📋 내 3줄 기획서 한 번에 복사하기
+        </button>
+        <div id="copy-toast" class="hidden mt-2 text-center text-emerald-600 font-bold text-[10px] animate-pulse">
+          클립보드에 기획서가 복사되었습니다! 다음 실습창에 붙여넣어 보세요!
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
+        <button onclick="resetGame()" class="btn-ghost flex-1 border border-stone-300 hover:border-stone-400 text-stone-600 font-bold py-3 px-4 rounded-lg text-xs transition">
+          다시 플레이하기
+        </button>
+        <button onclick="moveToBuilder()" class="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-extrabold py-3 px-4 rounded-lg text-xs transition shadow-md">
+          실습 도구로 넘어가기 🚀
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- [CUSTOM SYSTEM MODAL] -->
+  <div id="custom-modal" class="hidden fixed inset-0 z-50 bg-stone-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-[#FCFAF5] border border-stone-300 max-w-md w-full rounded-xl p-5 shadow-2xl relative animate-pop">
+      <div class="absolute -top-3 left-4 px-3 py-0.5 bg-amber-600 text-white font-black text-[10px] uppercase rounded shadow-sm">
+        SYSTEM REPORT
+      </div>
+      <h3 id="modal-title" class="text-sm font-bold text-stone-850 mb-2 mt-1">알림</h3>
+      <p id="modal-desc" class="text-xs text-stone-600 leading-relaxed mb-4">상세 알림 내용입니다.</p>
+      <div class="flex justify-end">
+        <button onclick="closeModal()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-4 py-2 rounded transition shadow-sm">
+          확인
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 푸터 (에디터 레이블 스타일) -->
+  <footer class="border-t border-stone-200 bg-stone-100/60 text-center py-4 px-4 mt-4">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-stone-500 text-xs">
+      <div>AK LABS Mission Control — DAY 3 PRE-WORKSHOP GAME</div>
+      <div class="code-font text-stone-400">[DRAFT_ENGINE_V2_ONLINE]</div>
+    </div>
+  </footer>
+
+  <!-- 사운드 및 게임 스크립트 -->
+    <script>
+// 전역 상태 변수
+    let liveGradeEl = document.getElementById('liveGrade');
+    let timerInterval = null;
+    let timeRemaining = 300; // 5분 타임어택 (300초)
+    let bossPatience = 100;  // 팀장님 인내심 (HP 역할)
+    let isGameOver = false;
+    let audioCtx = null;
+
+    // 커스텀 모달 호출 유틸
+    function openModal(title, text) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-desc').innerHTML = text;
+      document.getElementById('custom-modal').classList.remove('hidden');
+    }
+    
+    function closeModal() {
+      document.getElementById('custom-modal').classList.add('hidden');
+    }
+
+    // Web Audio API 사운드 합성기 (사용자 최초 클릭 액션 시 지연 초기화하여 정책 우회)
+    function playBeep(type) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        // 브라우저 보증 차단 우회
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'click') {
+          osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.05);
+        } else if (type === 'correct') {
+          osc.frequency.setValueAtTime(520, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1040, audioCtx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.18);
+        } else if (type === 'wrong') {
+          osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+          osc.frequency.linearRampToValueAtTime(120, audioCtx.currentTime + 0.25);
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        } else if (type === 'grade-up') {
+          osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.25);
+        } else if (type === 'gameover') {
+          osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+          osc.frequency.linearRampToValueAtTime(60, audioCtx.currentTime + 0.5);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.6);
+        }
+      } catch (e) {
+        // AudioContext 차단 대비 방어 코드
+      }
+    }
+
+    // 타임어택 루프 기동
+    function startTimer() {
+      document.getElementById('timer-box').classList.remove('hidden');
+      document.getElementById('patience-box').classList.remove('hidden');
+      
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (isGameOver) return;
+        
+        timeRemaining--;
+        displayTimer();
+
+        if (timeRemaining <= 0) {
+          triggerGameOver("⏰ 제한 시간이 5분이 모두 초과되었습니다! 팀장님이 발표자료 없이 무대에 올라가 기획서가 공중분해되었습니다.");
+        }
+      }, 1000);
+    }
+
+    function displayTimer() {
+      const minutes = Math.floor(timeRemaining / 60);
+      const seconds = timeRemaining % 60;
+      const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      
+      const timerEl = document.getElementById('game-timer');
+      timerEl.textContent = formatted;
+
+      // 1분 미만 남았을 때 붉은색 점멸 경고 강화
+      if (timeRemaining < 60) {
+        document.getElementById('timer-box').className = "flex items-center gap-1.5 bg-red-50 border border-red-300 px-2.5 py-1 rounded animate-pulse";
+        timerEl.className = "text-xs font-black text-red-600 code-font";
+      } else {
+        document.getElementById('timer-box').className = "flex items-center gap-1.5 bg-orange-50 border border-orange-200 px-2.5 py-1 rounded";
+        timerEl.className = "text-xs font-black text-orange-700 code-font";
+      }
+    }
+
+    // 팀장님 인내심 제어
+    function reducePatience(amount) {
+      if (isGameOver) return;
+
+      bossPatience -= amount;
+      if (bossPatience < 0) bossPatience = 0;
+
+      const pBar = document.getElementById('patience-bar');
+      const pText = document.getElementById('patience-text');
+
+      pBar.style.width = `${bossPatience}%`;
+      pText.textContent = `${bossPatience}%`;
+
+      // 인내심 수준에 따른 컬러 연출 변경 (눈이 편안한 웜 톤 대응)
+      if (bossPatience > 60) {
+        pBar.className = "bg-amber-500 h-full transition-all duration-300";
+        pText.className = "text-[10px] font-bold text-amber-600 code-font";
+      } else if (bossPatience > 30) {
+        pBar.className = "bg-orange-400 h-full transition-all duration-300";
+        pText.className = "text-[10px] font-bold text-orange-600 code-font";
+      } else {
+        pBar.className = "bg-red-500 h-full transition-all duration-300 animate-pulse";
+        pText.className = "text-[10px] font-bold text-red-500 code-font animate-pulse";
+      }
+
+      if (bossPatience <= 0) {
+        triggerGameOver("👿 팀장님의 참을성이 바닥나 '이번 기획서는 드랍한다'며 화를 내며 결재판을 뒤엎으셨습니다.");
+      }
+    }
+
+    // 게임오버 트리거
+    function triggerGameOver(reason) {
+      isGameOver = true;
+      clearInterval(timerInterval);
+      playBeep('gameover');
+
+      // 활성화된 화면 모두 닫고 게임오버 화면 노출
+      document.getElementById('screen-intro').classList.add('hidden');
+      document.getElementById('screen-stage1').classList.add('hidden');
+      document.getElementById('screen-stage2').classList.add('hidden');
+      document.getElementById('screen-stage3').classList.add('hidden');
+      
+      document.getElementById('screen-gameover').classList.remove('hidden');
+      document.getElementById('gameover-reason').textContent = reason;
+      
+      liveGradeEl.textContent = 'F 💀';
+      liveGradeEl.className = 'text-red-650 font-black text-xs tracking-wide animate-pulse';
+    }
+
+    // 예상 학점 실시간 업데이트
+    function updateGrade(percentage) {
+      if (percentage < 30) {
+        liveGradeEl.textContent = 'F 💀';
+        liveGradeEl.className = 'text-red-500 font-black text-xs tracking-wide animate-pulse';
+      } else if (percentage < 60) {
+        liveGradeEl.textContent = 'C+ 📝';
+        liveGradeEl.className = 'text-orange-500 font-black text-xs tracking-wide';
+      } else if (percentage < 90) {
+        liveGradeEl.textContent = 'B+ 👍';
+        liveGradeEl.className = 'text-amber-600 font-black text-xs tracking-wide';
+      } else {
+        liveGradeEl.textContent = 'A+ 🏆';
+        liveGradeEl.className = 'text-emerald-600 font-black text-xs tracking-wide animate-bounce';
+      }
+    }
+
+    // ================= STAGE 1 LOGIC =================
+    const STAGE1_DEFS = [
+      { id: 1, title: '1. 문제 정의' },
+      { id: 2, title: '2. 시장 기회' },
+      { id: 3, title: '3. 소비자 인사이트' },
+      { id: 4, title: '4. 제품 컨셉' },
+      { id: 5, title: '5. 마케팅 전략' },
+      { id: 6, title: '6. 실행 일정' },
+      { id: 7, title: '7. 예상 성과' },
+      { id: 8, title: '8. 결론' }
+    ];
+
+    const STAGE1_EXPLANATIONS = {
+      1: "풀려는 문제를 명확히 짚어내는 기획서의 첫 단추!",
+      2: "이 시장이 얼마나 돈이 되고 큰 기회인지 증명!",
+      3: "소비자의 겉으로 드러나지 않는 진짜 속마음 발견!",
+      4: "우리의 해결책을 한 문장으로 보여주는 기획서의 주인공!",
+      5: "이 멋진 아이디어를 타겟에게 알릴 기발한 마케팅 전략!",
+      6: "뜬구름 잡지 않는 구체적인 실행 계획과 타임라인!",
+      7: "숫자로 명확하게 약속하는 매출이나 가입자 목표!",
+      8: "결정권자에게 보내는 마지막 행동 유도 및 부탁 메시지!"
+    };
+
+    let selectedScatteredCardId = null;
+    let placedSlides = Array(8).fill(null);
+
+    function startGame() {
+      isGameOver = false;
+      timeRemaining = 300;
+      bossPatience = 100;
+      displayTimer();
+      startTimer();
+      
+      playBeep('click');
+      document.getElementById('screen-intro').classList.add('hidden');
+      document.getElementById('screen-stage1').classList.remove('hidden');
+      updateGrade(10);
+      setupStage1();
+    }
+
+    function setupStage1() {
+      const slotsContainer = document.getElementById('slide-slots');
+      const cardsContainer = document.getElementById('scattered-cards');
+      slotsContainer.innerHTML = '';
+      cardsContainer.innerHTML = '';
+
+      // 빈 슬라이드 슬롯 생성 (따스한 양장 노트 크라프트 톤 디자인)
+      STAGE1_DEFS.forEach((slide, index) => {
+        const slot = document.createElement('div');
+        slot.className = `slot-item border border-stone-200 bg-[#FAF7F0] rounded p-2.5 flex justify-between items-center cursor-pointer hover:bg-[#F2ECE0] transition min-h-[46px] shadow-sm`;
+        slot.dataset.index = index;
+        slot.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <span class="text-[10px] font-bold text-stone-500 code-font">SLIDE ${index + 1}</span>
+            <span class="text-xs font-bold text-stone-600" id="slot-text-${index}">[공란]</span>
+          </div>
+          <div id="slot-status-${index}" class="text-[9px] text-stone-400 font-bold tracking-tight">카드 대기 중</div>
+        `;
+        slot.addEventListener('click', () => handleSlotClick(index));
+        slotsContainer.appendChild(slot);
+      });
+
+      // 섞인 3D 카드 생성
+      const shuffled = [...STAGE1_DEFS].sort(() => Math.random() - 0.5);
+      shuffled.forEach((slide) => {
+        const cardContainer = document.createElement('div');
+        cardContainer.className = `card-container`;
+        cardContainer.id = `sc-card-${slide.id}`;
+        cardContainer.dataset.id = slide.id;
+        
+        cardContainer.innerHTML = `
+          <div class="card-inner font-sans">
+            <div class="card-front text-xs text-center select-none font-bold">
+              ${slide.title}
+            </div>
+            <div class="card-back text-[9px] sm:text-[11px] text-center leading-snug p-2 select-none">
+              <div class="text-[8px] text-amber-700 font-extrabold mb-0.5 code-font">[DEFINED_INFO]</div>
+              ${STAGE1_EXPLANATIONS[slide.id]}
+            </div>
+          </div>
+        `;
+        cardContainer.addEventListener('click', () => handleScatteredCardSelect(slide.id));
+        cardsContainer.appendChild(cardContainer);
+      });
+    }
+
+    function handleScatteredCardSelect(id) {
+      if (isGameOver) return;
+      playBeep('click');
+      
+      const selectedCard = document.getElementById(`sc-card-${id}`);
+      if (selectedCard && selectedCard.style.opacity === '0.3') return;
+
+      const allCards = document.querySelectorAll('.card-container');
+      allCards.forEach(card => {
+        if (card.style.opacity !== '0.3') {
+          card.classList.remove('is-flipped', 'selected-card');
+        }
+      });
+
+      selectedScatteredCardId = id;
+      
+      if (selectedCard) {
+        selectedCard.classList.add('is-flipped', 'selected-card');
+      }
+    }
+
+    function handleSlotClick(slotIndex) {
+      if (isGameOver) return;
+
+      if (!selectedScatteredCardId) {
+        playBeep('wrong');
+        const slots = document.querySelectorAll('.slot-item');
+        slots[slotIndex].classList.add('shake');
+        setTimeout(() => slots[slotIndex].classList.remove('shake'), 250);
+        return;
+      }
+
+      const matchingCard = STAGE1_DEFS.find(d => d.id === selectedScatteredCardId);
+      
+      // 정답 판별
+      if (matchingCard.id === (slotIndex + 1)) {
+        playBeep('correct');
+        placedSlides[slotIndex] = matchingCard;
+        
+        const slotEl = document.querySelector(`.slot-item[data-index="${slotIndex}"]`);
+        slotEl.className = `slot-item border border-emerald-200 bg-emerald-50 rounded p-2.5 flex justify-between items-center min-h-[46px] pointer-events-none shadow-sm`;
+        document.getElementById(`slot-text-${slotIndex}`).textContent = matchingCard.title;
+        document.getElementById(`slot-text-${slotIndex}`).className = "text-xs font-bold text-emerald-800";
+        document.getElementById(`slot-status-${slotIndex}`).textContent = "복구완료 ✓";
+        document.getElementById(`slot-status-${slotIndex}`).className = "text-[10px] font-bold text-emerald-600";
+
+        const cardEl = document.getElementById(`sc-card-${selectedScatteredCardId}`);
+        if (cardEl) {
+          cardEl.style.opacity = '0.3';
+          cardEl.style.pointerEvents = 'none';
+          cardEl.classList.remove('selected-card');
+        }
+        selectedScatteredCardId = null;
+
+        checkStage1Progress();
+      } else {
+        // 오답 처리
+        playBeep('wrong');
+        reducePatience(15); // 잘못 놓을 때마다 팀장님 인내심 15%씩 감소
+        
+        const slotEl = document.querySelector(`.slot-item[data-index="${slotIndex}"]`);
+        slotEl.classList.add('shake');
+        setTimeout(() => slotEl.classList.remove('shake'), 250);
+        
+        const statusEl = document.getElementById(`slot-status-${slotIndex}`);
+        const originText = statusEl.textContent;
+        statusEl.textContent = "순서 불일치! ❌";
+        statusEl.className = "text-[10px] font-bold text-red-600";
+        setTimeout(() => {
+          if (!isGameOver) {
+            statusEl.textContent = originText;
+            statusEl.className = "text-[9px] text-stone-400 font-bold";
+          }
+        }, 1200);
+      }
+    }
+
+    function checkStage1Progress() {
+      const correctCount = placedSlides.filter(Boolean).length;
+      const percent = Math.round((correctCount / 8) * 100);
+      document.getElementById('s1-percent').textContent = Math.round(percent * 0.3);
+      updateGrade(Math.round(percent * 0.3));
+
+      if (correctCount === 8) {
+        playBeep('grade-up');
+        const nextBtn = document.getElementById('s1-next');
+        nextBtn.removeAttribute('disabled');
+        nextBtn.className = "bg-gradient-to-r from-amber-600 to-orange-650 hover:from-amber-700 hover:to-orange-700 text-white px-5 py-2.5 rounded text-xs font-bold transition shadow-sm";
+        nextBtn.textContent = "Stage 2 진입하기 🔓";
+      }
+    }
+
+
+    // ================= STAGE 2 LOGIC =================
+    const STAGE2_DEFS = [
+      { type: 'Insight', text: '대학생 80%는 시험기간 새벽 2시에 엄청난 허기를 느끼지만, 편의점 인스턴트 외엔 야식 대안이 전혀 없다.' },
+      { type: 'Strategy', text: '1인분 완성 시간 단 90초, 대학교 건물 자판기에서 즉석 조리되어 튀어나오는 초고속 컵 야식 키트를 설계한다.' },
+      { type: 'Impact', text: '런칭 3개월 내 서울 주요 대학 캠퍼스 5곳에 자판기를 선점 입점시키고, 월 매출 500만 원 목표를 이룬다.' }
+    ];
+
+    let currentIsiIndex = 0;
+    let stage2Answers = { Insight: false, Strategy: false, Impact: false };
+
+    function startStage2() {
+      if (isGameOver) return;
+      playBeep('click');
+      document.getElementById('screen-stage1').classList.add('hidden');
+      document.getElementById('screen-stage2').classList.remove('hidden');
+      updateGrade(35);
+      setupStage2();
+    }
+
+    function setupStage2() {
+      currentIsiIndex = 0;
+      stage2Answers = { Insight: false, Strategy: false, Impact: false };
+      
+      document.getElementById('slot-insight').classList.add('hidden');
+      document.getElementById('slot-strategy').classList.add('hidden');
+      document.getElementById('slot-impact').classList.add('hidden');
+      
+      showNextIsiCard();
+    }
+
+    function showNextIsiCard() {
+      if (currentIsiIndex < STAGE2_DEFS.length) {
+        document.getElementById('isi-card').textContent = STAGE2_DEFS[currentIsiIndex].text;
+      } else {
+        document.getElementById('isi-card').innerHTML = "✨ 모든 3줄 요약 퍼즐 조각이 제 자리를 찾았습니다!";
+        document.getElementById('s2-percent').textContent = "60";
+        updateGrade(60);
+        
+        const nextBtn = document.getElementById('s2-next');
+        nextBtn.removeAttribute('disabled');
+        nextBtn.className = "bg-gradient-to-r from-amber-600 to-orange-655 hover:from-amber-700 hover:to-orange-700 text-white px-5 py-2.5 rounded text-xs font-bold transition shadow-sm";
+        nextBtn.textContent = "Stage 3 진입하기 🔓";
+      }
+    }
+
+    function assignIsi(targetType) {
+      if (isGameOver) return;
+      if (currentIsiIndex >= STAGE2_DEFS.length) return;
+
+      const currentItem = STAGE2_DEFS[currentIsiIndex];
+      if (currentItem.type === targetType) {
+        playBeep('correct');
+        stage2Answers[targetType] = true;
+        
+        const targetSlot = document.getElementById(`slot-${targetType.toLowerCase()}`);
+        targetSlot.classList.remove('hidden');
+        targetSlot.textContent = `[정답] ${currentItem.text.slice(0, 18)}... ✓`;
+        
+        currentIsiIndex++;
+        
+        const progressPercent = 30 + Math.round((currentIsiIndex / 3) * 30);
+        document.getElementById('s2-percent').textContent = progressPercent;
+        updateGrade(progressPercent);
+
+        showNextIsiCard();
+      } else {
+        // 오답 처리
+        playBeep('wrong');
+        reducePatience(15);
+        
+        const cardBox = document.getElementById('isi-card').parentElement;
+        cardBox.classList.add('shake');
+        setTimeout(() => cardBox.classList.remove('shake'), 250);
+      }
+    }
+
+
+    // ================= STAGE 3 LOGIC (피드백 & 대기 애니메이션 강화) =================
+    const STAGE3_DEFS = [
+      {
+        bad: '"우리 야식 키트는 대학생들이 정말 좋아할 혁신적인 간식 기획입니다."',
+        options: [
+          { 
+            text: '우리는 전국에 계신 청춘들과 학생들의 행복을 위해 맛 좋은 푸드를 정직하게 제공할 것입니다.', 
+            correct: false, 
+            reason: '❌ [보충 코칭] "청춘", "행복", "정직" 등 추상적인 감정에만 호소하면 심사위원이나 상사는 비즈니스 모델로 전혀 보지 않아요. 구체성이 가장 결여된 나쁜 문구입니다.' 
+          },
+          { 
+            text: '1인분 조리 단 90초, 자판기에서 즉석 가열되어 가성비 넘치게 즐기는 컵 형태 야식 세트', 
+            correct: true, 
+            reason: '🎉 [정답 피드백] "90초", "자판기", "가열", "컵 형태" 처럼 제품의 물리적 구동 형태와 핵심 차별점을 선명하고 정확한 정보로 설계해 설득력이 200% 상승했습니다!' 
+          },
+          { 
+            text: '이전보다 한층 업그레이드되어 더 쫄깃하고 맛있어진 야심 찬 한 끼 식사 보장 키트', 
+            correct: false, 
+            reason: '❌ [보충 코칭] "업그레이드", "쫄깃하고 맛있는", "야심 찬" 같은 형용사 위주의 나열은 주관적일 뿐, 기획서 독자에게 신뢰를 주거나 객관적 가치를 전달하지 못합니다.' 
+          }
+        ]
+      },
+      {
+        bad: '"야식을 좋아하고 시험기간에 배고픈 대한민국 젊은이들이 주 고객층입니다."',
+        options: [
+          { 
+            text: '시험기간 새벽 2시, 인근 편의점 말고는 야식 구매처가 전무한 교내 자취 대학 캠퍼스생', 
+            correct: true, 
+            reason: '🎉 [정답 피드백] 아주 훌륭합니다! "시험기간 새벽 2시", "교내 자취생", "편의점 대안 전무" 처럼 명확한 시간과 공간, 구체적인 결핍(Pain-Point) 상황을 지정해야만 뾰족한 타겟팅이 가능합니다.' 
+          },
+          { 
+            text: '고단한 일상 속에서 맛있는 가공식품을 먹으며 힘을 내고 싶은 전국의 모든 청춘 남녀', 
+            correct: false, 
+            reason: '❌ [보충 코칭] 타겟 대상이 너무 광범위하고 불분명합니다. 기획서에서 타겟팅 범위가 "모든 청춘"으로 넓어지면 아무에게도 가닿지 않는 제품이 되어 버립니다.' 
+          },
+          { 
+            text: '밤늦게까지 스마트폰을 보며 맛있는 음식을 간절히 찾고 있는 대학가 근처의 20대 커플들', 
+            correct: false, 
+            reason: '❌ [보충 코칭] 정성적인 묘사 같지만 "스마트폰을 보는 커플"은 우리 야식 브랜드의 핵심적인 "야간 결핍 요소(대안 없음)"와의 개연성이 다소 약합니다.' 
+          }
+        ]
+      },
+      {
+        bad: '"기획대로 실행된다면 대박이 나서 매출이 급격하게 수직 상승할 것을 확신합니다."',
+        options: [
+          { 
+            text: '대학생 원픽 브랜드로 급부상하여 대한민국 점유율 1위를 조기 달성하겠습니다.', 
+            correct: false, 
+            reason: '❌ [보충 코칭] "원픽 브랜드", "점유율 1위 조기 달성" 같은 말은 대표적인 기획서 악성 워딩입니다. 구체적인 예측 시점과 타당한 도달 지표가 부재해 근거 없는 다짐처럼 보입니다.' 
+          },
+          { 
+            text: '교내 커뮤니티(에브리타임) 마케팅을 전방위적으로 벌여 모두가 우리 제품을 사 먹게 하겠습니다.', 
+            correct: false, 
+            reason: '❌ [보충 코칭] 기대 성과라기보다 수단에 가까운 홍보 행위를 나열하고 있고, "모두가 사 먹게 하겠다"는 주장 역시 설득 근거가 턱없이 부족합니다.' 
+          },
+          { 
+            text: '런칭 3개월 내 주요 5개 대학교 캠퍼스 내 자판기 입점 완료 및 월 평균 매출 500만 원 보장', 
+            correct: true, 
+            reason: '🎉 [정답 피드백] 최고입니다! 투자자와 상사는 "3개월(기간)", "5개 학교(범위)", "500만 원(매출)" 같은 객관적이고 측정 가능한 KPI 수치 데이터를 보고 비로소 지갑을 열게 됩니다.' 
+          }
+        ]
+      }
+    ];
+
+    let currentStage3Index = 0;
+
+    function startStage3() {
+      if (isGameOver) return;
+      playBeep('click');
+      document.getElementById('screen-stage2').classList.add('hidden');
+      document.getElementById('screen-stage3').classList.remove('hidden');
+      updateGrade(65);
+      setupStage3();
+    }
+
+    function setupStage3() {
+      currentStage3Index = 0;
+      showStage3Question();
+    }
+
+    function showStage3Question() {
+      const q = STAGE3_DEFS[currentStage3Index];
+      document.getElementById('stage3-bad-text').textContent = q.bad;
+      document.getElementById('stage3-progress').textContent = `문항 ${currentStage3Index + 1} / 3`;
+      
+      const optContainer = document.getElementById('stage3-options');
+      const feedbackEl = document.getElementById('stage3-feedback');
+      const loadingEl = document.getElementById('stage3-loading');
+      
+      optContainer.innerHTML = '';
+      optContainer.classList.remove('hidden');
+      feedbackEl.classList.add('hidden');
+      loadingEl.classList.add('hidden');
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3 border border-stone-200 bg-white rounded-lg hover:border-amber-500/50 hover:bg-[#FAF7F0] transition text-xs sm:text-sm text-stone-700 font-medium leading-relaxed shadow-sm";
+        btn.innerHTML = `<span class="inline-block bg-stone-100 text-stone-500 font-bold px-1.5 py-0.5 rounded text-[10px] mr-2">${idx + 1}</span> ${opt.text}`;
+        btn.addEventListener('click', () => handleStage3Answer(opt, btn));
+        optContainer.appendChild(btn);
+      });
+    }
+
+    function handleStage3Answer(opt, selectedBtn) {
+      if (isGameOver) return;
+      const feedbackEl = document.getElementById('stage3-feedback');
+      const optContainer = document.getElementById('stage3-options');
+      const loadingEl = document.getElementById('stage3-loading');
+      const optButtons = document.querySelectorAll('#stage3-options button');
+
+      optButtons.forEach(btn => btn.style.pointerEvents = 'none');
+
+      if (opt.correct) {
+        playBeep('correct');
+        selectedBtn.className = "w-full text-left p-3 border-2 border-emerald-500 bg-emerald-50 rounded-lg text-xs sm:text-sm text-emerald-800 font-bold leading-relaxed animate-pop shadow-sm";
+        
+        feedbackEl.className = "mt-4 p-4 rounded-lg text-left text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 leading-relaxed shadow-sm";
+        feedbackEl.innerHTML = opt.reason;
+        feedbackEl.classList.remove('hidden');
+
+        // 일정 딜레이 후 '컴파일 불러오는 중' 애니메이션 작동
+        setTimeout(() => {
+          if (isGameOver) return;
+          
+          // 선택 영역을 숨기고 로더 작동
+          optContainer.classList.add('hidden');
+          feedbackEl.classList.add('hidden');
+          
+          const loadingMessages = [
+            "기획서 문맥 가독성 분석 중...",
+            "A+ 비즈니스 튜닝 엔진 컴파일 중...",
+            "수치 및 성과 지표 정밀 가공 중..."
+          ];
+          document.getElementById('stage3-loading-text').textContent = loadingMessages[currentStage3Index] || "문장 보정 적용 중...";
+          loadingEl.classList.remove('hidden');
+
+          setTimeout(() => {
+            if (isGameOver) return;
+            currentStage3Index++;
+            const overallPercent = 60 + Math.round((currentStage3Index / 3) * 40);
+            document.getElementById('s3-percent').textContent = overallPercent;
+            updateGrade(overallPercent);
+
+            if (currentStage3Index < STAGE3_DEFS.length) {
+              showStage3Question();
+            } else {
+              playBeep('grade-up');
+              loadingEl.classList.add('hidden');
+              
+              const finalBtn = document.getElementById('s3-next');
+              finalBtn.removeAttribute('disabled');
+              finalBtn.className = "bg-gradient-to-r from-amber-600 to-orange-650 hover:from-amber-700 hover:to-orange-700 text-white px-5 py-2.5 rounded text-xs font-bold transition shadow-md";
+              finalBtn.textContent = "최종 결과 확인 🏁";
+            }
+          }, 1500); // 로딩 전환 연출 시간 (1.5초)
+
+        }, 2200); // 피드백 탐독 시간 (2.2초)
+
+      } else {
+        // 오답 처리 및 피드백 노출 (딜레이 없이 바로 고를 수 있게 재활성화)
+        playBeep('wrong');
+        reducePatience(20); // 오답 시 20% 인내심 패널티
+
+        selectedBtn.className = "w-full text-left p-3 border border-red-300 bg-red-50 rounded-lg text-xs sm:text-sm text-red-650 font-semibold leading-relaxed shake shadow-sm";
+        
+        feedbackEl.className = "mt-4 p-4 rounded-lg text-left text-xs bg-red-50 text-red-750 border border-red-100 leading-relaxed animate-pop shadow-sm";
+        feedbackEl.innerHTML = opt.reason;
+        feedbackEl.classList.remove('hidden');
+
+        setTimeout(() => {
+          if (!isGameOver) {
+            selectedBtn.classList.remove('shake');
+            optButtons.forEach(btn => btn.style.pointerEvents = 'auto');
+          }
+        }, 1500);
+      }
+    }
+
+
+    // ================= END GAME LOGIC =================
+    function finishGame() {
+      if (isGameOver) return;
+      clearInterval(timerInterval);
+      playBeep('grade-up');
+      
+      document.getElementById('timer-box').classList.add('hidden');
+      document.getElementById('patience-box').classList.add('hidden');
+      
+      document.getElementById('screen-stage3').classList.add('hidden');
+      document.getElementById('screen-outro').classList.remove('hidden');
+      updateGrade(100);
+    }
+
+    function resetGame() {
+      clearInterval(timerInterval);
+      isGameOver = false;
+      timeRemaining = 300;
+      bossPatience = 100;
+      placedSlides = Array(8).fill(null);
+      currentIsiIndex = 0;
+      currentStage3Index = 0;
+      selectedScatteredCardId = null;
+
+      document.getElementById('screen-stage1').classList.add('hidden');
+      document.getElementById('screen-stage2').classList.add('hidden');
+      document.getElementById('screen-stage3').classList.add('hidden');
+      document.getElementById('screen-outro').classList.add('hidden');
+      document.getElementById('screen-gameover').classList.add('hidden');
+      
+      document.getElementById('timer-box').classList.add('hidden');
+      document.getElementById('patience-box').classList.add('hidden');
+      
+      // 인내심 상태 바 리셋
+      document.getElementById('patience-bar').style.width = '100%';
+      document.getElementById('patience-text').textContent = '100%';
+      document.getElementById('patience-bar').className = "bg-amber-500 h-full transition-all duration-300";
+
+      // 텍스트 필드 리셋
+      document.getElementById('my-insight').value = '';
+      document.getElementById('my-strategy').value = '';
+      document.getElementById('my-impact').value = '';
+      document.getElementById('copy-toast').classList.add('hidden');
+
+      document.getElementById('screen-intro').classList.remove('hidden');
+      updateGrade(0);
+    }
+
+    // 나만의 3줄 기획서 빌더 복사 기능 (커스텀 노티파이 변경)
+    function copyMyPitch() {
+      playBeep('click');
+      const ins = document.getElementById('my-insight').value.trim();
+      const str = document.getElementById('my-strategy').value.trim();
+      const imp = document.getElementById('my-impact').value.trim();
+
+      if (!ins || !str || !imp) {
+        openModal("⚠️ 입력 양식 오류", "기획서의 구성 요소인 Insight, Strategy, Impact를 모두 작성한 뒤 복사해 주세요! ✍️");
+        return;
+      }
+
+      const copyTemplate = `
+[AK LABS - 나만의 3줄 기획서 (ISI)]
+
+🚀 1. INSIGHT (타겟의 문제점)
+${ins}
+
+🛠️ 2. STRATEGY (해결책/컨셉)
+${str}
+
+📈 3. IMPACT (구체적 성과 지표)
+${imp}
+
+--------------------------------------
+* 본 기획서는 AK LABS 기획서 복구 시뮬레이터를 통해 복원된 골격입니다.
+      `.trim();
+
+      // 브라우저 복사 (안전 패턴 적용)
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = copyTemplate;
+      document.body.appendChild(tempTextArea);
+      tempTextArea.select();
+      try {
+        document.execCommand('copy');
+        const toast = document.getElementById('copy-toast');
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+      } catch (err) {
+        openModal("❌ 복사 에러", "클립보드 액세스가 거부되었습니다. 아래 기획 텍스트를 직접 복사해 주세요.");
+      }
+      document.body.removeChild(tempTextArea);
+    }
+
+    function moveToBuilder() {
+      playBeep('click');
+      openModal("🏆 축하합니다!", "아크랩스! 모의 심폐소생 훈련을 훌륭한 성적으로 완수했어!<br><br>이제 브라우저 탭을 닫고 원래의 기획서 실습도구 <strong>(day3_plan_builder.html)</strong>로 돌아가 오늘 팀만의 진짜 혁신 브랜드 기획을 빌드해 봐! 🚀");
+    }
+    </script>
+</body>
+</html>
