@@ -90,7 +90,7 @@
 <body class="text-brand-charcoal min-h-screen flex flex-col font-sans antialiased pb-16">
 
     <!-- ==================== [STICKY NAVBAR] ==================== -->
-    <nav class="sticky top-0 z-50 bg-[#F7F5F0]/92 backdrop-blur-md border-b border-brand-borderWarm/60 px-4 py-3.5 flex justify-center">
+    <nav class="sticky top-0 z-40 bg-[#F7F5F0]/92 backdrop-blur-md border-b border-brand-borderWarm/60 px-4 py-3.5 flex justify-center">
         <div class="max-w-[980px] w-full flex items-center justify-between gap-4 flex-wrap">
             <div class="flex items-center gap-2.5">
                 <div class="w-7 h-7 rounded-lg bg-brand-charcoal text-brand-accentDim flex items-center justify-center font-extrabold text-xs tracking-wider transform -rotate-3 font-mono">
@@ -104,6 +104,12 @@
                 <a href="#day3" class="font-mono text-[10px] font-bold text-brand-brownSoft hover:text-brand-accent px-3 py-1.5 rounded-full border border-brand-borderWarm bg-white transition-all shadow-sm">DAY 3</a>
                 <a href="#day4" class="font-mono text-[10px] font-bold text-brand-brownSoft hover:text-brand-accent px-3 py-1.5 rounded-full border border-brand-borderWarm bg-white transition-all shadow-sm">DAY 4</a>
                 <a href="#day5" class="font-mono text-[10px] font-bold text-brand-brownSoft hover:text-brand-accent px-3 py-1.5 rounded-full border border-brand-borderWarm bg-white transition-all shadow-sm">DAY 5</a>
+                
+                <!-- 관리자 인증 패널 링크 버튼 -->
+                <button onclick="openAdminModal()" class="font-mono text-[10px] font-bold text-brand-brownSoft hover:text-brand-accent px-3 py-1.5 rounded-full border border-brand-borderWarm bg-white transition-all shadow-sm flex items-center gap-1 cursor-pointer focus:outline-none" title="강사 잠금 제어판">
+                    <i class="fa-solid fa-user-shield text-[9px]"></i> 강사 로그인
+                </button>
+
                 <a href="https://litt.ly/aklabs" target="_blank" class="font-mono text-[10px] font-bold bg-brand-accent text-white px-3 py-1.5 rounded-full hover:bg-brand-accentDeep transition-all shadow-sm flex items-center gap-1"><i class="fa-solid fa-house text-[8px]"></i> AK LABS</a>
             </div>
         </div>
@@ -191,7 +197,7 @@
                 
                 <!-- 바로가기 앵커 버튼 -->
                 <div class="pt-3 border-t border-brand-borderWarm/60 flex justify-end">
-                    <a href="day1/day1_integrated_workbook.html" target="_blank" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
+                    <a href="day1/day1_integrated_workbook.html" target="_blank" id="btn-day1" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
                         <i class="fa-solid fa-rocket"></i> 실전 DAY 1 워크북 열기 ➔
                     </a>
                 </div>
@@ -244,8 +250,8 @@
 
                 <!-- 바로가기 앵커 버튼 -->
                 <div class="pt-3 border-t border-brand-borderWarm/60 flex justify-end">
-                    <a href="day2/day2_integrated_workbook.html" target="_blank" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-chart-line"></i> 실전 DAY 2 워크북 열기 ➔
+                    <a href="day2/day2_integrated_workbook.html" target="_blank" id="btn-day2" onclick="handleLinkClick(event, 2, this.href)" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-lock" id="lock-icon-2"></i> <span id="btn-text-2">실전 DAY 2 워크북 열기 ➔</span>
                     </a>
                 </div>
             </div>
@@ -309,8 +315,8 @@
 
                 <!-- 바로가기 앵커 버튼 -->
                 <div class="pt-3 border-t border-brand-borderWarm/60 flex justify-end">
-                    <a href="day3/day3_integrated_workbook.html" target="_blank" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-file-invoice"></i> 실전 DAY 3 워크북 열기 ➔
+                    <a href="day3/day3_integrated_workbook.html" target="_blank" id="btn-day3" onclick="handleLinkClick(event, 3, this.href)" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-lock" id="lock-icon-3"></i> <span id="btn-text-3">실전 DAY 3 워크북 열기 ➔</span>
                     </a>
                 </div>
             </div>
@@ -351,8 +357,8 @@
 
                 <!-- 바로가기 앵커 버튼 -->
                 <div class="pt-3 border-t border-brand-borderWarm/60 flex justify-end">
-                    <a href="day4/day4_integrated_workbook.html" target="_blank" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-network-wired"></i> 실전 DAY 4 워크북 열기 ➔
+                    <a href="day4/day4_integrated_workbook.html" target="_blank" id="btn-day4" onclick="handleLinkClick(event, 4, this.href)" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-lock" id="lock-icon-4"></i> <span id="btn-text-4">실전 DAY 4 워크북 열기 ➔</span>
                     </a>
                 </div>
             </div>
@@ -404,8 +410,8 @@
 
                 <!-- 바로가기 앵커 버튼 -->
                 <div class="pt-3 border-t border-brand-borderWarm/60 flex justify-end">
-                    <a href="day5/day5_integrated_workbook.html" target="_blank" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-video"></i> 실전 DAY 5 워크북 열기 ➔
+                    <a href="day5/day5_integrated_workbook.html" target="_blank" id="btn-day5" onclick="handleLinkClick(event, 5, this.href)" class="px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-lock" id="lock-icon-5"></i> <span id="btn-text-5">실전 DAY 5 워크북 열기 ➔</span>
                     </a>
                 </div>
             </div>
@@ -425,5 +431,324 @@
 
     </div>
 
+    <!-- ==================== [지물쇠 해제 패스코드 모달 팝업] ==================== -->
+    <div id="passcode-modal" class="fixed inset-0 bg-brand-charcoal/45 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+        <div id="passcode-modal-content" class="bg-white border border-brand-borderWarm rounded-3xl p-6 max-w-md w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300">
+            <!-- 닫기 -->
+            <button onclick="closePasscodeModal()" class="absolute top-4 right-4 text-brand-brownSoft hover:text-brand-charcoal transition text-lg h-8 w-8 rounded-full hover:bg-brand-bgWarm flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center space-y-3">
+                <div class="w-12 h-12 rounded-full bg-brand-accentDim text-brand-accent flex items-center justify-center text-lg mx-auto shadow-sm">
+                    <i class="fa-solid fa-lock-open"></i>
+                </div>
+                <h3 class="text-lg font-black text-brand-charcoal">DAY <span id="target-day-num" class="text-brand-accent font-mono font-bold"></span> 워크북 잠금 해제</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">이 실습은 잠겨 있습니다. 강사님이 당일 수업 시간에 공지해 주신 **자물쇠 해제 패스코드**를 입력하세요.</p>
+                <div class="pt-2">
+                    <input type="password" id="passcode-input" placeholder="패스코드 입력" class="w-full text-center px-3 py-2.5 border border-brand-borderWarm rounded-xl focus:outline-none focus:border-brand-accent font-bold placeholder-brand-brownSoft/40 bg-brand-bgWarm/45" onkeypress="handlePasscodeKeyPress(event)">
+                    <p id="passcode-error" class="text-[10px] text-red-600 font-semibold mt-1.5 hidden">❌ 패스코드가 올바르지 않습니다. 다시 입력해 주세요.</p>
+                </div>
+                <div class="flex gap-2 pt-3">
+                    <button onclick="closePasscodeModal()" class="flex-1 py-2.5 bg-brand-bgWarm text-brand-brownSoft hover:bg-brand-borderWarm font-bold text-xs rounded-lg transition cursor-pointer">취소</button>
+                    <button onclick="submitPasscode()" class="flex-1 py-2.5 bg-brand-accent hover:bg-brand-accentDeep text-white font-bold text-xs rounded-lg transition shadow-md cursor-pointer">잠금 해제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== [강사용 관리자 로그인 및 제어 패널 모달] ==================== -->
+    <div id="admin-modal" class="fixed inset-0 bg-brand-charcoal/45 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300">
+        <div id="admin-modal-content" class="bg-white border border-brand-borderWarm rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl relative transform scale-95 transition-all duration-300">
+            <button onclick="closeAdminModal()" class="absolute top-4 right-4 text-brand-brownSoft hover:text-brand-charcoal transition text-lg h-8 w-8 rounded-full hover:bg-brand-bgWarm flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <!-- 로그인 단 -->
+            <div id="admin-login-sec" class="space-y-4 text-center">
+                <div class="w-12 h-12 rounded-full bg-brand-charcoal text-white flex items-center justify-center text-lg mx-auto shadow-md transform rotate-6">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h3 class="text-base font-black text-brand-charcoal">강사 로그인</h3>
+                <div class="space-y-2 text-xs text-left">
+                    <input type="text" id="admin-id" placeholder="관리자 ID" class="w-full px-3 py-2 border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-accent">
+                    <input type="password" id="admin-pw" placeholder="비밀번호" class="w-full px-3 py-2 border border-brand-borderWarm rounded-lg focus:outline-none focus:border-brand-accent" onkeypress="handleAdminKeyPress(event)">
+                    <p id="admin-error" class="text-[10px] text-red-600 font-semibold mt-1 hidden">❌ 로그인 정보가 일치하지 않습니다.</p>
+                </div>
+                <button onclick="submitAdminLogin()" class="w-full py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl transition shadow cursor-pointer">로그인</button>
+            </div>
+
+            <!-- 관리자 상태 제어 스위치 단 -->
+            <div id="admin-ctrl-sec" class="hidden space-y-4">
+                <div class="flex items-center gap-2 border-b pb-2">
+                    <i class="fa-solid fa-toggle-on text-brand-accent text-lg"></i>
+                    <h3 class="text-base font-black text-brand-charcoal">실습 잠금 제어판</h3>
+                </div>
+                <p class="text-[11px] text-brand-brownSoft leading-normal">이 기기(브라우저)에서 적용될 일차별 강제 잠금 상태를 ON/OFF 토글하여 학생용 해제 상태를 직접 검증하거나 시연할 수 있습니다.</p>
+                <div class="space-y-2 text-xs pt-1">
+                    <div class="flex items-center justify-between p-2.5 rounded-lg border bg-brand-bgWarm/45">
+                        <span class="font-bold text-brand-charcoal">DAY 2 워크북</span>
+                        <input type="checkbox" id="sw-day2" onchange="toggleLockState(2)" class="w-4 h-4 cursor-pointer accent-brand-accent">
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-lg border bg-brand-bgWarm/45">
+                        <span class="font-bold text-brand-charcoal">DAY 3 워크북</span>
+                        <input type="checkbox" id="sw-day3" onchange="toggleLockState(3)" class="w-4 h-4 cursor-pointer accent-brand-accent">
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-lg border bg-brand-bgWarm/45">
+                        <span class="font-bold text-brand-charcoal">DAY 4 워크북</span>
+                        <input type="checkbox" id="sw-day4" onchange="toggleLockState(4)" class="w-4 h-4 cursor-pointer accent-brand-accent">
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-lg border bg-brand-bgWarm/45">
+                        <span class="font-bold text-brand-charcoal">DAY 5 워크북</span>
+                        <input type="checkbox" id="sw-day5" onchange="toggleLockState(5)" class="w-4 h-4 cursor-pointer accent-brand-accent">
+                    </div>
+                </div>
+                <div class="flex gap-2 pt-2 border-t mt-3">
+                    <button onclick="resetAllLocks()" class="flex-1 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-bold text-[10px] rounded-lg transition cursor-pointer">기기 전체 초기화(다시 잠금)</button>
+                    <button onclick="closeAdminModal()" class="flex-1 py-2 bg-brand-bgWarm text-brand-brownSoft hover:bg-brand-borderWarm font-bold text-[10px] rounded-lg transition cursor-pointer text-center">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== [글로벌 알림 토스트 (Toast)] ==================== -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-accent/30 shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-brand-accent text-base"></i>
+        <span id="toast-message">자물쇠가 해제되었습니다!</span>
+    </div>
+
+    <!-- ==================== [CONTROL LOGIC JS] ==================== -->
+    <script>
+        // 코드 최상단 초기 잠금 기본값 정의 (배포 통제용)
+        // true: 잠금 상태로 시작 (학생이 접속했을 때의 초기 기본값)
+        // false: 배포 시 처음부터 잠금 해제
+        const INITIAL_LOCKS = {
+            day1: false,
+            day2: true,
+            day3: true,
+            day4: true,
+            day5: true
+        };
+
+        // 올바른 일차별 패스코드 정의
+        const PASSCODES = {
+            day2: "day02",
+            day3: "day03",
+            day4: "day04",
+            day5: "day05"
+        };
+
+        // 타겟 관리자 로그인 정보
+        const ADMIN_CRED = { id: "admin", pw: "aklabs84!" };
+
+        // 현재 진입 대상 일차 번호 기록 변수
+        let selectedTargetDay = null;
+        let selectedTargetUrl = "";
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initLocksState();
+        });
+
+        // 1. 잠금/해제 상태 복원 및 UI 반영
+        function initLocksState() {
+            for (let i = 2; i <= 5; i++) {
+                const key = `day${i}_unlocked`;
+                let isUnlocked = localStorage.getItem(key);
+                
+                // 만약 로컬스토리지에 값이 없다면 INITIAL_LOCKS 값을 기본값으로 세팅
+                if (isUnlocked === null) {
+                    isUnlocked = !INITIAL_LOCKS[`day${i}`]; // lock = true 이면 unlocked = false
+                    localStorage.setItem(key, isUnlocked ? "true" : "false");
+                } else {
+                    isUnlocked = (isUnlocked === "true");
+                }
+
+                updateDayButtonUI(i, isUnlocked);
+            }
+        }
+
+        // 일차별 버튼 UI 갱신 (자물쇠 아이콘 및 회색 톤다운)
+        function updateDayButtonUI(dayNum, isUnlocked) {
+            const btn = document.getElementById(`btn-day${dayNum}`);
+            const icon = document.getElementById(`lock-icon-${dayNum}`);
+            const btnText = document.getElementById(`btn-text-${dayNum}`);
+            
+            if (isUnlocked) {
+                // 잠금 해제 상태 - 오렌지 액티브 테마
+                btn.className = "px-5 py-2.5 bg-brand-charcoal hover:bg-brand-accent text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer";
+                icon.className = "fa-solid fa-lock-open text-emerald-400";
+                btnText.textContent = `실전 DAY ${dayNum} 워크북 열기 ➔`;
+            } else {
+                // 잠금 잠김 상태 - 비활성 그레이지 톤다운 테마
+                btn.className = "px-5 py-2.5 bg-gray-200 text-gray-500 hover:bg-gray-300 border border-gray-300 font-bold text-xs rounded-xl shadow-sm transition-all duration-200 flex items-center gap-2 cursor-pointer";
+                icon.className = "fa-solid fa-lock text-red-500";
+                btnText.textContent = `DAY ${dayNum} 실습 잠김 (암호 해제 필요)`;
+            }
+
+            // 관리자 스위치 동기화
+            const sw = document.getElementById(`sw-day${dayNum}`);
+            if (sw) {
+                sw.checked = !isUnlocked; // 잠겨있으면 스위치 체크온
+            }
+        }
+
+        // 바로가기 링크 클릭 인터셉터
+        function handleLinkClick(event, dayNum, targetUrl) {
+            const key = `day${dayNum}_unlocked`;
+            const isUnlocked = (localStorage.getItem(key) === "true");
+
+            if (!isUnlocked) {
+                event.preventDefault(); // 기본 이동 무력화
+                openPasscodeModal(dayNum, targetUrl);
+            }
+        }
+
+        // 2. 패스코드 모달 제어
+        function openPasscodeModal(dayNum, targetUrl) {
+            selectedTargetDay = dayNum;
+            selectedTargetUrl = targetUrl;
+            
+            document.getElementById('target-day-num').innerText = dayNum;
+            document.getElementById('passcode-input').value = "";
+            document.getElementById('passcode-error').classList.add('hidden');
+
+            const modal = document.getElementById('passcode-modal');
+            const content = document.getElementById('passcode-modal-content');
+
+            modal.classList.remove('hidden');
+            modal.offsetHeight;
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+
+            setTimeout(() => {
+                document.getElementById('passcode-input').focus();
+            }, 100);
+        }
+
+        function closePasscodeModal() {
+            const modal = document.getElementById('passcode-modal');
+            const content = document.getElementById('passcode-modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function handlePasscodeKeyPress(e) {
+            if (e.key === 'Enter') {
+                submitPasscode();
+            }
+        }
+
+        // 패스코드 검증 제출
+        function submitPasscode() {
+            const inputVal = document.getElementById('passcode-input').value.trim();
+            const correctPass = PASSCODES[`day${selectedTargetDay}`];
+
+            if (inputVal === correctPass) {
+                // 잠금 해제 승인
+                localStorage.setItem(`day${selectedTargetDay}_unlocked`, "true");
+                updateDayButtonUI(selectedTargetDay, true);
+                closePasscodeModal();
+                showToast(`DAY ${selectedTargetDay} 워크북 잠금이 해제되었습니다!`);
+
+                // 탭 새 창으로 즉시 워크북 페이지 이동
+                window.open(selectedTargetUrl, '_blank');
+            } else {
+                // 비정상 패스코드 오류 경고 노출
+                document.getElementById('passcode-error').classList.remove('hidden');
+                document.getElementById('passcode-input').focus();
+            }
+        }
+
+        // 3. 관리자 제어 패널 모달 제어
+        function openAdminModal() {
+            document.getElementById('admin-id').value = "";
+            document.getElementById('admin-pw').value = "";
+            document.getElementById('admin-error').classList.add('hidden');
+            document.getElementById('admin-login-sec').classList.remove('hidden');
+            document.getElementById('admin-ctrl-sec').classList.add('hidden');
+
+            const modal = document.getElementById('admin-modal');
+            const content = document.getElementById('admin-modal-content');
+
+            modal.classList.remove('hidden');
+            modal.offsetHeight;
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeAdminModal() {
+            const modal = document.getElementById('admin-modal');
+            const content = document.getElementById('admin-modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function handleAdminKeyPress(e) {
+            if (e.key === 'Enter') {
+                submitAdminLogin();
+            }
+        }
+
+        // 관리자 로그인 처리
+        function submitAdminLogin() {
+            const id = document.getElementById('admin-id').value.trim();
+            const pw = document.getElementById('admin-pw').value.trim();
+
+            if (id === ADMIN_CRED.id && pw === ADMIN_CRED.pw) {
+                // 로그인 성공 시 스위치 목록 패널 전환
+                document.getElementById('admin-login-sec').classList.add('hidden');
+                document.getElementById('admin-ctrl-sec').classList.remove('hidden');
+                
+                // 현재 로컬스토리지 값에 맞추어 체크박스 동기화
+                for (let i = 2; i <= 5; i++) {
+                    const isUnlocked = (localStorage.getItem(`day${i}_unlocked`) === "true");
+                    document.getElementById(`sw-day${i}`).checked = !isUnlocked; // 잠김 ON 이면 check true
+                }
+            } else {
+                document.getElementById('admin-error').classList.remove('hidden');
+            }
+        }
+
+        // 관리자 스위치 개별 토글
+        function toggleLockState(dayNum) {
+            const isLockedChecked = document.getElementById(`sw-day${dayNum}`).checked;
+            // 스위치가 켜졌다는 것은 잠그는 상태(Locked)로 변경한다는 의미 ➔ Unlocked = false
+            const isUnlocked = !isLockedChecked;
+            localStorage.setItem(`day${dayNum}_unlocked`, isUnlocked ? "true" : "false");
+            updateDayButtonUI(dayNum, isUnlocked);
+        }
+
+        // 기기 전체 다시 잠금 초기화
+        function resetAllLocks() {
+            if (confirm("이 기기의 5일간의 모든 잠금 해제 기록을 삭제하고 초기 상태(비배포 잠금)로 되돌릴까요?")) {
+                for (let i = 2; i <= 5; i++) {
+                    localStorage.removeItem(`day${i}_unlocked`);
+                }
+                initLocksState();
+                closeAdminModal();
+                showToast("모든 일차 잠금 상태가 다시 잠김으로 초기화되었습니다.");
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('hidden');
+            toast.className = "fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-accent/30 shadow-xl flex items-center gap-2 transform translate-y-0 opacity-100 transition duration-300 z-50 animate-bounce";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 right-6 bg-white text-brand-charcoal text-xs font-semibold px-4 py-3 rounded-xl border border-brand-accent/30 shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition duration-300 z-50";
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
