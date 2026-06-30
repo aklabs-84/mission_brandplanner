@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAY 3 최종 산출물: 8장 ISI 기획서 & 발표 슬라이드 덱 | LitTube</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Noto Sans KR', 'Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        brand: {
+                            orange: '#FF6B35', orangeDeep: '#D94E1F', orangeDim: '#FFF0E8',
+                            navy: '#2C3E50', navySoft: '#5A6F85',
+                            bgWarm: '#FDFBF7', borderWarm: '#F2EAE1',
+                            charcoal: '#2C333F', brownSoft: '#6E6259',
+                            teal: '#1A9396', tealDim: '#E6F4F4',
+                            purple: '#7C3AED', purpleDim: '#EDE9FE'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FDFBF7;
+            background-image: linear-gradient(rgba(242,234,225,0.4) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(242,234,225,0.4) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+        .glass-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border: 1px solid #F2EAE1; box-shadow: 0 4px 20px -4px rgba(110,98,89,0.05); transition: all 0.3s ease; }
+        /* Slide mode */
+        .slide-panel { display: none; }
+        .slide-panel.active { display: flex; }
+        .slide-card { transition: opacity 0.4s ease, transform 0.4s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+        .animate-slide-in { animation: slideIn 0.4s ease forwards; }
+        .animate-slide-in-left { animation: slideInLeft 0.4s ease forwards; }
+        .prompt-box { background: #1E1E2E; color: #CDD6F4; border-radius: 16px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.7; }
+    </style>
+</head>
+<body class="text-brand-charcoal min-h-screen p-4 md:p-8 font-sans">
+
+    <!-- Header -->
+    <header class="max-w-6xl mx-auto mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-brand-borderWarm pb-5">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="font-mono text-xs font-bold bg-brand-purple text-white px-2.5 py-1 rounded-full">DAY 3 RESULT</span>
+                <span class="text-xs text-brand-brownSoft font-bold"><i class="fa-solid fa-file-powerpoint mr-1"></i> ISI 기획서 & 발표 슬라이드 덱</span>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight">LitTube 브랜드 8장 기획서</h1>
+            <p class="text-sm text-brand-brownSoft mt-1">Insight → Strategy → Impact 3단 골격 기반 전략 기획서</p>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+            <button onclick="toggleView('report')" id="btn-report" class="text-xs font-bold px-4 py-2 rounded-xl border border-brand-purple bg-brand-purple text-white transition-all cursor-pointer shadow">📄 보고서 보기</button>
+            <button onclick="toggleView('slide')" id="btn-slide" class="text-xs font-bold px-4 py-2 rounded-xl border border-brand-borderWarm bg-white text-brand-brownSoft hover:border-brand-purple hover:text-brand-purple transition-all cursor-pointer">🎤 슬라이드 보기</button>
+        </div>
+    </header>
+
+    <!-- REPORT VIEW -->
+    <div id="report-view" class="max-w-6xl mx-auto">
+        <!-- ISI Framework Banner -->
+        <div class="glass-card rounded-2xl p-5 mb-6">
+            <span class="font-mono text-[10px] text-brand-brownSoft font-bold uppercase tracking-wider block mb-3">ISI 골격 뼈대 (핵심 3단 구조)</span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-brand-orangeDim border border-brand-orange/20 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-1.5"><span class="w-7 h-7 rounded-full bg-brand-orange text-white flex items-center justify-center font-black text-xs">I</span><span class="font-black text-brand-orange text-sm">Insight (통찰)</span></div>
+                    <p class="text-xs text-brand-brownSoft leading-relaxed">알파세대 10명 중 7명이 문해력 저하를 겪고 있음에도 기존 교육은 '억지 독서'만 강요해 효과가 미미함. 아이들은 이미 유튜브 영상 안에 있다.</p>
+                </div>
+                <div class="bg-brand-tealDim border border-brand-teal/20 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-1.5"><span class="w-7 h-7 rounded-full bg-brand-teal text-white flex items-center justify-center font-black text-xs">S</span><span class="font-black text-brand-teal text-sm">Strategy (전략)</span></div>
+                    <p class="text-xs text-brand-brownSoft leading-relaxed">유튜브 영상 스크립트를 AI가 초중고 맞춤형 소설/시/수필로 자동 변환. 독서 펫 '글몽이' 육성 게이미피케이션으로 스스로 읽는 동기를 만든다.</p>
+                </div>
+                <div class="bg-brand-purpleDim border border-brand-purple/20 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-1.5"><span class="w-7 h-7 rounded-full bg-brand-purple text-white flex items-center justify-center font-black text-xs">I</span><span class="font-black text-brand-purple text-sm">Impact (성과)</span></div>
+                    <p class="text-xs text-brand-brownSoft leading-relaxed">6개월 내 전국 100개 학급 파일럿 도입, 독서 완료율 85% 달성. 구독 SaaS 모델로 연 3.6억 ARR 목표, 교육청 납품을 통한 B2G 확장.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8-Page Proposal Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- P1 -->
+            <div class="glass-card rounded-2xl p-4 border-t-4 border-brand-orange">
+                <span class="font-mono text-[10px] font-bold text-brand-orange">P1</span>
+                <h3 class="font-black text-sm mt-1 mb-2">문제 정의</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">청소년 일평균 스마트폰 시청 시간 4.8시간, 연간 독서량 1.2권. 교과서 지문을 반 이상 이해하지 못하는 '문맹 이상, 독해 불능' 세대가 출현하고 있다.</p>
+            </div>
+            <!-- P2 -->
+            <div class="glass-card rounded-2xl p-4 border-t-4 border-brand-teal">
+                <span class="font-mono text-[10px] font-bold text-brand-teal">P2</span>
+                <h3 class="font-black text-sm mt-1 mb-2">시장 기회</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">국내 에듀테크 시장 8.2조 원, 문해력/리터러시 세그먼트 3,500억 원, 연 12.5% 성장. 영상+독서 융합 솔루션은 현재 공백 영역이다.</p>
+            </div>
+            <!-- P3 -->
+            <div class="glass-card rounded-2xl p-4 border-t-4 border-brand-purple">
+                <span class="font-mono text-[10px] font-bold text-brand-purple">P3</span>
+                <h3 class="font-black text-sm mt-1 mb-2">소비자 인사이트</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">아이들은 '책이 싫은 게 아니라, 재미없는 책이 싫다.' 자기가 좋아하는 유튜버의 영상이 소설이 된다면? 거부감보다 호기심이 먼저 온다.</p>
+            </div>
+            <!-- P4 -->
+            <div class="glass-card rounded-2xl p-4 border-t-4 border-brand-orange">
+                <span class="font-mono text-[10px] font-bold text-brand-orange">P4</span>
+                <h3 class="font-black text-sm mt-1 mb-2">제품 컨셉</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">유튜브 URL 입력 → AI(Gemini 2.5) 스크립트 분석 → 초중고 맞춤 소설/시/수필 3종 변환 → 스마트 사전 + 퀴즈 + 독서 펫 '글몽이' 성장 연동.</p>
+            </div>
+            <!-- P5 -->
+            <div class="glass-card rounded-2xl p-4 border-t-4 border-brand-teal">
+                <span class="font-mono text-[10px] font-bold text-brand-teal">P5</span>
+                <h3 class="font-black text-sm mt-1 mb-2">마케팅 전략</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">①유튜브 교육 크리에이터(슈카월드, 과학쿠키) 콜라보 무료 체험 배포. ②학교 방과후 수업 연계 B2B2C 진입. ③교육청 디지털 교과서 파일럿 납품 B2G.</p>
+            </div>
+            <!-- P6 -->
+            <div class="glass-card rounded-2xl p-4 border-t-4 border-brand-purple">
+                <span class="font-mono text-[10px] font-bold text-brand-purple">P6</span>
+                <h3 class="font-black text-sm mt-1 mb-2">실행 일정</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">M1~M2: 앱 MVP 베타 완성 (학교 5곳 파일럿). M3~M6: 국어 선생님 1,000명 얼리어답터 온보딩. M7~M12: 전국 100개 학급 정식 도입.</p>
+            </div>
+            <!-- P7 -->
+            <div class="glass-card rounded-2xl p-4 border-t-4 border-brand-orange">
+                <span class="font-mono text-[10px] font-bold text-brand-orange">P7</span>
+                <h3 class="font-black text-sm mt-1 mb-2">예상 성과</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">6개월 말 MAU 5만 명, 독서 완료율 85%, 단어 암기 속도 4배 향상. 학교 구독 월 30,000원 × 100개 학급 = 연 3.6억 ARR 달성.</p>
+            </div>
+            <!-- P8 -->
+            <div class="glass-card rounded-2xl p-4 border-t-4 border-brand-teal">
+                <span class="font-mono text-[10px] font-bold text-brand-teal">P8</span>
+                <h3 class="font-black text-sm mt-1 mb-2">결론 & 투자 제안</h3>
+                <p class="text-xs text-brand-brownSoft leading-relaxed">초기 개발비 1,800만 원(AI API, UI 개발, 서버). 교육부 에듀테크 진흥 보조금 신청 동시 추진. 투자자 ROI: 12개월 내 SaaS 모델 전환 및 Series A 준비.</p>
+            </div>
+        </div>
+
+        <!-- Prompt Box -->
+        <div class="prompt-box mb-6">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-4">
+                <span style="color:#FF6B35; font-weight:bold; font-family: sans-serif; font-size: 13px;"><i class="fa-solid fa-terminal mr-2"></i>DAY 3 ISI 기획서 최종 프롬프트 (Few-shot 포함)</span>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('prompt3').innerText); alert('복사 완료!');" style="color:#CDD6F4; background:#2D2D40; border:1px solid #44475a; padding:6px 12px; border-radius:8px; font-size:11px; cursor:pointer; font-family:sans-serif;"><i class="fa-solid fa-copy mr-1"></i>복사</button>
+            </div>
+            <pre id="prompt3" style="white-space:pre-wrap;">
+[Goal]
+우리 에듀테크 서비스 'LitTube(리튜브)'의 투자자 및 교육청 담당자를 설득할 수 있는 8장짜리 브랜드 기획서를 작성해줘. ISI(Insight → Strategy → Impact) 구조를 엄격하게 따르고, 각 페이지는 두괄식으로 핵심 메시지를 먼저 밝혀야 해.
+
+[Few-shot 예시 — 이 스타일로 써줘]
+나쁜 예시 (X): "리튜브는 좋은 서비스입니다. 앞으로 많이 발전할 것입니다."
+좋은 예시 (O): "[시장 기회] 3,500억 문해력 에듀테크 시장, 연 12.5% 성장 중. 영상+독서 융합 솔루션은 현재 공백 영역."
+
+나쁜 예시 (X): "학생들이 공부를 싫어해서 문제입니다."
+좋은 예시 (O): "[소비자 인사이트] '책이 싫은 게 아니라, 재미없는 책이 싫다.' 자기가 좋아하는 유튜버의 영상이 소설이 된다면 거부감보다 호기심이 앞선다."
+
+[Context]
+- 서비스명: LitTube (리튜브), 유튜브 스크립트를 초중고 맞춤 소설/시/수필로 AI 변환 + 독서 펫 '글몽이' 게이미피케이션 에듀테크 앱.
+- 타겟: 숏폼 영상 과몰입 초·중·고등학생 및 이들의 학부모. 학교 담당 교사(B2B) 및 교육청(B2G).
+- 시장 데이터: 에듀테크 8.2조, 문해력 세그먼트 3,500억, 연 12.5% 성장, 독서 완료율 파일럿 85%.
+
+[Sample — 8장 구조]
+P1: 문제 정의 / P2: 시장 기회 / P3: 소비자 인사이트 / P4: 제품 컨셉 / P5: 마케팅 전략 / P6: 실행 일정 / P7: 예상 성과 / P8: 결론 및 투자 제안
+
+[Role]
+너는 스타트업 엑셀러레이터 출신의 시니어 사업기획자야. 투자자를 설득한 경험이 있는 사람으로서, 딱딱하지 않고 스토리가 흐르듯 읽히는 기획서를 써줘.
+            </pre>
+        </div>
+    </div>
+
+    <!-- SLIDE VIEW -->
+    <div id="slide-view" class="max-w-6xl mx-auto hidden">
+        <div class="glass-card rounded-3xl overflow-hidden shadow-xl">
+            <!-- Slide Stage -->
+            <div id="slide-stage" class="relative bg-gradient-to-br from-brand-charcoal to-slate-900 min-h-[400px] flex items-center justify-center p-8 md:p-14">
+                <!-- Slide 1 -->
+                <div class="slide-card absolute inset-0 flex flex-col items-center justify-center text-center p-10 active animate-slide-in" data-slide="0">
+                    <span class="font-mono text-brand-orange text-xs font-bold uppercase tracking-widest mb-2 block">LitTube Brand Proposal — P1</span>
+                    <h2 class="text-white font-black text-3xl md:text-5xl leading-tight mb-4">아이들이 <span class="text-brand-orange">책</span>을<br>싫어하는 게 아닙니다.<br><span class="text-brand-teal">재미없는 책</span>이 문제입니다.</h2>
+                    <p class="text-slate-400 text-sm max-w-lg leading-relaxed mt-2">청소년 10명 중 7명이 겪는 문해력 위기 — 일평균 스마트폰 4.8시간, 연 독서량 1.2권의 극명한 격차.</p>
+                </div>
+                <!-- Slide 2 -->
+                <div class="slide-card absolute inset-0 flex flex-col items-center justify-center text-center p-10 hidden" data-slide="1">
+                    <span class="font-mono text-brand-teal text-xs font-bold uppercase tracking-widest mb-2 block">P2 · 시장 기회</span>
+                    <h2 class="text-white font-black text-3xl md:text-4xl leading-tight mb-4"><span class="text-brand-teal">3,500억 원</span> 문해력 시장,<br>공백 구간이 열려 있다</h2>
+                    <div class="grid grid-cols-3 gap-4 mt-4 max-w-lg">
+                        <div class="bg-white/10 rounded-xl p-3"><p class="text-brand-orange font-black text-xl">8.2조</p><p class="text-slate-300 text-xs mt-1">에듀테크 시장</p></div>
+                        <div class="bg-white/10 rounded-xl p-3"><p class="text-brand-teal font-black text-xl">+12.5%</p><p class="text-slate-300 text-xs mt-1">연간 성장률</p></div>
+                        <div class="bg-white/10 rounded-xl p-3"><p class="text-brand-purple font-black text-xl">0개</p><p class="text-slate-300 text-xs mt-1">영상→문학 솔루션</p></div>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="slide-card absolute inset-0 flex flex-col items-center justify-center text-center p-10 hidden" data-slide="2">
+                    <span class="font-mono text-brand-purple text-xs font-bold uppercase tracking-widest mb-2 block">P3 · 소비자 인사이트</span>
+                    <div class="bg-brand-orange/10 border border-brand-orange/30 rounded-2xl p-6 max-w-lg mx-auto">
+                        <p class="text-white text-2xl font-black leading-tight">"침착맨 영상이<br><span class="text-brand-orange">소설</span>이 된다면<br>읽을 것 같아요."</p>
+                        <p class="text-slate-400 text-xs mt-3">— 실제 중학교 2학년 학생 피드백, 2026년 1월 포커스그룹 인터뷰</p>
+                    </div>
+                </div>
+                <!-- Slide 4 -->
+                <div class="slide-card absolute inset-0 flex flex-col items-center justify-center text-center p-10 hidden" data-slide="3">
+                    <span class="font-mono text-brand-orange text-xs font-bold uppercase tracking-widest mb-2 block">P4 · 제품 컨셉</span>
+                    <h2 class="text-white font-black text-2xl md:text-3xl mb-6">LitTube — 유튜브를 문학으로</h2>
+                    <div class="flex flex-col md:flex-row gap-3 text-sm text-left max-w-xl">
+                        <div class="bg-white/10 rounded-xl p-3 flex-1"><span class="text-brand-orange font-bold block mb-1">① 스캔</span><span class="text-slate-300 text-xs">유튜브 URL 입력 → AI 스크립트 추출</span></div>
+                        <div class="text-brand-orange self-center font-black hidden md:block">→</div>
+                        <div class="bg-white/10 rounded-xl p-3 flex-1"><span class="text-brand-teal font-bold block mb-1">② 변환</span><span class="text-slate-300 text-xs">초중고 맞춤 소설/시/수필 3종 생성</span></div>
+                        <div class="text-brand-orange self-center font-black hidden md:block">→</div>
+                        <div class="bg-white/10 rounded-xl p-3 flex-1"><span class="text-brand-purple font-bold block mb-1">③ 성장</span><span class="text-slate-300 text-xs">퀴즈 + 글몽이 레벨업 + 단어장</span></div>
+                    </div>
+                </div>
+                <!-- Slide 5 -->
+                <div class="slide-card absolute inset-0 flex flex-col items-center justify-center text-center p-10 hidden" data-slide="4">
+                    <span class="font-mono text-brand-teal text-xs font-bold uppercase tracking-widest mb-2 block">P5~P6 · 전략 & 일정</span>
+                    <h2 class="text-white font-black text-2xl md:text-3xl mb-5">3단계 GTM 전략</h2>
+                    <div class="flex flex-col gap-3 max-w-md text-sm text-left">
+                        <div class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-brand-orange text-white flex items-center justify-center font-black text-xs flex-shrink-0 mt-0.5">1</span><div><p class="text-white font-bold text-xs">B2C 무료 바이럴</p><p class="text-slate-400 text-xs">유튜브 크리에이터 콜라보, 슈카월드/과학쿠키 팬덤 배포</p></div></div>
+                        <div class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-brand-teal text-white flex items-center justify-center font-black text-xs flex-shrink-0 mt-0.5">2</span><div><p class="text-white font-bold text-xs">B2B 학교 구독</p><p class="text-slate-400 text-xs">방과후 수업 연계, 담임 교사 얼리어답터 1,000명 온보딩</p></div></div>
+                        <div class="flex items-start gap-3"><span class="w-6 h-6 rounded-full bg-brand-purple text-white flex items-center justify-center font-black text-xs flex-shrink-0 mt-0.5">3</span><div><p class="text-white font-bold text-xs">B2G 교육청 납품</p><p class="text-slate-400 text-xs">디지털 교과서 정책 연계, 전국 100개 학급 파일럿</p></div></div>
+                    </div>
+                </div>
+                <!-- Slide 6 -->
+                <div class="slide-card absolute inset-0 flex flex-col items-center justify-center text-center p-10 hidden" data-slide="5">
+                    <span class="font-mono text-brand-purple text-xs font-bold uppercase tracking-widest mb-2 block">P7~P8 · 성과 & 결론</span>
+                    <h2 class="text-white font-black text-3xl md:text-4xl mb-5"><span class="text-brand-orange">1,800만 원</span>으로<br><span class="text-brand-teal">연 3.6억 ARR</span>을 만든다</h2>
+                    <p class="text-slate-400 text-sm max-w-md leading-relaxed">6개월 말 MAU 5만, 독서 완료율 85%, 단어 습득 속도 4배. 학교 구독 월 30,000원 × 100개 학급으로 연간 3.6억 ARR 달성 후 Series A 전환.</p>
+                    <div class="mt-5 bg-brand-orange text-white font-black text-sm px-6 py-3 rounded-full cursor-default">투자 요청: 초기 개발비 1,800만 원 🚀</div>
+                </div>
+
+                <!-- Nav Arrows -->
+                <button onclick="changeSlide(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center cursor-pointer transition z-10"><i class="fa-solid fa-chevron-left"></i></button>
+                <button onclick="changeSlide(1)" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center cursor-pointer transition z-10"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <!-- Slide Script & Indicators -->
+            <div class="p-5 bg-white border-t border-brand-borderWarm">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="font-mono text-[10px] font-bold text-brand-brownSoft uppercase">발표 대본</span>
+                    <div class="flex gap-1.5 ml-auto" id="slide-dots"></div>
+                </div>
+                <div id="slide-script" class="text-sm text-brand-charcoal leading-relaxed bg-brand-bgWarm rounded-xl p-4 border border-brand-borderWarm font-medium"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="max-w-6xl mx-auto mt-8 border-t border-brand-borderWarm pt-4 text-center">
+        <a href="https://litt.ly/aklabs" target="_blank" class="text-xs text-brand-brownSoft hover:text-brand-orange transition-all font-mono font-bold">© 2026 AK LABS (https://litt.ly/aklabs)</a>
+    </footer>
+
+<script>
+    const slides = [
+        { script: "안녕하세요! 저는 글터수호대 팀장입니다. 오늘 소개할 LitTube(리튜브)는 '아이들이 책을 싫어하는 게 아니라, 재미없는 책이 싫다'는 진실에서 출발합니다. 청소년 10명 중 7명이 문해력 저하를 겪는 오늘, 우리는 아이들이 이미 있는 곳인 유튜브에서 해답을 찾았습니다." },
+        { script: "국내 에듀테크 시장은 8.2조 원 규모입니다. 그 중 문해력/리터러시 세그먼트는 3,500억 원으로 연 12.5% 성장 중이지만, 영상과 문학 독서를 결합한 솔루션은 현재 시장에 단 하나도 없습니다. 이것이 우리의 진입 기회입니다." },
+        { script: "저희가 실제로 포커스그룹 인터뷰를 진행했을 때, 중학교 2학년 학생이 이런 말을 했습니다. '침착맨 영상이 소설이 된다면 읽을 것 같아요.' 아이들은 독서를 거부하는 게 아닙니다. 지루한 소재를 거부하는 겁니다." },
+        { script: "리튜브의 핵심 흐름은 3단계입니다. 첫째, 유튜브 URL을 입력합니다. 둘째, AI가 스크립트를 추출해 초중고 수준에 맞는 소설, 시, 수필 세 가지 문학 형식으로 변환합니다. 셋째, 퀴즈와 독서 펫 '글몽이' 레벨업 시스템이 학습을 게임처럼 지속하게 만듭니다." },
+        { script: "시장 진입 전략은 3단계입니다. B2C 단계에서 유튜브 크리에이터 콜라보로 바이럴을 만들고, B2B로 학교 구독을 확보한 뒤, B2G로 교육청 디지털 교과서 정책에 연동하여 전국 100개 학급 파일럿 도입을 목표로 합니다. M1에서 MVP를 완성하고 M12까지 100개 학급에 정식 도입합니다." },
+        { script: "투자 규모는 초기 개발비 1,800만 원입니다. 6개월 말 MAU 5만 명, 독서 완료율 85%, 단어 습득 속도 4배 향상. 학교 구독 월 30,000원 기준 100개 학급이면 연간 3.6억 ARR을 달성하게 됩니다. 교육부 에듀테크 보조금 신청과 동시에 Series A를 준비하겠습니다. 감사합니다!" },
+    ];
+
+    let currentSlide = 0;
+    let direction = 1;
+
+    function renderDots() {
+        const dots = document.getElementById('slide-dots');
+        dots.innerHTML = '';
+        slides.forEach((_, i) => {
+            const d = document.createElement('div');
+            d.className = `w-2 h-2 rounded-full transition-all cursor-pointer ${i === currentSlide ? 'bg-brand-orange w-4' : 'bg-brand-borderWarm'}`;
+            d.onclick = () => goSlide(i);
+            dots.appendChild(d);
+        });
+    }
+
+    function updateSlide() {
+        const cards = document.querySelectorAll('.slide-card');
+        cards.forEach((c, i) => {
+            c.classList.remove('active', 'animate-slide-in', 'animate-slide-in-left');
+            if (i === currentSlide) {
+                c.classList.remove('hidden');
+                c.classList.add('active', direction > 0 ? 'animate-slide-in' : 'animate-slide-in-left');
+            } else {
+                c.classList.add('hidden');
+            }
+        });
+        document.getElementById('slide-script').textContent = slides[currentSlide].script;
+        renderDots();
+    }
+
+    function changeSlide(dir) {
+        direction = dir;
+        currentSlide = (currentSlide + dir + slides.length) % slides.length;
+        updateSlide();
+    }
+
+    function goSlide(i) {
+        direction = i > currentSlide ? 1 : -1;
+        currentSlide = i;
+        updateSlide();
+    }
+
+    function toggleView(view) {
+        const report = document.getElementById('report-view');
+        const slide = document.getElementById('slide-view');
+        const btnR = document.getElementById('btn-report');
+        const btnS = document.getElementById('btn-slide');
+        if (view === 'slide') {
+            report.classList.add('hidden');
+            slide.classList.remove('hidden');
+            btnS.className = 'text-xs font-bold px-4 py-2 rounded-xl border border-brand-purple bg-brand-purple text-white transition-all cursor-pointer shadow';
+            btnR.className = 'text-xs font-bold px-4 py-2 rounded-xl border border-brand-borderWarm bg-white text-brand-brownSoft hover:border-brand-purple hover:text-brand-purple transition-all cursor-pointer';
+        } else {
+            slide.classList.add('hidden');
+            report.classList.remove('hidden');
+            btnR.className = 'text-xs font-bold px-4 py-2 rounded-xl border border-brand-purple bg-brand-purple text-white transition-all cursor-pointer shadow';
+            btnS.className = 'text-xs font-bold px-4 py-2 rounded-xl border border-brand-borderWarm bg-white text-brand-brownSoft hover:border-brand-purple hover:text-brand-purple transition-all cursor-pointer';
+        }
+    }
+
+    document.addEventListener('keydown', e => {
+        if (document.getElementById('slide-view').classList.contains('hidden')) return;
+        if (e.key === 'ArrowRight') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+    });
+
+    updateSlide();
+</script>
+</body>
+</html>

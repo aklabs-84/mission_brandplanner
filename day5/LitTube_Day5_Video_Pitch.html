@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAY 5 최종 산출물: 숏폼 홍보 영상 시뮬레이터 & 피칭 대본 | LitTube</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Noto Sans KR', 'Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: {
+                        brand: {
+                            orange: '#FF6B35', orangeDeep: '#D94E1F', orangeDim: '#FFF0E8',
+                            navy: '#2C3E50', bgWarm: '#FDFBF7', borderWarm: '#F2EAE1',
+                            charcoal: '#2C333F', brownSoft: '#6E6259',
+                            teal: '#1A9396', tealDim: '#E6F4F4',
+                            purple: '#7C3AED', purpleDim: '#EDE9FE',
+                            good: '#4F772D', goodDim: '#EAF0E2',
+                            gold: '#F59E0B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FDFBF7;
+            background-image: linear-gradient(rgba(242,234,225,0.4) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(242,234,225,0.4) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+        .glass-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border: 1px solid #F2EAE1; box-shadow: 0 6px 24px -6px rgba(110,98,89,0.07); }
+
+        /* Phone Frame */
+        .phone-frame {
+            width: 200px;
+            aspect-ratio: 9/16;
+            background: #1A1A2E;
+            border-radius: 28px;
+            border: 5px solid #2C333F;
+            box-shadow: 0 24px 60px -12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .phone-notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 70px; height: 18px;
+            background: #2C333F;
+            border-radius: 0 0 14px 14px;
+            z-index: 20;
+        }
+        /* Video Scenes */
+        .video-scene {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 16px;
+            opacity: 0; transition: opacity 0.6s ease;
+            pointer-events: none;
+        }
+        .video-scene.active { opacity: 1; pointer-events: auto; }
+
+        /* Scene 1 — dark room */
+        .scene-1 { background: linear-gradient(135deg, #0D0D1A 0%, #1A1A3A 100%); }
+        /* Scene 2 — warm vibrant */
+        .scene-2 { background: linear-gradient(135deg, #2C333F 0%, #1A4A4A 100%); }
+        /* Scene 3 — CTA bright */
+        .scene-3 { background: linear-gradient(135deg, #FF6B35 0%, #D94E1F 100%); }
+
+        /* Play button */
+        .play-btn {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 10;
+            background: rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .play-btn:hover { background: rgba(0,0,0,0.2); }
+        .play-icon {
+            width: 52px; height: 52px;
+            background: rgba(255,107,53,0.9);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: white;
+            box-shadow: 0 0 30px rgba(255,107,53,0.5);
+            transition: transform 0.2s;
+        }
+        .play-btn:hover .play-icon { transform: scale(1.1); }
+
+        /* Progress bar */
+        #video-progress { transition: width 0.1s linear; }
+
+        /* Timeline dots */
+        .timeline-dot { transition: all 0.3s; }
+        .timeline-dot.active { background: #FF6B35 !important; transform: scale(1.3); }
+
+        /* Subtitle animate */
+        @keyframes subtitleIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+        .subtitle-animate { animation: subtitleIn 0.4s ease forwards; }
+
+        /* Pitching cards */
+        .pitch-card {
+            border-left: 4px solid;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .pitch-card:hover { transform: translateX(4px); }
+
+        /* Prompt box */
+        .prompt-box { background: #1E1E2E; color: #CDD6F4; border-radius: 16px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; line-height: 1.75; }
+
+        /* Timer pulse */
+        @keyframes timerPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        .timer-pulse { animation: timerPulse 1s ease-in-out infinite; }
+        
+        .fade-in { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    </style>
+</head>
+<body class="text-brand-charcoal min-h-screen p-4 md:p-8 font-sans">
+
+    <!-- Header -->
+    <header class="max-w-6xl mx-auto mb-7 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-brand-borderWarm pb-5">
+        <div>
+            <div class="flex items-center gap-2 mb-1.5">
+                <span class="font-mono text-xs font-bold bg-gradient-to-r from-brand-orange to-brand-purple text-white px-2.5 py-1 rounded-full">DAY 5 RESULT · FINAL</span>
+                <span class="text-xs text-brand-brownSoft font-bold"><i class="fa-solid fa-clapperboard mr-1"></i> 홍보 영상 & 최종 피칭 대본</span>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight">LitTube 숏폼 홍보 영상 & 5단 피칭 대본</h1>
+            <p class="text-sm text-brand-brownSoft mt-1">Google Vids + pomelli로 제작한 최종 론칭 패키지</p>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono">
+            <span class="bg-brand-goodDim text-brand-good border border-brand-good/20 px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-brand-good timer-pulse inline-block"></span>LIVE 배포 완료</span>
+        </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-7">
+
+        <!-- LEFT: Phone Simulator + Timeline -->
+        <div class="lg:col-span-2 space-y-5">
+            <!-- Phone -->
+            <div class="glass-card rounded-2xl p-6 flex flex-col items-center gap-5">
+                <div class="text-center">
+                    <h2 class="font-black text-base"><i class="fa-solid fa-mobile-screen text-brand-orange mr-1.5"></i>숏폼 영상 플레이어</h2>
+                    <p class="text-xs text-brand-brownSoft mt-0.5">▶ 버튼을 눌러 20초 영상을 체험해 보세요</p>
+                </div>
+
+                <!-- Phone Frame -->
+                <div class="phone-frame" id="phone">
+                    <div class="phone-notch"></div>
+
+                    <!-- SCENE 1 -->
+                    <div class="video-scene scene-1 active" id="scene-1">
+                        <p class="text-[9px] text-slate-400 font-mono mb-1 text-center">새벽 2시, 자취방</p>
+                        <div class="text-4xl mb-1">🌙</div>
+                        <p class="text-white text-center font-black text-sm leading-tight">배고파...<br>배달앱은<br>최소주문 2만원</p>
+                        <p class="text-slate-400 text-[9px] mt-2 text-center">시험기간, 자취생의 현실</p>
+                        <div class="mt-2 text-[8px] text-slate-500 font-mono text-center">[SCENE 1 · 0:00~0:07]</div>
+                    </div>
+
+                    <!-- SCENE 2 -->
+                    <div class="video-scene scene-2" id="scene-2">
+                        <p class="text-[9px] text-brand-teal font-mono font-bold mb-2 text-center subtitle-animate">유튜브를 문학으로 📚</p>
+                        <div class="text-3xl mb-2 subtitle-animate">🐾</div>
+                        <div class="bg-white/10 rounded-lg px-3 py-2 mb-2 subtitle-animate">
+                            <p class="text-white text-[11px] font-black text-center leading-tight">슈카월드 영상 넣기<br>→ 소설로 변환<br>→ 글몽이 레벨업!</p>
+                        </div>
+                        <div class="flex gap-2 subtitle-animate">
+                            <span class="text-[9px] text-brand-orange font-bold">📖 소설</span>
+                            <span class="text-[9px] text-brand-teal font-bold">🌸 시</span>
+                            <span class="text-[9px] text-brand-purple font-bold">✍️ 수필</span>
+                        </div>
+                        <p class="text-[8px] text-slate-400 font-mono mt-2">[SCENE 2 · 0:07~0:15]</p>
+                    </div>
+
+                    <!-- SCENE 3 -->
+                    <div class="video-scene scene-3" id="scene-3">
+                        <p class="text-white font-black text-center text-base leading-tight mb-2 subtitle-animate">문해력 성장<br>지금 무료 체험!</p>
+                        <div class="bg-white rounded-xl px-4 py-3 text-center mb-2 subtitle-animate">
+                            <p class="text-brand-orange font-black text-xs">LitTube 리튜브</p>
+                            <p class="text-brand-charcoal text-[9px] font-bold mt-0.5">📚 glittersuhodae.netlify.app</p>
+                        </div>
+                        <div class="bg-white/20 border border-white/30 rounded-lg p-2 subtitle-animate">
+                            <div class="w-20 h-20 bg-white/20 rounded-lg flex items-center justify-center text-white text-lg mx-auto">
+                                <i class="fa-solid fa-qrcode text-3xl"></i>
+                            </div>
+                            <p class="text-white text-[8px] text-center mt-1">QR 스캔으로 바로 접속</p>
+                        </div>
+                        <p class="text-white/70 text-[8px] font-mono mt-2">[SCENE 3 · 0:15~0:20]</p>
+                    </div>
+
+                    <!-- Play button overlay -->
+                    <div class="play-btn" id="play-btn" onclick="playVideo()">
+                        <div class="play-icon">
+                            <i class="fa-solid fa-play ml-1 text-base"></i>
+                        </div>
+                    </div>
+
+                    <!-- Bottom HUD -->
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 z-10">
+                        <div class="flex justify-between text-[8px] text-white/70 font-mono mb-1">
+                            <span id="vid-time">0:00</span>
+                            <span>0:20</span>
+                        </div>
+                        <div class="h-1 bg-white/20 rounded-full overflow-hidden">
+                            <div id="video-progress" class="h-full bg-brand-orange rounded-full" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Indicators -->
+                <div class="w-full">
+                    <p class="text-xs font-bold text-brand-brownSoft mb-2.5 text-center">장면 타임라인</p>
+                    <div class="flex items-center gap-0">
+                        <div class="flex flex-col items-center flex-1 cursor-pointer" onclick="jumpScene(0)">
+                            <div class="timeline-dot active w-4 h-4 rounded-full bg-brand-orange border-2 border-white shadow-md mb-1" id="dot-0"></div>
+                            <span class="font-mono text-[9px] text-brand-brownSoft font-bold text-center leading-tight">SCENE 1<br>0:00</span>
+                        </div>
+                        <div class="flex-1 h-0.5 bg-brand-borderWarm -mt-4"></div>
+                        <div class="flex flex-col items-center flex-1 cursor-pointer" onclick="jumpScene(1)">
+                            <div class="timeline-dot w-4 h-4 rounded-full bg-brand-borderWarm border-2 border-white shadow-md mb-1" id="dot-1"></div>
+                            <span class="font-mono text-[9px] text-brand-brownSoft font-bold text-center leading-tight">SCENE 2<br>0:07</span>
+                        </div>
+                        <div class="flex-1 h-0.5 bg-brand-borderWarm -mt-4"></div>
+                        <div class="flex flex-col items-center flex-1 cursor-pointer" onclick="jumpScene(2)">
+                            <div class="timeline-dot w-4 h-4 rounded-full bg-brand-borderWarm border-2 border-white shadow-md mb-1" id="dot-2"></div>
+                            <span class="font-mono text-[9px] text-brand-brownSoft font-bold text-center leading-tight">SCENE 3<br>0:15</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Replay button -->
+                <button id="replay-btn" onclick="resetVideo()" class="hidden w-full bg-brand-orange hover:bg-brand-orangeDeep text-white font-bold text-xs py-2.5 rounded-xl cursor-pointer transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> 다시 재생
+                </button>
+            </div>
+
+            <!-- Scene Detail Cards -->
+            <div class="space-y-3">
+                <div class="glass-card rounded-xl p-3.5">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="bg-brand-charcoal text-white font-mono font-bold text-[10px] px-2 py-0.5 rounded">SCENE 1</span>
+                        <span class="text-[10px] text-brand-brownSoft">0:00 ~ 0:07</span>
+                    </div>
+                    <p class="text-xs text-brand-charcoal font-medium leading-relaxed"><strong>🌙 오프닝 후크</strong> — 시험기간 새벽, 배달앱을 켰다 끄는 자취생의 공감 장면. 배경음: 무거운 Lo-fi 비트. 나레이션: "이 시간, 당신의 머리를 채울 수 있는 게 있다면?"</p>
+                </div>
+                <div class="glass-card rounded-xl p-3.5">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="bg-brand-teal text-white font-mono font-bold text-[10px] px-2 py-0.5 rounded">SCENE 2</span>
+                        <span class="text-[10px] text-brand-brownSoft">0:07 ~ 0:15</span>
+                    </div>
+                    <p class="text-xs text-brand-charcoal font-medium leading-relaxed"><strong>✨ 솔루션 시연</strong> — 유튜브 URL 입력 → 소설 변환 → 글몽이 레벨업 화면 전환. 나레이션: "즐겨보던 유튜브가 소설이 됩니다. 글몽이가 함께 성장합니다."</p>
+                </div>
+                <div class="glass-card rounded-xl p-3.5">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <span class="bg-brand-orange text-white font-mono font-bold text-[10px] px-2 py-0.5 rounded">SCENE 3</span>
+                        <span class="text-[10px] text-brand-brownSoft">0:15 ~ 0:20</span>
+                    </div>
+                    <p class="text-xs text-brand-charcoal font-medium leading-relaxed"><strong>🎯 마무리 CTA</strong> — 랜딩 페이지 QR코드 + URL 풀스크린 등장. "지금 무료로 글몽이를 만나세요!" 텍스트와 함께 론칭 마감.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Pitching Script + Prompt -->
+        <div class="lg:col-span-3 space-y-6">
+            
+            <!-- 5단 피칭 타이머 카드 -->
+            <div class="glass-card rounded-2xl p-6">
+                <h2 class="font-black text-lg mb-1"><i class="fa-solid fa-microphone text-brand-orange mr-2"></i>5분 최종 론칭 피칭 대본</h2>
+                <p class="text-xs text-brand-brownSoft mb-5">DAY 5 발표를 위한 5단 스토리 피칭 — 총 4분 30초~5분</p>
+                
+                <div class="space-y-3.5">
+                    <!-- Step 1 -->
+                    <div class="pitch-card glass-card rounded-xl p-4 border-brand-orange">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-7 h-7 rounded-full bg-brand-orange text-white flex items-center justify-center font-black text-xs">1</span>
+                            <span class="font-black text-brand-charcoal text-sm">오프닝 후크</span>
+                            <span class="ml-auto font-mono text-[10px] text-brand-brownSoft bg-brand-orangeDim px-2 py-0.5 rounded-full">⏱ 30초</span>
+                        </div>
+                        <p class="text-xs text-brand-brownSoft leading-relaxed italic">"손들어보세요, 오늘 유튜브 30분 이상 보신 분? 그럼 오늘 책 한 페이지 이상 읽으신 분은요? 우리 아이들도 지금 이 상황입니다. 그 간극을 메우는 것, LitTube가 합니다."</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="pitch-card glass-card rounded-xl p-4 border-brand-navy">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-7 h-7 rounded-full bg-brand-navy text-white flex items-center justify-center font-black text-xs">2</span>
+                            <span class="font-black text-brand-charcoal text-sm">문제 정의</span>
+                            <span class="ml-auto font-mono text-[10px] text-brand-brownSoft bg-slate-100 px-2 py-0.5 rounded-full">⏱ 1분</span>
+                        </div>
+                        <p class="text-xs text-brand-brownSoft leading-relaxed italic">"청소년 일평균 스마트폰 사용 시간은 4.8시간. 연간 독서량은 1.2권. 교과서 지문을 반 이상 이해하지 못하는 아이들이 늘고 있습니다. 문제는 아이들이 책을 싫어하는 게 아닙니다. 재미없는 책이 싫은 겁니다."</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="pitch-card glass-card rounded-xl p-4 border-brand-teal">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-7 h-7 rounded-full bg-brand-teal text-white flex items-center justify-center font-black text-xs">3</span>
+                            <span class="font-black text-brand-charcoal text-sm">솔루션 시연</span>
+                            <span class="ml-auto font-mono text-[10px] text-brand-brownSoft bg-brand-tealDim px-2 py-0.5 rounded-full">⏱ 1분 30초</span>
+                        </div>
+                        <p class="text-xs text-brand-brownSoft leading-relaxed italic">"지금 데모를 보여드리겠습니다. 슈카월드 유튜브 URL 하나를 LitTube에 입력합니다. AI가 스크립트를 분석하여 중학교 2학년 수준의 소설로 변환합니다. 독서 펫 '글몽이'가 등장하고, 퀴즈를 풀면 경험치와 골드가 쌓입니다. 게임처럼 시작했지만 아이는 어느새 문학을 읽고 있습니다."</p>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="pitch-card glass-card rounded-xl p-4 border-brand-purple">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-7 h-7 rounded-full bg-brand-purple text-white flex items-center justify-center font-black text-xs">4</span>
+                            <span class="font-black text-brand-charcoal text-sm">홍보 영상 상영</span>
+                            <span class="ml-auto font-mono text-[10px] text-brand-brownSoft bg-brand-purpleDim px-2 py-0.5 rounded-full">⏱ 1분</span>
+                        </div>
+                        <p class="text-xs text-brand-brownSoft leading-relaxed italic">"20초 숏폼 홍보 영상을 보여드리겠습니다. Google Vids로 직접 제작했습니다. [영상 재생] 어떠신가요? 이 영상 하나가 SNS에서 자취생 커뮤니티와 학부모 카페로 빠르게 퍼질 것입니다."</p>
+                    </div>
+                    <!-- Step 5 -->
+                    <div class="pitch-card glass-card rounded-xl p-4 border-brand-gold">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="w-7 h-7 rounded-full bg-brand-gold text-white flex items-center justify-center font-black text-xs">5</span>
+                            <span class="font-black text-brand-charcoal text-sm">마무리 CTA & 투자 제안</span>
+                            <span class="ml-auto font-mono text-[10px] text-brand-brownSoft bg-amber-50 px-2 py-0.5 rounded-full">⏱ 30초</span>
+                        </div>
+                        <p class="text-xs text-brand-brownSoft leading-relaxed italic">"저희는 단 1,800만 원의 초기 개발비로 6개월 내 MAU 5만 명, 연 3.6억 ARR을 목표로 합니다. 교육부 에듀테크 보조금을 함께 신청하고, Series A를 준비하겠습니다. 글터수호대가 대한민국 청소년의 문해력을 지킵니다. 감사합니다!"</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prompt Box -->
+            <div class="prompt-box">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-4">
+                    <span style="color:#FF6B35; font-weight:bold; font-family:sans-serif; font-size:13px;"><i class="fa-solid fa-terminal mr-2"></i>DAY 5 Google Vids 영상 & 피칭 대본 최종 프롬프트</span>
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('prompt5').innerText); alert('복사 완료!');" style="color:#CDD6F4;background:#2D2D40;border:1px solid #44475a;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-family:sans-serif;"><i class="fa-solid fa-copy mr-1"></i>복사</button>
+                </div>
+                <pre id="prompt5" style="white-space:pre-wrap; font-size:10.5px; color:#CDD6F4;">
+▶ [Gemini Omni Video — 숏폼 영상 생성 프롬프트]
+
+아래 내용을 바탕으로 9:16 세로형 SNS 숏폼 영상(20초)을 만들어줘.
+
+[영상 구성]
+- Scene 1 (0~7초): 어두운 자취방, 새벽 2시, 배달앱을 켰다 끄는 지친 대학생. 
+  카메라: 서서히 줌인 → 얼굴 클로즈업.
+  자막: "이 시간, 당신의 머리를 채울 수 있는 게 있다면?"
+  
+- Scene 2 (7~15초): 밝고 활기차게 전환. LitTube 앱 화면, 유튜브 URL 입력 → 소설 변환 → 글몽이 레벨업 이펙트.
+  카메라: 빠른 컷 전환, 화면 슬라이드 인 효과.
+  자막: "즐겨보던 유튜브가 소설이 됩니다. 글몽이가 함께 성장합니다."
+  
+- Scene 3 (15~20초): 오렌지 배경 풀스크린. LitTube QR + URL 노출.
+  자막: "지금 무료로 글몽이를 만나세요!"
+  CTA: "📚 glittersuhodae.netlify.app"
+
+[음악 & 나레이션]
+- Scene 1: 무겁고 잔잔한 Lo-fi 피아노 (슬픔 → 전환 암시)
+- Scene 2~3: 경쾌한 상승 비트, AI 성우 나레이션 활기차게
+- AI 성우 톤: 밝고 신뢰감 있는 20대 여성 목소리
+
+---
+
+▶ [Google Vids — AI 성우 나레이션 원고 & 최종 피칭 대본 요청 프롬프트]
+
+[Goal]
+LitTube(리튜브) 에듀테크 스타트업의 최종 데모데이 발표를 위한 두 가지 산출물을 만들어줘:
+1. Google Vids에 넣을 20초 숏폼 영상 AI 성우 나레이션 원고 (Scene 1~3 분량)
+2. 투자자/교수님 앞에서 발표할 5분 짜리 론칭 피칭 대본 (5단 구조)
+
+[Context]
+- 브랜드: LitTube(리튜브), 유튜브 스크립트를 초중고 맞춤 소설/시/수필 변환 + 독서 펫 '글몽이' 게이미피케이션
+- 핵심 수치: 독서 완료율 85%, 단어 습득 4.2배, MAU 목표 5만, 연 ARR 3.6억, 초기 투자 요청 1,800만 원
+- 발표 청중: 대학 교수진 + 교육 투자자 + 에듀테크 심사위원
+
+[Sample — 피칭 스토리 구조]
+① 오프닝 후크(30초): 청중이 공감할 수 있는 충격적인 질문이나 사실로 시작
+② 문제 정의(1분): 숫자 근거로 문제 심각성 강조
+③ 솔루션 시연(1분 30초): 실제 데모 화면과 함께 설명
+④ 홍보 영상 상영(1분): 준비한 숏폼 영상 재생
+⑤ 마무리 CTA(30초): 투자 금액, 기대 ROI, 힘 있는 클로징 문장
+
+[Role]
+너는 스타트업 IR 전문 컨설턴트야. 청중의 감정을 움직이면서도 논리적으로 설득하는 피칭 대본을 써줘. 스티브 잡스처럼 단순하고 강렬한 문장을 써줘.
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <footer class="max-w-6xl mx-auto mt-10 border-t border-brand-borderWarm pt-5 text-center">
+        <p class="text-xs font-mono text-brand-brownSoft">글터수호대 · DAY 5 최종 론칭 패키지 완성 🚀</p>
+        <a href="https://litt.ly/aklabs" target="_blank" class="text-brand-orange hover:underline text-xs font-mono mt-1 block font-bold">Powered by AK LABS · https://litt.ly/aklabs</a>
+    </footer>
+
+<script>
+    let playing = false;
+    let currentScene = 0;
+    let timer = null;
+    let elapsed = 0;
+    const totalSec = 20;
+    const sceneTimes = [0, 7, 15, 20];
+
+    function playVideo() {
+        if (playing) return;
+        playing = true;
+        document.getElementById('play-btn').style.display = 'none';
+        document.getElementById('replay-btn').classList.add('hidden');
+        runTimer();
+    }
+
+    function runTimer() {
+        timer = setInterval(() => {
+            elapsed++;
+            const pct = (elapsed / totalSec) * 100;
+            document.getElementById('video-progress').style.width = pct + '%';
+            const s = elapsed % 60;
+            const m = Math.floor(elapsed / 60);
+            document.getElementById('vid-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+            
+            // Scene transitions
+            if (elapsed >= 7 && currentScene === 0) setScene(1);
+            if (elapsed >= 15 && currentScene === 1) setScene(2);
+            if (elapsed >= totalSec) {
+                clearInterval(timer);
+                playing = false;
+                document.getElementById('replay-btn').classList.remove('hidden');
+            }
+        }, 1000);
+    }
+
+    function setScene(idx) {
+        document.querySelectorAll('.video-scene').forEach((s, i) => {
+            s.classList.toggle('active', i === idx);
+        });
+        document.querySelectorAll('.timeline-dot').forEach((d, i) => {
+            d.classList.toggle('active', i === idx);
+        });
+        currentScene = idx;
+    }
+
+    function jumpScene(idx) {
+        clearInterval(timer);
+        playing = false;
+        elapsed = sceneTimes[idx];
+        setScene(idx);
+        const pct = (elapsed / totalSec) * 100;
+        document.getElementById('video-progress').style.width = pct + '%';
+        document.getElementById('play-btn').style.display = 'none';
+        document.getElementById('replay-btn').classList.remove('hidden');
+    }
+
+    function resetVideo() {
+        clearInterval(timer);
+        playing = false;
+        elapsed = 0;
+        currentScene = 0;
+        setScene(0);
+        document.getElementById('video-progress').style.width = '0%';
+        document.getElementById('vid-time').textContent = '0:00';
+        document.getElementById('play-btn').style.display = 'flex';
+        document.getElementById('replay-btn').classList.add('hidden');
+    }
+</script>
+</body>
+</html>

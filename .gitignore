@@ -18,6 +18,8 @@
 !day5/**
 !assets/
 !assets/**
+!Docs/
+!Docs/**
 
 # 3. 루트 대문 메뉴판 및 설정 파일 예외 허용
 !mission_preview.html
