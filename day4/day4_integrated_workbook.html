@@ -152,6 +152,9 @@
                                 <li><b>Gemini</b>로 대충 찍은 야식 이미지를 초고화질 광고 컷과 라벨 컷으로 새롭게 뽑아냅니다.</li>
                                 <li>구글 스티치에 프롬프트를 얹어 웹페이지를 빌딩한 뒤 <b>Netlify로 실시간 배포</b>합니다.</li>
                             </ul>
+                            <div class="mt-2.5 pt-2 border-t border-brand-gold/10 text-xs text-brand-brownSoft">
+                                <i class="fa-solid fa-circle-info"></i> 구글 스티치 외에도 기존 실습했던 Gemini Canvas 도구, Google AI Studio에서 동일하게 랜딩 페이지 만들기 작업을 진행할 수 있습니다.
+                            </div>
                         </div>
 
                         <!-- 탭 링크 가이드 -->
@@ -183,17 +186,21 @@
                         <div class="space-y-3">
                             <h4 class="text-xs font-bold text-brand-charcoal uppercase tracking-wider"><i class="fa-solid fa-list-check text-brand-gold"></i> 단계별 실습 프로토콜</h4>
                             <div class="space-y-2.5 text-sm text-brand-brownSoft leading-relaxed">
-                                <div id="guide-item-quiz" class="p-4 rounded-xl bg-brand-goldDim/60 border border-brand-gold/20 transition">
+                                <div id="guide-item-quiz" class="p-4 rounded-xl bg-brand-goldDim/60 border border-brand-gold/20 transition shadow-inner">
                                     <span class="font-bold text-brand-gold text-sm block">STEP 1. 레이아웃 퀴즈 풀기</span>
-                                    <p class="mt-1 text-brand-charcoal text-xs">고객 이탈을 줄이고 구매율을 극대화하는 6대 핵심 블록 배치(Hero, Problem, Solution 등)의 표준 순서를 맞추어 정합성을 확보합니다.</p>
+                                    <p class="mt-1 text-brand-charcoal text-xs">고객 이탈을 줄이고 구매율을 극대화하는 6대 핵심 블록 배치(Hero, Problem, Solution, Social Proof, CTA, Footer)의 표준 순서를 맞추어 정합성을 확보합니다.</p>
                                 </div>
                                 <div id="guide-item-builder" class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition">
-                                    <span class="font-bold text-brand-gold text-sm block">STEP 2. 에셋 & 스티치 프롬프트 조립</span>
-                                    <p class="mt-1 text-brand-charcoal text-xs">우리 브랜드 기획안을 바탕으로 입력 양식을 채워 스티치 웹 빌딩 지시어 및 제미나이 3D 광고 이미지 전용 프롬프트를 복사합니다.</p>
+                                    <span class="font-bold text-brand-gold text-sm block">STEP 2. 브랜드의 두뇌 구축 (Gems) & 프롬프트 조립</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">NotebookLM과 Gemini Gems(최신 Gemini 3.5 Flash 모델 활용)에 기획서를 학습시켜 'AI 전담 브랜드 매니저'를 구축합니다. 젬에게 웹사이트 생성 프롬프트와 메인 카피라이팅 3가지를 요청한 후, 입력 폼을 채워 스티치용 5단계 표준 웹 빌딩 및 이미지 프롬프트를 조립합니다.</p>
                                 </div>
                                 <div id="guide-item-simulator" class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition">
-                                    <span class="font-bold text-brand-gold text-sm block">STEP 3~4. 스티치 편집 & 실시간 배포</span>
-                                    <p class="mt-1 text-brand-charcoal text-xs">시뮬레이터를 통해 AI 에디터 수정(다크모드, 리뷰 추가 등)을 사전에 검증하고 완성 코드를 Netlify에 배포해 실시간 URL을 획득합니다.</p>
+                                    <span class="font-bold text-brand-gold text-sm block">STEP 3~4. 초고화질 무드 컷 업그레이드 & 스티치 편집</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">Gemini 3.5 Flash를 사용하여 음식 사진을 초고화질 무드 컷으로 렌더링하고 한글 로고 라벨을 부착합니다. 완성된 이미지를 구글 스티치 가상 에디터에 업로드하고, AI 피드백 명령(다크 모드, 리뷰 추가 등)을 검증합니다.</p>
+                                </div>
+                                <div class="p-4 rounded-xl border border-brand-borderWarm/60 opacity-50 transition">
+                                    <span class="font-bold text-brand-gold text-sm block">STEP 5. 실시간 배포 및 최종 검수</span>
+                                    <p class="mt-1 text-brand-charcoal text-xs">스티치 디자인과 편집이 모두 완료되면 Netlify(네트리파이)를 선택하여 원클릭 실시간 배포를 수행하고, 발급받은 URL을 검수하여 결과물 로그를 정리합니다.</p>
                                 </div>
                             </div>
                         </div>
@@ -213,7 +220,7 @@
                                     <span class="px-2 py-0.5 text-xs font-mono rounded bg-brand-gold/10 text-brand-gold">개념 1</span> 랜딩 페이지 (Landing Page)
                                 </h3>
                                 <p class="text-xs text-brand-brownSoft leading-normal">
-                                    광고 링크나 QR코드를 타고 마주하는 웹사이트로, 불필요한 링크를 차단하고 '회원 가입', '입점 문의', '구매' 등의 **단 하나의 핵심 목표**에만 집중하게 만드는 비즈니스 기획 문서입니다.
+                                    방문자의 특정 행동을 유도하는 단일 페이지 구조의 웹페이지입니다. 불필요한 요소를 최소화하고 <strong>Hero, Problem, Solution, Social Proof, CTA, Footer</strong>의 6대 핵심 레이아웃 블록으로 유기적인 설득 흐름을 설계합니다.
                                 </p>
                                 <!-- 웹툰 토글 버튼 및 이미지 영역 -->
                                 <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
@@ -229,10 +236,20 @@
                             <!-- 개념 2 -->
                             <div onclick="openConceptModal(1)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-gold/45 hover:shadow-md transition duration-200">
                                 <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
-                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-amber-500/10 text-amber-600">개념 2</span> CTA — Call To Action
+                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-emerald-500/10 text-emerald-600">개념 2</span> 구글 스티치 (Google Stitch)
                                 </h3>
                                 <p class="text-xs text-brand-brownSoft leading-normal">
-                                    고객에게 '지금 클릭해 혜택받기' 등 구체적이고 혜택 지향적인 행동을 유도하도록 고안된 버튼이나 링크를 의미합니다. 단순 '제출/확인'보다 설득력이 높은 핵심 마케팅 요소입니다.
+                                    AI가 생성한 텍스트, 이미지, 코드 및 다양한 디자인 컴포넌트들을 하나의 완성된 프로젝트로 매끄럽게 연결(Stitch)해 주는 구글의 최신 AI 기반 통합 디자인 & 개발 파이프라인 기술입니다.
+                                </p>
+                            </div>
+
+                            <!-- 개념 3 -->
+                            <div onclick="openConceptModal(2)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-gold/45 hover:shadow-md transition duration-200">
+                                <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
+                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-amber-500/10 text-amber-600">개념 3</span> CTA — Call To Action
+                                </h3>
+                                <p class="text-xs text-brand-brownSoft leading-normal">
+                                    고객에게 특정 행동(구매, 회원가입 등)을 즉각적으로 유도하는 장치나 매력적인 문구 버튼입니다. 오직 달성하고자 하는 단 하나의 핵심 목적에 시선이 쏠리도록 입체적이고 혜택 중심으로 설계합니다.
                                 </p>
                                 <!-- 웹툰 토글 버튼 및 이미지 영역 -->
                                 <div class="mt-2 pt-2 border-t border-brand-borderWarm/40">
@@ -243,16 +260,6 @@
                                         <img src="../assets/webtoon_cta.jpg" alt="CTA 웹툰" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-full h-auto cursor-zoom-in hover:opacity-95 transition duration-150">
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- 개념 3 -->
-                            <div onclick="openConceptModal(2)" class="p-4 rounded-xl bg-brand-bgWarm border border-brand-borderWarm space-y-2 cursor-pointer hover:border-brand-gold/45 hover:shadow-md transition duration-200">
-                                <h3 class="font-bold text-brand-charcoal text-sm flex items-center gap-1.5">
-                                    <span class="px-2 py-0.5 text-xs font-mono rounded bg-emerald-500/10 text-emerald-600">개념 3</span> Gemini Gems (젬스)
-                                </h3>
-                                <p class="text-xs text-brand-brownSoft leading-normal">
-                                    특정 브랜드 가이드, 마케팅 원칙 등의 지식 데이터를 주입해 두어, 언제 말을 걸어도 우리 기획서의 맥락과 규칙을 충실히 반영해 가이드를 출력해 내는 AI 맞춤형 매니저 기능입니다.
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -329,7 +336,7 @@
                                 <span class="text-xs font-bold text-brand-gold uppercase tracking-wider font-mono">STEP 1 / 5 · REAL-TIME QUIZ</span>
                                 <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">랜딩 페이지 레이아웃 정렬하기</h2>
                                 <p class="text-xs text-brand-brownSoft mt-1 leading-relaxed">
-                                    고객의 이탈을 막고 구매율(CTA)을 극대화하는 **표준 랜딩 페이지 설계 순서**에 맞게 카드를 위아래 버튼으로 조정해 보세요!
+                                    고객의 이탈을 막고 구매율(CTA)을 극대화하는 <strong>표준 랜딩 페이지 설계 순서</strong>에 맞게 카드를 위아래 버튼으로 조정해 보세요!
                                 </p>
                             </div>
 
@@ -359,7 +366,7 @@
                                 <span class="text-xs font-bold text-brand-gold uppercase tracking-wider font-mono">STEP 2 / 5 · PROMPT BUILDER</span>
                                 <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">구글 스티치 & 제미나이 에셋 생성기</h2>
                                 <p class="text-xs text-brand-brownSoft mt-1 leading-relaxed">
-                                    우리 브랜드 핵심 기획을 입력하면 **[스티치 사이트 프롬프트]**와 **[제미나이 3D 광고 이미지 프롬프트]**가 실시간 자동 조립됩니다.
+                                    우리 브랜드 핵심 기획을 입력하면 <strong>[스티치 사이트 프롬프트]</strong>와 <strong>[제미나이 3D 광고 이미지 프롬프트]</strong>가 실시간 자동 조립됩니다.
                                 </p>
                             </div>
 
@@ -505,7 +512,7 @@
                                 <span class="text-xs font-bold text-brand-gold uppercase tracking-wider font-mono">STEP 4 / 5 · LAUNCH & DEPLOY</span>
                                 <h2 class="text-xl md:text-2xl font-black text-brand-charcoal mt-0.5">전 세계로의 실시간 배포</h2>
                                 <p class="text-xs text-brand-brownSoft mt-1 leading-relaxed">
-                                    구글 스티치 가공이 완료되었다면, **Netlify**를 연동해 원클릭 배포를 완료하고 생성된 주소를 아래에 검증 등록하세요.
+                                    구글 스티치 가공이 완료되었다면, <strong>Netlify</strong>를 연동해 원클릭 배포를 완료하고 생성된 주소를 아래에 검증 등록하세요.
                                 </p>
                             </div>
 
@@ -645,28 +652,90 @@
             },
             netlifyUrl: '',
             quizItems: [
-                { id: "cta", title: "5. Call to Action (CTA)", desc: "마지막 구매/도입 문의 등 핵심 행동 촉구 유도", order: 5 },
-                { id: "hero", title: "1. Hero Section", desc: "첫인상을 결정하는 메인 헤드라인 & 시각적 대표 이미지", order: 1 },
-                { id: "problem", title: "2. Problem Definition", desc: "사용자가 가진 뚜렷한 고통과 직면한 불편(Pain Point) 공감", order: 2 },
-                { id: "solution", title: "3. Solution Showcase", desc: "우리 상품이 어떻게 그 불편함을 완벽하게 해소하고 해결해 주는지 제안", order: 3 },
-                { id: "social", title: "4. Social Proof & Reviews", desc: "실제 리뷰, 수치, 신뢰 데이터를 기반으로 안심하고 쓰도록 증명", order: 4 },
-                { id: "footer", title: "6. Footer & Info", desc: "사업자 정보, 저작권, 관련 규정 및 추가 참고 링크 배치", order: 6 }
+                { id: "cta", title: "Call to Action (CTA)", desc: "마지막 구매/도입 문의 등 핵심 행동 촉구 유도", order: 5 },
+                { id: "hero", title: "Hero Section", desc: "첫인상을 결정하는 메인 헤드라인 & 시각적 대표 이미지", order: 1 },
+                { id: "problem", title: "Problem Definition", desc: "사용자가 가진 뚜렷한 고통과 직면한 불편(Pain Point) 공감", order: 2 },
+                { id: "solution", title: "Solution Showcase", desc: "우리 상품이 어떻게 그 불편함을 완벽하게 해소하고 해결해 주는지 제안", order: 3 },
+                { id: "social", title: "Social Proof & Reviews", desc: "실제 리뷰, 수치, 신뢰 데이터를 기반으로 안심하고 쓰도록 증명", order: 4 },
+                { id: "footer", title: "Footer & Info", desc: "사업자 정보, 저작권, 관련 규정 및 추가 참고 링크 배치", order: 6 }
             ]
         };
+
+        // 로컬 스토리지 상태 저장 함수
+        function saveStateToLocalStorage() {
+            try {
+                localStorage.setItem('day4_workbook_state', JSON.stringify(state));
+            } catch (e) {
+                console.error("로컬 스토리지 저장 실패:", e);
+            }
+        }
+
+        // 로컬 스토리지 상태 로드 함수
+        function loadStateFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('day4_workbook_state');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.activeMainTab !== undefined) state.activeMainTab = parsed.activeMainTab;
+                    if (parsed.activeGuideTab !== undefined) state.activeGuideTab = parsed.activeGuideTab;
+                    if (parsed.currentStep !== undefined) state.currentStep = parsed.currentStep;
+                    if (parsed.isQuizCleared !== undefined) state.isQuizCleared = parsed.isQuizCleared;
+                    if (parsed.isDeployCleared !== undefined) state.isDeployCleared = parsed.isDeployCleared;
+                    if (parsed.teamName !== undefined) state.teamName = parsed.teamName;
+                    if (parsed.netlifyUrl !== undefined) state.netlifyUrl = parsed.netlifyUrl;
+                    
+                    if (parsed.inputs) {
+                        state.inputs.brandName = parsed.inputs.brandName || '';
+                        state.inputs.slogan = parsed.inputs.slogan || '';
+                        state.inputs.color = parsed.inputs.color || '';
+                        state.inputs.target = parsed.inputs.target || '';
+                        state.inputs.benefit = parsed.inputs.benefit || '';
+                        state.inputs.cta = parsed.inputs.cta || '';
+                    }
+
+                    // UI 값 복원
+                    document.getElementById('teamName').value = state.teamName;
+                    document.getElementById('inp-brand-name').value = state.inputs.brandName;
+                    document.getElementById('inp-slogan').value = state.inputs.slogan;
+                    document.getElementById('inp-color').value = state.inputs.color;
+                    document.getElementById('inp-target').value = state.inputs.target;
+                    document.getElementById('inp-benefit').value = state.inputs.benefit;
+                    document.getElementById('inp-cta').value = state.inputs.cta;
+                    document.getElementById('inp-netlify-url').value = state.netlifyUrl;
+
+                    return true;
+                }
+            } catch (e) {
+                console.error("로컬 스토리지 로드 실패:", e);
+            }
+            return false;
+        }
 
         // 페이지 로딩 시 초기 바인딩
         window.addEventListener('DOMContentLoaded', () => {
             // 로컬 스토리지 복원
-            const savedTeam = localStorage.getItem('day4_team_name');
-            if (savedTeam) {
-                document.getElementById('teamName').value = savedTeam;
-                state.teamName = savedTeam;
-            }
+            const hasSaved = loadStateFromLocalStorage();
 
             shuffleQuizItems();
             renderQuiz();
             assemblePrompt();
-            goToStep(1);
+            
+            if (!hasSaved) {
+                goToStep(1);
+            } else {
+                switchGuideTab(state.activeGuideTab);
+                goToStep(state.currentStep);
+                
+                // 퀴즈 클리어 시 피드백 복구 연출
+                if (state.isQuizCleared) {
+                    checkQuizResult();
+                }
+                
+                // 넷틀리파이 클리어 시 피드백 복구 연출
+                if (state.isDeployCleared) {
+                    verifyNetlifyUrl();
+                }
+            }
 
             // 글로벌 모달 클릭 해제 바인딩
             document.getElementById('global-modal').addEventListener('click', function(e) {
@@ -679,10 +748,10 @@
 
         // 팀명 저장
         function saveTeamName(val) {
-            localStorage.setItem('day4_team_name', val);
             state.teamName = val;
             assemblePrompt();
             compileFinalData();
+            saveStateToLocalStorage();
         }
 
         // 퀴즈 셔플
@@ -761,6 +830,7 @@
                 feedbackText.innerText = "블록 정렬 순서가 맞지 않습니다. 고객이 페이지에 머무르게 하려면 첫 화면에 가치(Hero)를 보여주고, 공감대 형성(Problem) ➔ 대안 제시(Solution) ➔ 안심 보증(Reviews) 순서가 적당합니다. 다시 시도해 보세요!";
             }
             compileFinalData();
+            saveStateToLocalStorage();
         }
 
         // 프롬프트 조립
@@ -773,25 +843,51 @@
             state.inputs.cta = document.getElementById('inp-cta').value || "90초 야식 50% 할인 쿠폰 받기 ➔";
 
             // 스티치용 웹 프롬프트
-            const stitchPromptText = `구글 스티치(Stitch)에서 작동할 고효율 랜딩 페이지 구조 생성을 요청합니다:
+            const stitchPromptText = `Create a modern, high-converting responsive landing page design for '${state.inputs.brandName}', ${state.inputs.slogan}.
 
-[브랜드명]: ${state.inputs.brandName}
-[서비스/제품 정의]: ${state.inputs.slogan}
-[설계 분위기 및 지배 색상]: ${state.inputs.color}
-[공략 대상 고객 (Target)]: ${state.inputs.target}
-[핵심 가치 제안 (Solution)]: ${state.inputs.benefit}
-[메인 목표 행동 유도 (CTA 버튼)]: ${state.inputs.cta}
+#### 1. Design Vibe & Theme (Vibe)
+* **Color Palette:** Deep background tones themed around '${state.inputs.color}' to evoke a comforting, warm late-night atmosphere, accented by a contrasting high-impact color for call-to-action (CTA) buttons and key highlights.
+* **Typography:** Clean, friendly, and modern Sans-serif typography with high legibility.
+* **Overall Vibe:** Cozy, trustworthy, comforting, tailored for target audiences working late.
 
-[필수 구조 구성 지시]:
-1. Hero Section: "${state.inputs.brandName}" 브랜드 로고와 대담하고 시각적인 슬로건 "${state.inputs.slogan}"이 강조되게 해주세요.
-2. Problem: "${state.inputs.target}" 고객이 일상에서 가장 느끼는 주요 문제와 스트레스 공감대를 다뤄주세요.
-3. Solution: "${state.inputs.benefit}"를 해결책으로 자연스럽게 소개하며, 3단 레이아웃을 통해 세부 이점을 시각적으로 분할해 주세요.
-4. Social Proof: 신뢰성을 보장하는 만족도 높은 3가지 인용구 리뷰를 삽입해주세요.
-5. CTA: 눈에 띄는 색상의 보더라인/버튼 형태로 "${state.inputs.cta}" 앵커를 추가하고 클릭 시 원활히 링크 타겟팅 되도록 배포 환경을 고려해 조립해 주세요.`;
+#### 2. Key Sections & Layout Structure (What & Why)
+
+* **Section 1: Hero Section (Header & Main Visual)**
+  * **Navigation Bar:** Minimalist. Logo '${state.inputs.brandName}' on the left, and a single accent button on the right: 'Get Started'.
+  * **Main Copy:** '${state.inputs.slogan}'
+  * **Sub Copy:** 'Specifically designed for ${state.inputs.target} who need a warm, comforting boost.'
+  * **CTA Button:** A large, prominent button in accent color: '${state.inputs.cta}'
+  * **Image Placeholder:** A placeholder for a high-quality, professional food photograph of "${state.inputs.brandName}" container in a cozy late-night study room.
+
+* **Section 2: Problem & Solution (Pain Point)**
+  * **Layout:** 2-column or card-based layout.
+  * **Left/Card A (Problem):** "Struggling to find hot, comforting food late at night? Feeling exhausted and hungry while studying?"
+  * **Right/Card B (Solution):** "${state.inputs.benefit}. Enjoy a delicious warm meal in just 90 seconds, right where you are."
+
+* **Section 3: Signature Menu / Core Features (Products)**
+  * **Layout:** Grid of 3 premium product/feature cards.
+  * **Card 1:** [Signature Menu 1] - Comforting warm food cup - Ready in 90 seconds.
+  * **Card 2:** [Premium Ingredients] - Healthy, clean formula - Gentle on late-night stomachs.
+  * **Card 3:** [Campus Hotspot] - Easily accessible in college building vending machines.
+  * Each card must have an image placeholder, product/feature title, brief description, price or benefit tag, and a subtle 'Learn More' button.
+
+* **Section 4: How It Works (Three Simple Steps)**
+  * **Layout:** Simple 3-step horizontal flow with clean minimal icons.
+  * **Step 1 (Select):** Locate the nearest ${state.inputs.brandName} station or vending machine in your campus.
+  * **Step 2 (Instant Cook):** Select your menu and wait just 90 seconds for auto-heating.
+  * **Step 3 (Enjoy & Recharge):** Enjoy your warm, comforting food and power through your night.
+
+* **Section 5: Final CTA (Call to Action)**
+  * **Layout:** Center-aligned, high-impact block with a warm background gradient.
+  * **Title:** "Don't let hunger slow you down tonight"
+  * **Description:** "Sign up now to receive your first ${state.inputs.brandName} 50% discount coupon!"
+  * **Input Field:** A simple single-field email/phone subscription box next to a large button: '${state.inputs.cta}'
+
+Please render this entire structure into a beautifully polished, interactive single-page landing page on a responsive desktop layout.`;
 
             document.getElementById('stitch-prompt-preview').innerText = stitchPromptText;
 
-            // 제미나이 3D 광고 이미지 프롬프트
+            // 제미나이 3D 광고 이미지 프롬프트 (최신 Veo 및 Gemini 3.5 Flash 최적화)
             const imgPromptText = `A professional, hyper-realistic commercial product photograph of "${state.inputs.brandName}" food container. 
 A warm, steaming food cup or packaging kit with delicious details visible. The label on the container clearly reads "${state.inputs.brandName}" in elegant modern Korean typography.
 Set against a cozy dark background featuring tones of ${state.inputs.color}. Soft steam rising elegantly from the warm food container.
@@ -808,6 +904,7 @@ Hyper-detailed food photography, professional food styling, warm color grading, 
             document.getElementById('sim-footer-brand').innerText = state.inputs.brandName;
 
             compileFinalData();
+            saveStateToLocalStorage();
         }
 
         // 개별 프롬프트 복사
@@ -945,6 +1042,7 @@ Hyper-detailed food photography, professional food styling, warm color grading, 
                 feedbackText.innerText = "올바른 URL 형식(https://...)으로 작성해 주세요. 넷틀리파이에서 발급된 원본 주소를 복사-붙여넣기 하시는 것을 강력 추천합니다.";
             }
             compileFinalData();
+            saveStateToLocalStorage();
         }
 
         // Step Management Navigation logic
@@ -997,6 +1095,7 @@ Hyper-detailed food photography, professional food styling, warm color grading, 
             if (state.currentStep === 5) {
                 compileFinalData();
             }
+            saveStateToLocalStorage();
         }
 
         // Final Output Markdown Assembler
@@ -1110,19 +1209,19 @@ A professional, hyper-realistic commercial product photograph of "${brand}" food
                     badgeText: "개념 1",
                     badgeBgClass: "bg-brand-gold/10 text-brand-gold",
                     title: "랜딩 페이지 (Landing Page)",
-                    desc: "광고나 링크를 클릭한 후 도달하는 비즈니스용 단일 구조의 마케팅 전용 웹사이트입니다.\n\n- 목표: 고객이 불필요한 서핑 링크로 빠지지 않고, 오직 '제품 상세 확인' 및 '최종 가입/구매'라는 하나의 타겟 행동만 성취하게 설계합니다.\n- 구조: 문제 공감부터 신뢰도 보증(Review), 그리고 명확한 CTA 버튼 배치로 흐름을 이어가야 전환율이 상승합니다."
+                    desc: "광고나 링크를 클릭한 후 도달하는 비즈니스용 단일 구조의 마케팅 전용 웹사이트입니다.\n\n■ 핵심 목표: 고객이 불필요한 링크로 이탈하지 않고, 오직 '최종 가입/구매/문의'라는 단 하나의 목적(Goal)에만 집중하도록 설계합니다.\n\n■ 랜딩 페이지를 구성하는 6대 핵심 레이아웃 요소:\n1. Hero Section (헤로 섹션)\n   - 첫인상을 결정하는 메인 헤드라인과 대표 이미지입니다. 방문자가 3초 안에 이탈하지 않도록 강력한 가치 제안을 던집니다.\n2. Problem Definition (문제 정의)\n   - 타겟 고객이 일상에서 마주하는 고통과 불편함(Pain Point)에 깊이 공감하여 더 아래로 스크롤을 내리도록 동기를 부여합니다.\n3. Solution Showcase (해결책 제시)\n   - 우리 서비스가 이 문제를 어떻게 완벽하고 신속하게 해결하는지 세부 혜택과 시각적 요소로 보여줍니다.\n4. Social Proof & Reviews (사회적 증명 및 리뷰)\n   - 만족도가 높은 5점 리뷰, 인용구, 데이터 등을 제시해 신뢰도를 증명하고 안심하고 이용하도록 유도합니다.\n5. Call to Action (CTA - 행동 촉구)\n   - 회원가입이나 쿠폰 받기 등 마케터가 의도한 행동을 즉각 유도하는 밝고 선명한 버튼입니다.\n6. Footer & Info (푸터 및 정보)\n   - 회사명, 저작권, 관련 규정 및 정보들을 명확히 배치하여 브랜드의 비즈니스적 안전성과 신뢰를 최종 마무리합니다.\n\n■ 예시 (AI 홈트레이닝 앱):\n- [나쁜 예시]: 광고 클릭 시 대표 인사말, 회사 연혁, 커뮤니티 등 정보가 파편화되어 이탈률이 증가함.\n- [좋은 예시]: \"단 10분, 당신의 거실을 1:1 PT룸으로!\"라는 강렬한 헤드카피와 함께 전후 비교 후기, 혜택, 그리고 큰 무료 체험 주황색 버튼(CTA) 하나만 명확히 제공하여 가입 전환율 급증."
                 },
                 {
                     badgeText: "개념 2",
-                    badgeBgClass: "bg-amber-500/10 text-amber-600",
-                    title: "CTA (Call To Action - 행동 유도)",
-                    desc: "방문자에게 망설임 없이 행동을 유도하게 배치하는 마케팅 클릭 요소입니다.\n\n- 설계 팁: 단순 '확인'이나 '제출' 같은 수동적 명사 대신, 고객이 얻을 혜택을 명시하는 구체적인 동사 표현(예: '90초 즉석 야식 50% 할인 쿠폰 받기 ➔')을 장착하여 매력적인 선택지를 제공합니다."
+                    badgeBgClass: "bg-emerald-500/10 text-emerald-600",
+                    title: "구글 스티치 (Google Stitch)",
+                    desc: "AI가 생성한 텍스트, 이미지, 코드 및 다양한 디자인 컴포넌트들을 하나의 완성된 프로젝트로 매끄럽게 연결(Stitch)해 주는 구글의 최신 AI 기반 통합 디자인 & 개발 파이프라인 기술입니다.\n\n■ 핵심 형식: 여러 AI 에이전트나 디자인 소스들이 파편화되지 않도록 단일 작업 흐름(Workflow) 안에서 매끄럽게 엮어주는 통합 파이프라인 형태를 취합니다.\n\n■ 원칙: 사용자가 창작 및 개발 과정에서 도구를 번거롭게 오갈 필요 없이, 아이디어 기획부터 최종 구현(바이브 코딩, 3D 웹 디자인 등)까지의 결과물을 끊김 없이 실시간으로 정합하고 자동화하는 것을 목표로 합니다.\n\n■ 예시 (이벤트 홍보용 3D 웹사이트 제작):\n- [Stitch 기능이 없을 때]: 이미지 AI로 배경을 만들고, 코딩 AI로 웹 코드를 짠 뒤, 별도의 3D 컴포넌트 툴로 효과를 줍니다. 이 파편화된 파일들을 컴퓨터에 일일이 다운로드한 다음, 개발 프로그램(IDE)에 직접 코드를 붙여넣고 경로를 수정해가며 결합해야 해 시간이 오래 걸립니다.\n- [Stitch 기능을 활용할 때]: 하나의 작업 공간 안에서 AI에게 \"3D 웹사이트 디자인해 줘\"라고 주문하면, AI가 완성한 멋진 이미지와 3D 컴포넌트, 그리고 프론트엔드 코드를 Stitch 기능이 알아서 '착' 하고 하나로 바느질하듯 결합해 줍니다. 클릭 한 번에 디자인 요소들이 개발 환경으로 그대로 스티칭(연동)되어 들어가므로, 오류 없이 몇 분 만에 완벽한 3D 반응형 웹사이트 시제품을 뚝딱 완성할 수 있습니다."
                 },
                 {
                     badgeText: "개념 3",
-                    badgeBgClass: "bg-emerald-500/10 text-emerald-600",
-                    title: "Gemini Gems (젬스)",
-                    desc: "일차별로 변화하는 우리 브랜드 가이드라인과 톤앤매너 규칙(Instruction)을 AI 백그라운드에 미리 묶어둔 기능입니다.\n\n- 장점: 매번 복잡한 조건이나 기획서 텍스트를 새로 주입해 줄 필요 없이, 언제 말을 걸어도 우리 브랜드의 매니저 자격을 상실하지 않고 그에 부합한 웹 카피와 에셋을 출력해 줍니다."
+                    badgeBgClass: "bg-amber-500/10 text-amber-600",
+                    title: "CTA (Call To Action - 행동 유도)",
+                    desc: "웹사이트나 광고, 랜딩페이지 등에서 방문자에게 \"지금 구매하기\", \"무료로 구독하기\"와 같이 마케터가 의도한 특정 행동을 즉각적으로 유도하는 장치나 문구(Call To Action)를 뜻합니다.\n\n■ 핵심 형식: 주로 시선을 사로잡는 선명한 색상의 '버튼' 형태로 배치되며, 직관적이고 강력한 동사형 문장으로 구성되는 것이 일반적입니다.\n\n■ 원칙: 하나의 화면에 너무 많은 선택지를 주면 고객이 혼란스러워하므로, 가장 달성하고 싶은 핵심 목적을 담은 단 하나의 핵심 CTA에 집중하게 만드는 것이 중요합니다.\n\n■ 예시 (AI 비즈니스 생산성 마스터 과정 모집):\n- [CTA 설계가 잘못되었을 때]: 강의 소개 페이지 맨 아래에 밋밋한 회색 글씨로 \"관심 있으신 분들은 아래 링크를 참조하시거나 고객센터로 문의를 남겨주시면 안내해 드립니다\"라고 길게 적혀 있어 방문자가 귀찮아서 그냥 페이지를 나가버림.\n- [효과적인 CTA를 적용했을 때]: 강의의 핵심 혜택을 매끄럽게 설명한 직후, 화면 중앙에 눈에 확 띄는 밝은 주황색 입체 버튼이 나타납니다. 버튼 위에는 [지금 0원으로 1회차 강의 먼저 들어보기 ➔]라는 매력적이고 구체적인 문구가 적혀 있어, 방문자가 부담 없이 버튼을 클릭해 첫 강의를 듣고 가입까지 마치게 됩니다."
                 }
             ];
             const data = concepts[idx];
@@ -1198,6 +1297,7 @@ A professional, hyper-realistic commercial product photograph of "${brand}" food
                     content.classList.add('hidden');
                 }
             }
+            saveStateToLocalStorage();
         }
     </script>
 </body>
