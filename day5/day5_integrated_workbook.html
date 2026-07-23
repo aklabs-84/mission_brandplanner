@@ -83,6 +83,114 @@
         .layout-item {
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        /* 수료증 인쇄 전용 스타일 — A4 용지 상하좌우 꽉 채움 */
+        @media print {
+            @page { size: A4; margin: 0; }
+            body * { visibility: hidden; }
+            #certificate-modal, #certificate-modal * { visibility: visible; }
+            #certificate-modal {
+                position: fixed;
+                inset: 0;
+                width: 210mm;
+                height: 297mm;
+                background: white !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                display: block !important;
+                padding: 0 !important;
+            }
+            #certificate-modal-content {
+                box-shadow: none !important;
+                max-height: none !important;
+                max-width: none !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                overflow: visible !important;
+                background: transparent !important;
+                border-radius: 0 !important;
+            }
+            #cert-print-area {
+                margin: 10mm !important;
+                width: calc(210mm - 20mm) !important;
+                height: calc(297mm - 20mm) !important;
+            }
+            #cert-body {
+                height: 100%;
+                display: flex !important;
+                flex-direction: column;
+                justify-content: space-between;
+                padding: 22mm 16mm !important;
+                box-sizing: border-box;
+            }
+            #cert-body .cert-eyebrow { font-size: 15px !important; margin-bottom: 10px !important; }
+            #cert-body .cert-title { font-size: 76px !important; margin-bottom: 0 !important; }
+            #cert-body .cert-team-row { margin: 0 !important; }
+            #cert-body .cert-team-label { font-size: 18px !important; }
+            #cert-body #cert-team-name { font-size: 28px !important; }
+            #cert-body .cert-body-text { font-size: 21px !important; line-height: 2.1 !important; }
+            #cert-body #cert-date { font-size: 18px !important; }
+            #cert-body .cert-issuer { font-size: 24px !important; }
+            #cert-body #cert-id { font-size: 13px !important; }
+            #cert-body .cert-seal { width: 130px !important; height: 130px !important; }
+            #cert-body .cert-seal-ribbon { top: 112px !important; width: 100px !important; height: 60px !important; }
+            #cert-body .cert-seal-ribbon::before,
+            #cert-body .cert-seal-ribbon::after { width: 44px !important; height: 60px !important; }
+            .cert-corner { font-size: 60px !important; }
+            .no-print { display: none !important; }
+            /* 인쇄 시 금박 인장/그라디언트 배경이 생략되지 않도록 강제 출력 */
+            #certificate-modal, #certificate-modal * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+        }
+
+        /* 수료증 코너 장식 & 금박 인장 */
+        .cert-corner {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 30px;
+            line-height: 1;
+            color: #C9A227;
+            opacity: 0.85;
+        }
+        .cert-seal {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: repeating-conic-gradient(from 0deg, #F7E7A0 0deg 9deg, #D4AF37 9deg 18deg);
+            box-shadow: 0 3px 8px rgba(154, 116, 20, 0.35), inset 0 0 0 3px rgba(255, 255, 255, 0.5);
+            position: relative;
+        }
+        .cert-seal::after {
+            content: '';
+            position: absolute;
+            inset: 12px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #FFF6D6, #E8C55A 55%, #B8860B 100%);
+            box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.6);
+        }
+        .cert-seal-ribbon {
+            position: absolute;
+            top: 62px;
+            left: 50%;
+            width: 56px;
+            height: 34px;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .cert-seal-ribbon::before,
+        .cert-seal-ribbon::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 24px;
+            height: 34px;
+            background: linear-gradient(180deg, #D4AF37, #9C7A1E);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
+        }
+        .cert-seal-ribbon::before { left: 2px; transform: rotate(-10deg); }
+        .cert-seal-ribbon::after { right: 2px; transform: rotate(10deg); }
     </style>
 </head>
 <body class="text-brand-charcoal min-h-screen flex flex-col font-sans antialiased p-3 md:p-6 pb-16">
@@ -494,6 +602,15 @@
                                 </p>
                             </div>
 
+                            <!-- 피칭 대본 생성 프롬프트 영역 -->
+                            <div class="bg-brand-charcoal rounded-xl p-4 border border-dashed border-brand-purple flex flex-col justify-between">
+                                <span class="text-[9px] text-brand-purple font-bold bg-brand-purpleDim px-2 py-0.5 rounded-full self-start mb-2">PITCH SCRIPT GENERATION PROMPT</span>
+                                <pre id="pitch-script-prompt-preview" class="text-brand-purpleDim text-[11px] whitespace-pre-wrap font-mono leading-relaxed max-h-[160px] overflow-y-auto pr-2 mb-3">STEP 2에서 입력한 브랜드 정보와 STEP 1 피칭 순서가 반영되어 대본 생성 프롬프트가 자동으로 조립됩니다...</pre>
+                                <button onclick="copyPromptToClipboard('pitch-script-prompt-preview', '피칭 대본 생성 프롬프트')" class="w-full py-2.5 bg-brand-purple hover:bg-brand-purpleDeep text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 cursor-pointer font-sans">
+                                    <i class="fa-regular fa-copy"></i> Gemini용 피칭 대본 프롬프트 복사
+                                </button>
+                            </div>
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <!-- 자가 체크리스트 -->
                                 <div class="space-y-2">
@@ -561,7 +678,7 @@
                             <span class="font-mono text-xs text-brand-brownSoft font-bold">
                                 STEP <span id="current-step-text" class="text-brand-purple font-bold">1</span> / 5
                             </span>
-                            <button id="btn-next" onclick="moveStep(1)" class="px-5 py-3 bg-brand-purple hover:bg-brand-purpleDeep text-white font-bold text-sm rounded-xl transition shadow-lg shadow-brand-purple/10 cursor-pointer">
+                            <button id="btn-next" onclick="handleNextClick()" class="px-5 py-3 bg-brand-purple hover:bg-brand-purpleDeep text-white font-bold text-sm rounded-xl transition shadow-lg shadow-brand-purple/10 cursor-pointer">
                                 다음 →
                             </button>
                         </div>
@@ -603,6 +720,66 @@
             </button>
             <!-- 이미지 엘리먼트 -->
             <img id="image-modal-src" src="" alt="확대 웹툰 이미지" class="rounded-2xl border border-white/10 max-h-[85vh] w-auto object-contain shadow-2xl">
+        </div>
+    </div>
+
+    <!-- ==================== [미션 완주 수료증 모달] ==================== -->
+    <div id="certificate-modal" class="fixed inset-0 bg-black/55 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-300 p-4">
+        <div id="certificate-modal-content" class="bg-[#FFFDF7] rounded-lg shadow-2xl relative transform scale-95 transition-all duration-300 max-h-[92vh] overflow-y-auto max-w-xl w-full">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeCertificateModal()" class="no-print absolute top-3 right-3 z-10 text-brand-brownSoft hover:text-brand-charcoal transition text-lg h-8 w-8 rounded-full hover:bg-brand-bgWarm flex items-center justify-center cursor-pointer focus:outline-none">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- 인증서 금색 프레임 (인쇄 대상 영역) -->
+            <div id="cert-print-area" class="relative m-4 md:m-6">
+                <div class="absolute inset-0 border-[3px] border-[#C9A227] pointer-events-none"></div>
+                <div class="absolute inset-[7px] border border-dotted border-[#C9A227]/70 pointer-events-none"></div>
+
+                <span class="cert-corner absolute -top-2 -left-2">❧</span>
+                <span class="cert-corner absolute -top-2 -right-2 scale-x-[-1]">❧</span>
+                <span class="cert-corner absolute -bottom-2 -left-2 scale-y-[-1]">❧</span>
+                <span class="cert-corner absolute -bottom-2 -right-2 scale-x-[-1] scale-y-[-1]">❧</span>
+
+                <div id="cert-body" class="relative px-7 py-10 md:px-12 md:py-12">
+                    <p class="cert-eyebrow text-center text-[10px] md:text-[11px] tracking-[0.35em] text-[#B8860B] font-bold uppercase mb-3">AK LABS · Mission Control</p>
+                    <h2 class="cert-title text-center text-4xl md:text-5xl font-black text-brand-charcoal tracking-[0.3em] mb-10">수료증</h2>
+
+                    <div class="cert-team-row flex justify-end items-baseline gap-3 mb-8 pr-1 border-b border-brand-borderWarm pb-2.5">
+                        <span class="cert-team-label text-xs md:text-sm font-bold text-brand-brownSoft tracking-widest">팀&nbsp;&nbsp;명</span>
+                        <span id="cert-team-name" class="text-lg md:text-xl font-black text-brand-charcoal">-</span>
+                    </div>
+
+                    <p class="cert-body-text text-center text-[13px] md:text-[15px] leading-loose text-brand-charcoal mb-10">
+                        위 팀은 AK LABS 5일간의 AI 실전 부트캠프<br>
+                        전 과정(미션 킥오프 → 시장조사 → 기획서 →<br>
+                        웹 빌딩 → 영상 & 피칭)을<br>
+                        성실히 수행하였으므로 이 수료증을 수여합니다.
+                    </p>
+
+                    <div class="flex items-end justify-between">
+                        <div class="relative shrink-0">
+                            <div class="cert-seal"></div>
+                            <div class="cert-seal-ribbon"></div>
+                        </div>
+                        <div class="text-right">
+                            <p id="cert-date" class="text-sm md:text-base font-bold text-brand-charcoal mb-1"></p>
+                            <p class="cert-issuer text-base md:text-lg font-black text-brand-charcoal tracking-wide">AK LABS</p>
+                            <p id="cert-id" class="text-[10px] font-mono text-brand-brownSoft mt-1"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="no-print flex items-center gap-3 px-6 md:px-8 pb-6 pt-1">
+                <button onclick="printCertificate()" class="flex-1 py-3 bg-[#B8860B] hover:bg-[#9C7209] text-white font-bold text-xs rounded-xl transition shadow flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-print"></i> 인쇄 / PDF로 저장
+                </button>
+                <button onclick="closeCertificateModal()" class="flex-1 py-3 bg-white hover:bg-brand-bgWarm text-brand-charcoal border border-brand-borderWarm font-bold text-xs rounded-xl transition shadow-sm cursor-pointer">
+                    닫기
+                </button>
+            </div>
         </div>
     </div>
 
@@ -781,6 +958,9 @@
             });
             document.getElementById('image-modal').addEventListener('click', function(e) {
                 if (e.target === this) closeImageModal();
+            });
+            document.getElementById('certificate-modal').addEventListener('click', function(e) {
+                if (e.target === this) closeCertificateModal();
             });
         });
 
@@ -1005,6 +1185,43 @@
 — 본 데이터는 AK LABS 피칭 빌더에서 발행한 최종 Day 5 미션 완료 증명서입니다. 5일간의 여정이 모두 무사히 끝났음을 보증합니다!`;
 
             document.getElementById('compiled-data-box').value = outputStr;
+            assemblePitchPrompt();
+        }
+
+        // 5단 피칭 대본 생성 프롬프트 조립 (STEP 2 입력값 + 실제 5단 순서 반영)
+        function assemblePitchPrompt() {
+            const brand = state.inputs.brandName || "새벽끼니";
+            const product = state.inputs.feedProduct || "(미입력)";
+            const value = state.inputs.feedValue || "(미입력)";
+            const tone = state.inputs.feedTone || "(미입력)";
+            const url = state.inputs.vidsUrl || "(미입력)";
+
+            const orderedFlow = state.quizItems
+                .map((item, idx) => `${idx + 1}. ${item.title} — ${item.desc}`)
+                .join('\n');
+
+            const pitchPromptText = `[Role & Mission]
+당신은 스타트업의 5분 론칭 피칭 대본을 전문적으로 작성해 주는 'AI 피칭 코치'입니다. 아래 정보를 바탕으로, 실제 발표 현장에서 그대로 읽을 수 있는 자연스러운 구어체 피칭 대본을 작성해 주세요.
+
+[제품 정보]
+- 브랜드명: ${brand}
+- 제품명: ${product}
+- 핵심 가치: ${value}
+- 톤앤보이스: ${tone}
+- 랜딩페이지: ${url}
+
+[5단 피칭 구조 & 시간 배분 (총 5분/300초)]
+${orderedFlow}
+
+[작성 규칙]
+1. 각 단계 앞에 "[STEP N · 예상 소요시간]" 라벨을 붙여 구분해 주세요.
+2. 실제 발표자가 그대로 읽을 대사를 자연스러운 한국어 구어체로 작성해 주세요.
+3. 문장이 끝나는 곳엔 온점(.), 호흡을 쉬어야 하는 곳엔 쉼표(,)를 정확히 찍어 발표 호흡이 자연스럽도록 작성해 주세요.
+4. "홍보 영상 상영" 단계는 대사 대신 "(여기서 홍보 영상을 재생합니다)"로 표시해 주세요.
+5. 전체 분량은 5분 발표 기준(약 700~900자)으로 작성해 주세요.`;
+
+            const el = document.getElementById('pitch-script-prompt-preview');
+            if (el) el.innerText = pitchPromptText;
         }
 
         function copyCompletedKit() {
@@ -1078,6 +1295,63 @@
             if (nextIdx >= 1 && nextIdx <= 5) {
                 goToStep(nextIdx);
             }
+        }
+
+        // 하단 '다음' 버튼 클릭 분기: STEP 5에서는 미션 완주 처리(수료증 발행)로 전환
+        function handleNextClick() {
+            if (state.currentStep < 5) {
+                moveStep(1);
+            } else {
+                completeMission();
+            }
+        }
+
+        // ==================== [미션 완주 및 수료증 발행] ====================
+        function completeMission() {
+            initAudio();
+            const team = state.teamName && state.teamName.trim() ? state.teamName.trim() : '';
+            if (!team) {
+                showToast("팀명을 먼저 입력해 주세요!");
+                document.getElementById('teamName').focus();
+                return;
+            }
+            compileFinalData();
+            openCertificateModal(team);
+        }
+
+        function openCertificateModal(team) {
+            const modal = document.getElementById('certificate-modal');
+            const content = document.getElementById('certificate-modal-content');
+
+            document.getElementById('cert-team-name').textContent = team;
+            const today = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            document.getElementById('cert-date').textContent = `${today.getFullYear()}.${pad(today.getMonth() + 1)}.${pad(today.getDate())}`;
+            document.getElementById('cert-id').textContent = `AK-D5-${today.getFullYear()}${pad(today.getMonth() + 1)}${pad(today.getDate())}-${Math.floor(Math.random() * 900 + 100)}`;
+
+            modal.classList.remove('hidden');
+            modal.offsetHeight;
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+
+            playBeep(true);
+            showToast("🎉 미션 완주 수료증이 발행되었습니다!");
+        }
+
+        function closeCertificateModal() {
+            const modal = document.getElementById('certificate-modal');
+            const content = document.getElementById('certificate-modal-content');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        }
+
+        function printCertificate() {
+            window.print();
         }
 
         // ==================== [글로벌 독립 모달 제어 함수] ====================
